@@ -1,0 +1,19 @@
+{
+    "name": "Irvobmagturs/InvoiceCore",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Irvobmagturs\\InvoiceCore\\": "src/"
+        }
+    },
+    "require": {
+        "ext-json": "*",
+        "webonyx/graphql-php": "^0.12.6",
+        "buttercup/protects": "dev-master",
+        "mathiasverraes/classfunctions": "1.*",
+        "ramsey/uuid": "^3.8"
+    },
+    "require-dev": {
+        "phpspec/phpspec": "5.0.3"
+    }
+}
