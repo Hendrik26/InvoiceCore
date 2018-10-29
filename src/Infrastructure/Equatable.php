@@ -2,7 +2,7 @@
 
 namespace Irvobmagturs\InvoiceCore\Infrastructure;
 
-interface EqualityTestable
+interface Equatable
 {
     /**
      * @param mixed $other

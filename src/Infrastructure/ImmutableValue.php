@@ -33,7 +33,7 @@ use RuntimeException;
  *         }
  *     }
  */
-abstract class ImmutableValue implements EqualityTestable
+abstract class ImmutableValue implements Equatable
 {
     private $data = [];
 
