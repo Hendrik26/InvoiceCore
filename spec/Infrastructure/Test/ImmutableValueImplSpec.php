@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * @author I. R. Vobmagturs <i+r+vobmagturs@commodea.com>
+ */
 namespace spec\Irvobmagturs\InvoiceCore\Infrastructure\Test;
 
 use DateTime;
