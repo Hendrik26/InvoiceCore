@@ -41,9 +41,10 @@ abstract class ImmutableValue implements Equatable
     {
         return is_array($value)
             ? array_map([self::class, 'cloneValue'], $value)
-            : is_object($value)
+            : (is_object($value)
                 ? clone $value
-                : $value;
+                : $value
+            );
     }
 
     private static function isEqual($a, $b): bool
