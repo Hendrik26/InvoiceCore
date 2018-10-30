@@ -1,14 +1,11 @@
-<?php
+<?php declare(strict_types=1);
 /**
- * Created by PhpStorm.
- * User: hendrik
- * Date: 30.10.18
- * Time: 10:53
+ * @author hendrik
  */
-
 namespace Irvobmagturs\InvoiceCore\Model\ValueObject;
 
-
+use Irvobmagturs\InvoiceCore\Infrastructure\AbstractValueObjectBase;
+use Irvobmagturs\InvoiceCore\Infrastructure\Serializable;
 
 /**
  * @property-read float $amount
@@ -16,7 +13,8 @@ namespace Irvobmagturs\InvoiceCore\Model\ValueObject;
  * @method Money withAmount(float $v)
  * @method Money withCurrency(string $v)
  */
-final class Money extends AbstractValueObjectBase  {
+final class Money extends AbstractValueObjectBase
+{
 
     public function __construct(float $amount, string $currency) {
         $this->init('amount', $amount);
