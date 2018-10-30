@@ -93,7 +93,7 @@ abstract class ImmutableValue implements Equatable
     public function __get(string $name)
     {
         if (array_key_exists($name, $this->data)) {
-            return $this->$name ?: null;
+            return $this->data[$name];
         }
         throw new RuntimeException('Cannot access (' . get_class($this) . ')->$' . $name);
     }
