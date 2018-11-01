@@ -15,14 +15,20 @@ use Irvobmagturs\InvoiceCore\Model\ValueObject\LineItem;
 class LineItemWasAppended implements Serializable
 {
     private $item;
+    /**
+     * @var int
+     */
+    private $position;
 
     /**
      * LineItemWasAppended constructor.
+     * @param int $position
      * @param LineItem $item
      */
-    public function __construct(LineItem $item)
+    public function __construct(int $position, LineItem $item)
     {
         $this->item = $item;
+        $this->position = $position;
     }
 
     /**
@@ -31,6 +37,7 @@ class LineItemWasAppended implements Serializable
     function serialize(): array
     {
         return [
+            $this->position,
             $this->item->serialize()
         ];
     }
@@ -42,7 +49,7 @@ class LineItemWasAppended implements Serializable
      */
     static function deserialize(array $data): Serializable
     {
-        return new self(LineItem::deserialize($data[0]));
+        return new self($data[0], LineItem::deserialize($data[1]));
     }
 
     /**
