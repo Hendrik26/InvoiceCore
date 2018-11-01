@@ -48,6 +48,13 @@ class Invoice implements AggregateRoot
     }
 
     /**
+     * @param int $position
+     */
+    public function removeLineItemByPosition(int $position){
+
+    }
+
+    /**
      * @param LineItem $item
      * @throws InvalidLineItemTitle
      */
@@ -57,6 +64,17 @@ class Invoice implements AggregateRoot
             throw new InvalidLineItemTitle();
         }
     }
+
+    /**
+     * @param int $position
+     */
+    private function guardInvalidPosition(int $position): void
+    {
+        if (($position < 0) || $position >= count($this->lineItems)) {
+            throw new InvalidLineItemPosition();
+        }
+    }
+
 
     private function whenLineItemWasAppended(LineItemWasAppended $event)
     {
