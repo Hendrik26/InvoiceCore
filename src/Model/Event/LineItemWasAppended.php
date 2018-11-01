@@ -32,6 +32,14 @@ class LineItemWasAppended implements Serializable
     }
 
     /**
+     * @return int
+     */
+    public function getPosition(): int
+    {
+        return $this->position;
+    }
+
+    /**
      * @return array
      */
     function serialize(): array
