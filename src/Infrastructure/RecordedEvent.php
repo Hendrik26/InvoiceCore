@@ -7,7 +7,7 @@ namespace Irvobmagturs\InvoiceCore\Infrastructure;
 
 use Buttercup\Protects\DomainEvent;
 use Buttercup\Protects\IdentifiesAggregate;
-use DateTimeImmutable;
+use DateTimeInterface;
 
 class RecordedEvent implements DomainEvent
 {
@@ -15,15 +15,15 @@ class RecordedEvent implements DomainEvent
     private $aggregateId;
     /** @var Serializable */
     private $payload;
-    /** @var DateTimeImmutable */
+    /** @var DateTimeInterface */
     private $recordedOn;
 
     /**
      * @param Serializable $payload
      * @param IdentifiesAggregate $aggregateId
-     * @param DateTimeImmutable $recordedOn
+     * @param DateTimeInterface $recordedOn
      */
-    public function __construct(Serializable $payload, IdentifiesAggregate $aggregateId, DateTimeImmutable $recordedOn)
+    public function __construct(Serializable $payload, IdentifiesAggregate $aggregateId, DateTimeInterface $recordedOn)
     {
         $this->payload = $payload;
         $this->aggregateId = $aggregateId;
@@ -48,9 +48,9 @@ class RecordedEvent implements DomainEvent
     }
 
     /**
-     * @return DateTimeImmutable
+     * @return DateTimeInterface
      */
-    public function getRecordedOn(): DateTimeImmutable
+    public function getRecordedOn(): DateTimeInterface
     {
         return $this->recordedOn;
     }
