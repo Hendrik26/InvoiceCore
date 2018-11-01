@@ -44,7 +44,7 @@ class Invoice implements AggregateRoot
     public function appendLineItem(LineItem $item): void
     {
         $this->guardEmptyTitle($item);
-        $this->recordThat(new LineItemWasAppended(0, $item));
+        $this->recordThat(new LineItemWasAppended(count($this->lineItems), $item));
     }
 
     /**
