@@ -21,10 +21,31 @@ class InvoiceSpec extends ObjectBehavior
     {
         $item->beConstructedWith($this->itemConstructorArgsFromTitle('some proper title'));
         $this->appendLineItem($item);
+        /** @var RecordedEvent[] $recordedEvents */
         $recordedEvents = $this->getRecordedEvents();
         $recordedEvents->shouldHaveCount(1);
         $recordedEvents[0]->shouldBeAnInstanceOf(RecordedEvent::class);
-        $recordedEvents[0]->getPayload()->shouldBeAnInstanceOf(LineItemWasAppended::class);
+        /** @var LineItemWasAppended $payload */
+        $payload = $recordedEvents[0]->getPayload();
+        $payload->shouldBeAnInstanceOf(LineItemWasAppended::class);
+        $payload->getPosition()->shouldBe(0);
+    }
+
+    function it_increments_the_position_when_appending_items(LineItem $item, LineItem $secondItem)
+    {
+        $item->beConstructedWith($this->itemConstructorArgsFromTitle('some proper title'));
+        $secondItem->beConstructedWith($this->itemConstructorArgsFromTitle('something else'));
+        $this->appendLineItem($item);
+        $this->appendLineItem($secondItem);
+        /** @var RecordedEvent[] $recordedEvents */
+        $recordedEvents = $this->getRecordedEvents();
+        $recordedEvents->shouldHaveCount(2);
+        /** @var LineItemWasAppended $payload */
+        $payload = $recordedEvents[0]->getPayload();
+        $payload->getPosition()->shouldBe(0);
+        /** @var LineItemWasAppended $payload */
+        $payload = $recordedEvents[1]->getPayload();
+        $payload->getPosition()->shouldBe(1);
     }
 
     function it_is_an_aggregate_root()
