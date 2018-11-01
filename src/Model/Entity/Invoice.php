@@ -25,6 +25,8 @@ class Invoice implements AggregateRoot
     use ApplyCallsWhenMethod;
     /** @var InvoiceId */
     private $aggregateId;
+    /** @var LineItem[] */
+    private $lineItems = [];
 
     /**
      * Invoice constructor.
@@ -42,7 +44,7 @@ class Invoice implements AggregateRoot
     public function appendLineItem(LineItem $item): void
     {
         $this->guardEmptyTitle($item);
-        $this->recordThat(new LineItemWasAppended($item));
+        $this->recordThat(new LineItemWasAppended(0, $item));
     }
 
     /**
@@ -58,7 +60,7 @@ class Invoice implements AggregateRoot
 
     private function whenLineItemWasAppended(LineItemWasAppended $event)
     {
-        // TODO
+        $this->lineItems[] = $event->getItem();
     }
 
     /**
