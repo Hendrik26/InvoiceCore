@@ -7,7 +7,6 @@ namespace Irvobmagturs\InvoiceCore\Infrastructure;
 
 use Buttercup\Protects\DomainEvent;
 use Buttercup\Protects\DomainEvents;
-use Buttercup\Protects\IdentifiesAggregate;
 use DateTimeImmutable;
 use DateTimeZone;
 
@@ -24,8 +23,6 @@ trait RecordsEventsForBusinessMethods
     {
         $this->recordedEvents = [];
     }
-
-    abstract public function getAggregateId(): IdentifiesAggregate;
 
     /**
      * Get all the Domain Events that were recorded since the last time it was cleared, or since it was
@@ -49,7 +46,9 @@ trait RecordsEventsForBusinessMethods
         } catch (\Exception $e) {
             // cannot happen
         }
-        $this->recordedEvents[] = new RecordedEvent($event, $this->getAggregateId(), $now);
+        $recordedEvent = new RecordedEvent($event, $this->getAggregateId(), $now);
+        $this->apply($recordedEvent);
+        $this->recordedEvents[] = $recordedEvent;
     }
 
     /**
