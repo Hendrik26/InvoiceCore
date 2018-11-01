@@ -6,9 +6,11 @@
 namespace spec\Irvobmagturs\InvoiceCore\Model\Entity;
 
 use Buttercup\Protects\AggregateRoot;
+use Irvobmagturs\InvoiceCore\Infrastructure\RecordedEvent;
 use Irvobmagturs\InvoiceCore\Model\Entity\Invoice;
 use Irvobmagturs\InvoiceCore\Model\Event\LineItemWasAppended;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidLineItemTitle;
+use Irvobmagturs\InvoiceCore\Model\Id\InvoiceId;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\LineItem;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\Money;
 use PhpSpec\ObjectBehavior;
@@ -21,7 +23,8 @@ class InvoiceSpec extends ObjectBehavior
         $this->appendLineItem($item);
         $recordedEvents = $this->getRecordedEvents();
         $recordedEvents->shouldHaveCount(1);
-        $recordedEvents[0]->shouldBeAnInstanceOf(LineItemWasAppended::class);
+        $recordedEvents[0]->shouldBeAnInstanceOf(RecordedEvent::class);
+        $recordedEvents[0]->getPayload()->shouldBeAnInstanceOf(LineItemWasAppended::class);
     }
 
     function it_is_an_aggregate_root()
@@ -46,6 +49,11 @@ class InvoiceSpec extends ObjectBehavior
         $item->beConstructedWith($this->itemConstructorArgsFromTitle(' '));
         $this->shouldThrow(InvalidLineItemTitle::class)->duringAppendLineItem($item);
         $this->getRecordedEvents()->shouldHaveCount(0);
+    }
+
+    function let()
+    {
+        $this->beConstructedWith(InvoiceId::fromString('afc788eb-d60b-4de6-b409-3aab54d46945'));
     }
 
     /**

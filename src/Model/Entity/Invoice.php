@@ -16,22 +16,38 @@ use Irvobmagturs\InvoiceCore\Infrastructure\ApplyCallsWhenMethod;
 use Irvobmagturs\InvoiceCore\Infrastructure\RecordsEventsForBusinessMethods;
 use Irvobmagturs\InvoiceCore\Model\Event\LineItemWasAppended;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidLineItemTitle;
+use Irvobmagturs\InvoiceCore\Model\Id\InvoiceId;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\LineItem;
 
 final class Invoice implements AggregateRoot
 {
     use RecordsEventsForBusinessMethods;
     use ApplyCallsWhenMethod;
+    /** @var InvoiceId */
+    private $aggregateId;
 
-    public function appendLineItem(LineItem $item): void
+    /**
+     * Invoice constructor.
+     * @param InvoiceId $aggregateId
+     */
+    public function __construct(InvoiceId $aggregateId)
     {
-        $this->guardEmptyTitle($item);
-        $this->recordThat(new LineItemWasAppended($item));
-        $this->whenLineItemWasAppended($this->recordedEvents[0]);
+        $this->aggregateId = $aggregateId;
     }
 
     /**
      * @param LineItem $item
+     * @throws InvalidLineItemTitle
+     */
+    public function appendLineItem(LineItem $item): void
+    {
+        $this->guardEmptyTitle($item);
+        $this->recordThat(new LineItemWasAppended($item));
+    }
+
+    /**
+     * @param LineItem $item
+     * @throws InvalidLineItemTitle
      */
     private function guardEmptyTitle(LineItem $item): void
     {
@@ -54,19 +70,8 @@ final class Invoice implements AggregateRoot
         // TODO: Implement reconstituteFrom() method.
     }
 
-    /**
-     * @return IdentifiesAggregate
-     */
-    public function getAggregateId()
+    public function getAggregateId(): IdentifiesAggregate
     {
-        // TODO: Implement getAggregateId() method.
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasChanges()
-    {
-        // TODO: Implement hasChanges() method.
+        return $this->aggregateId;
     }
 }

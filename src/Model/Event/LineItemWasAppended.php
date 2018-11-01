@@ -8,16 +8,13 @@
 
 namespace Irvobmagturs\InvoiceCore\Model\Event;
 
-
-use Buttercup\Protects\DomainEvent;
-use Buttercup\Protects\IdentifiesAggregate;
+use Exception;
 use Irvobmagturs\InvoiceCore\Infrastructure\Serializable;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\LineItem;
 
-class LineItemWasAppended implements DomainEvent, Serializable
+class LineItemWasAppended implements Serializable
 {
     private $item;
-    private $timeStamp;
 
     /**
      * LineItemWasAppended constructor.
@@ -25,18 +22,7 @@ class LineItemWasAppended implements DomainEvent, Serializable
      */
     public function __construct(LineItem $item)
     {
-        $this->timeStamp = new \DateTime();
         $this->item = $item;
-
-    }
-
-    /**
-     * The Aggregate this event belongs to.
-     * @return IdentifiesAggregate
-     */
-    public function getAggregateId()
-    {
-        // TODO: Implement getAggregateId() method.
     }
 
     /**
@@ -45,23 +31,18 @@ class LineItemWasAppended implements DomainEvent, Serializable
     function serialize(): array
     {
         return [
-            $this->timeStamp->format(DATE_ATOM),
-            $this->item->serialize(),
+            $this->item->serialize()
         ];
     }
 
     /**
      * @param array $data
-     * @return static The object instance
-     * @throws Exception when the date string cannot be parsed
+     * @return static
+     * @throws Exception
      */
     static function deserialize(array $data): Serializable
     {
-        $lineItemWasAppended = new self(
-            $data[1]
-        );
-        $lineItemWasAppended->timeStamp = $data[0];
-        return $lineItemWasAppended;
+        return new self(LineItem::deserialize($data[0]));
     }
 
     /**
@@ -71,6 +52,4 @@ class LineItemWasAppended implements DomainEvent, Serializable
     {
         return $this->item;
     }
-
-
 }

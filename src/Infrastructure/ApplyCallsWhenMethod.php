@@ -4,7 +4,6 @@
  */
 namespace Irvobmagturs\InvoiceCore\Infrastructure;
 
-use Buttercup\Protects\DomainEvent;
 use Verraes\ClassFunctions\ClassFunctions;
 
 trait ApplyCallsWhenMethod
@@ -12,11 +11,11 @@ trait ApplyCallsWhenMethod
     /**
      * Delegate the application of the event to the appropriate when... method, e. g. a VisitorHasLeft event will be
      * processed by the (private) method whenVisitorHasLeft(VisitorHasLeft $event): void
-     * @param DomainEvent $event
+     * @param RecordedEvent $event
      */
-    protected function apply(DomainEvent $event): void
+    protected function apply(RecordedEvent $event): void
     {
-        $method = 'when' . ClassFunctions::short($event);
-        $this->$method($event);
+        $method = 'when' . ClassFunctions::short($event->getPayload());
+        $this->$method($event->getPayload(), $event);
     }
 }
