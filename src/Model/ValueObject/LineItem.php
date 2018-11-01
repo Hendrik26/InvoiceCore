@@ -28,7 +28,7 @@ use Irvobmagturs\InvoiceCore\Infrastructure\Serializable;
  * @method self withTimeBased(bool $v)
  * @method self withDate(?DateTimeInterface $v)
  */
-final class LineItem extends AbstractValueObjectBase
+class LineItem extends AbstractValueObjectBase
 {
     public function __construct(
         int $position,

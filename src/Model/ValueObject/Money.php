@@ -13,7 +13,7 @@ use Irvobmagturs\InvoiceCore\Infrastructure\Serializable;
  * @method Money withAmount(float $v)
  * @method Money withCurrency(string $v)
  */
-final class Money extends AbstractValueObjectBase
+class Money extends AbstractValueObjectBase
 {
 
     public function __construct(float $amount, string $currency) {

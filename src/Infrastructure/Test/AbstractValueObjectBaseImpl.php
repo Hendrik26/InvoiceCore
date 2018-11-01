@@ -8,7 +8,7 @@ use DateTime;
 use Irvobmagturs\InvoiceCore\Infrastructure\AbstractValueObjectBase;
 use Irvobmagturs\InvoiceCore\Infrastructure\Serializable;
 
-final class AbstractValueObjectBaseImpl extends AbstractValueObjectBase
+class AbstractValueObjectBaseImpl extends AbstractValueObjectBase
 {
     /**
      * @param array $data

@@ -6,6 +6,6 @@ namespace Irvobmagturs\InvoiceCore\Model\Exception;
 
 use Ramsey\Uuid\Exception\InvalidUuidStringException;
 
-final class InvalidCustomerId extends InvalidUuidStringException
+class InvalidCustomerId extends InvalidUuidStringException
 {
 }

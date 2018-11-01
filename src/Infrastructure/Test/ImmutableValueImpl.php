@@ -15,7 +15,7 @@ use Irvobmagturs\InvoiceCore\Infrastructure\ImmutableValue;
  * @method self withArray(array $v)
  * @method self withDateTime(DateTime $v)
  */
-final class ImmutableValueImpl extends ImmutableValue
+class ImmutableValueImpl extends ImmutableValue
 {
     public function __construct(string $string, array $array, DateTime $dateTime)
     {

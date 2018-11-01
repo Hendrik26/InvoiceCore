@@ -11,7 +11,7 @@ use Irvobmagturs\InvoiceCore\Model\Exception\InvalidCustomerId;
 use Ramsey\Uuid\Exception\InvalidUuidStringException;
 use Ramsey\Uuid\Uuid;
 
-final class CustomerId implements IdentifiesAggregate
+class CustomerId implements IdentifiesAggregate
 {
     use UsesUuidForIdentification;
 
