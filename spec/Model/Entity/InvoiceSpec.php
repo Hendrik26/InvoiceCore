@@ -8,6 +8,7 @@ namespace spec\Irvobmagturs\InvoiceCore\Model\Entity;
 use Buttercup\Protects\AggregateRoot;
 use Irvobmagturs\InvoiceCore\Model\Entity\Invoice;
 use Irvobmagturs\InvoiceCore\Model\Event\LineItemWasAppended;
+use Irvobmagturs\InvoiceCore\Model\Exception\InvalidLineItemTitle;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\LineItem;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\Money;
 use PhpSpec\ObjectBehavior;
@@ -36,7 +37,14 @@ class InvoiceSpec extends ObjectBehavior
     function it_rejects_an_item_with_an_empty_title(LineItem $item, Money $money)
     {
         $item->beConstructedWith($this->itemConstructorArgsFromTitle(''));
-        $this->shouldThrow()->duringAppendLineItem($item);
+        $this->shouldThrow(InvalidLineItemTitle::class)->duringAppendLineItem($item);
+        $this->getRecordedEvents()->shouldHaveCount(0);
+    }
+
+    function it_rejects_an_item_with_a_blank_title(LineItem $item, Money $money)
+    {
+        $item->beConstructedWith($this->itemConstructorArgsFromTitle(' '));
+        $this->shouldThrow(InvalidLineItemTitle::class)->duringAppendLineItem($item);
         $this->getRecordedEvents()->shouldHaveCount(0);
     }
 
