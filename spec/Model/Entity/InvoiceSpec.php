@@ -5,8 +5,8 @@
 
 namespace spec\Irvobmagturs\InvoiceCore\Model\Entity;
 
-use Buttercup\Protects\AggregateHistory;
-use Buttercup\Protects\AggregateRoot;
+use Irvobmagturs\InvoiceCore\Infrastructure\AggregateHistory;
+use Irvobmagturs\InvoiceCore\Infrastructure\AggregateRoot;
 use Irvobmagturs\InvoiceCore\Infrastructure\RecordedEvent;
 use Irvobmagturs\InvoiceCore\Model\Entity\Invoice;
 use Irvobmagturs\InvoiceCore\Model\Event\LineItemWasAppended;
@@ -110,9 +110,11 @@ class InvoiceSpec extends ObjectBehavior
 
     function it_reconstitutes_from_aggregate_history(AggregateHistory $aggregateHistory)
     {
+        $invoiceId = InvoiceId::fromString('4cd97851-15ed-4e7e-87f8-0fa84ac76c5d');
+        $aggregateHistory->getAggregateId()->willReturn($invoiceId);
         $this->beConstructedThroughReconstituteFrom($aggregateHistory);
         $this->shouldBeAnInstanceOf(Invoice::class);
-        $this->getAggregateId()->shouldEqual($aggregateHistory->getAggregateId());
+        $this->getAggregateId()->shouldBeLike($invoiceId);
     }
 
 

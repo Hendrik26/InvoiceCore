@@ -8,14 +8,15 @@
 
 namespace Irvobmagturs\InvoiceCore\Model\Entity;
 
-use Buttercup\Protects\AggregateHistory;
-use Buttercup\Protects\AggregateRoot;
 use Buttercup\Protects\IdentifiesAggregate;
 use Buttercup\Protects\RecordsEvents;
+use Irvobmagturs\InvoiceCore\Infrastructure\AggregateHistory;
+use Irvobmagturs\InvoiceCore\Infrastructure\AggregateRoot;
 use Irvobmagturs\InvoiceCore\Infrastructure\ApplyCallsWhenMethod;
 use Irvobmagturs\InvoiceCore\Infrastructure\RecordsEventsForBusinessMethods;
 use Irvobmagturs\InvoiceCore\Model\Event\LineItemWasAppended;
 use Irvobmagturs\InvoiceCore\Model\Event\LineItemWasRemoved;
+use Irvobmagturs\InvoiceCore\Model\Exception\InvalidInvoiceId;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidLineItemPosition;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidLineItemTitle;
 use Irvobmagturs\InvoiceCore\Model\Id\InvoiceId;
@@ -98,10 +99,11 @@ class Invoice implements AggregateRoot
     /**
      * @param AggregateHistory $aggregateHistory
      * @return RecordsEvents
+     * @throws InvalidInvoiceId
      */
     public static function reconstituteFrom(AggregateHistory $aggregateHistory)
     {
-        $invoice = new self(InvoiceId::fromString($aggregateHistory->getAggregateId()));
+        $invoice = new self(InvoiceId::fromString(strval($aggregateHistory->getAggregateId())));
         foreach ($aggregateHistory as $event)
         {
             $invoice->apply($event);
