@@ -15,6 +15,8 @@ use Buttercup\Protects\RecordsEvents;
 use Irvobmagturs\InvoiceCore\Infrastructure\ApplyCallsWhenMethod;
 use Irvobmagturs\InvoiceCore\Infrastructure\RecordsEventsForBusinessMethods;
 use Irvobmagturs\InvoiceCore\Model\Event\LineItemWasAppended;
+use Irvobmagturs\InvoiceCore\Model\Event\LineItemWasRemoved;
+use Irvobmagturs\InvoiceCore\Model\Exception\InvalidLineItemPosition;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidLineItemTitle;
 use Irvobmagturs\InvoiceCore\Model\Id\InvoiceId;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\LineItem;
@@ -51,7 +53,8 @@ class Invoice implements AggregateRoot
      * @param int $position
      */
     public function removeLineItemByPosition(int $position){
-
+        $this->guardInvalidPosition($position);
+        $this->recordThat(new LineItemWasRemoved($position));
     }
 
     /**
@@ -75,11 +78,22 @@ class Invoice implements AggregateRoot
         }
     }
 
-
+    /**
+     * @param LineItemWasAppended $event
+     */
     private function whenLineItemWasAppended(LineItemWasAppended $event)
     {
         $this->lineItems[] = $event->getItem();
     }
+
+    /**
+     * @param LineItemWasAppended $event
+     */
+    private function whenLineItemWasRemoved(LineItemWasRemoved $event)
+    {
+       array_splice( $this->lineItems, $event->getPosition(), 1);
+    }
+
 
     /**
      * @param AggregateHistory $aggregateHistory

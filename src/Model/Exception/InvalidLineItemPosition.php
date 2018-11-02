@@ -8,14 +8,12 @@
 
 namespace Irvobmagturs\InvoiceCore\Model\Exception;
 
+use InvalidArgumentException;
 
-class InvalidLineItemPosition
+/**
+ * Class InvalidLineItemPosition
+ * @package Irvobmagturs\InvoiceCore\Model\Exception
+ */
+class InvalidLineItemPosition extends InvalidArgumentException
 {
-
-    /**
-     * InvalidLineItemPosition constructor.
-     */
-    public function __construct()
-    {
-    }
 }

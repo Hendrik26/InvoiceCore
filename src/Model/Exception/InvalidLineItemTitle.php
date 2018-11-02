@@ -13,6 +13,6 @@ use InvalidArgumentException;
 /**
  * Thrown if LineItemTitle is empty
  */
-class InvalidLineItemTitle extends InvalidArgumentException
+class InvalidLineItemTitle extends \OutOfBoundsException
 {
 }
