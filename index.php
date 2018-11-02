@@ -37,7 +37,7 @@ if (!($_SERVER['REQUEST_METHOD'] ?? null)) {
 }
 
 $schemaCache = __DIR__ . '/data/cache/schema';
-$schemaFile = __DIR__ . '/conf/cqrs.graphqls';
+$schemaFile = __DIR__ . '/cqrs.graphqls';
 require_once __DIR__ . '/vendor/autoload.php';
 $context = null;
 $rootValue = null;
