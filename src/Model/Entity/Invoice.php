@@ -19,7 +19,7 @@ use Irvobmagturs\InvoiceCore\Model\Exception\InvalidLineItemTitle;
 use Irvobmagturs\InvoiceCore\Model\Id\InvoiceId;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\LineItem;
 
-class Invoice implements AggregateRoot // Test Git-Repository 002
+class Invoice implements AggregateRoot // Test Git-Repository
 {
     use RecordsEventsForBusinessMethods;
     use ApplyCallsWhenMethod;
