@@ -5,6 +5,7 @@
 
 namespace spec\Irvobmagturs\InvoiceCore\Model\Entity;
 
+use Buttercup\Protects\AggregateHistory;
 use Buttercup\Protects\AggregateRoot;
 use Irvobmagturs\InvoiceCore\Infrastructure\RecordedEvent;
 use Irvobmagturs\InvoiceCore\Model\Entity\Invoice;
@@ -107,6 +108,12 @@ class InvoiceSpec extends ObjectBehavior
         $this->getRecordedEvents()->shouldHaveCount(2);
     }
 
+    function it_reconstitutes_from_aggregate_history(AggregateHistory $aggregateHistory)
+    {
+        $this->beConstructedThroughReconstituteFrom($aggregateHistory);
+        $this->shouldBeAnInstanceOf(Invoice::class);
+        $this->getAggregateId()->shouldEqual($aggregateHistory->getAggregateId());
+    }
 
 
     function let()
