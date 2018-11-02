@@ -12,13 +12,14 @@ use GraphQL\Type\Definition\ResolveInfo;
 use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\CqrsCommandHandler;
 use Irvobmagturs\InvoiceCore\Model\Entity\Invoice;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidInvoiceId;
-use Irvobmagturs\InvoiceCore\Model\Exception\InvalidLineItemTitle;
 use Irvobmagturs\InvoiceCore\Model\Id\InvoiceId;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\LineItem;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\Money;
 
 class InvoiceHandler extends CqrsCommandHandler
 {
+    private $invoice = [];
+
     /**
      * @param string $aggregateId
      * @param array $args
@@ -26,14 +27,13 @@ class InvoiceHandler extends CqrsCommandHandler
      * @param ResolveInfo $info
      * @return bool
      * @throws InvalidInvoiceId
-     * @throws InvalidLineItemTitle
      * @throws Exception
      */
     public function appendLineItem(string $aggregateId, array $args, $context, ResolveInfo $info): bool
     {
-        $invoice = new Invoice(InvoiceId::fromString($aggregateId));
+        $this->invoice[$aggregateId] = $this->invoice[$aggregateId] ?? new Invoice(InvoiceId::fromString($aggregateId));
         $itemSpec = $args['item'];
-        $invoice->appendLineItem(
+        $this->invoice[$aggregateId]->appendLineItem(
             new LineItem(
                 0, // TODO remove explicit position
                 new Money($itemSpec['price']['amount'], $itemSpec['price']['currency']),
@@ -43,6 +43,19 @@ class InvoiceHandler extends CqrsCommandHandler
                 new DateTimeImmutable($itemSpec['date'], new DateTimeZone('UTC'))
             )
         );
+        return true;
+    }
+
+    /**
+     * @param string $aggregateId
+     * @param array $args
+     * @param $context
+     * @param ResolveInfo $info
+     * @return bool
+     */
+    public function removeLineItemByPosition(string $aggregateId, array $args, $context, ResolveInfo $info): bool
+    {
+        $this->invoice[$aggregateId]->removeLineItemByPosition($args['position']);
         return true;
     }
 }
