@@ -1,0 +1,25 @@
+schema {
+	query: CqrsQuery
+	mutation: CqrsCommandHandlers
+}
+type CqrsQuery {
+	loadFoo: String
+}
+type CqrsCommandHandlers {
+	Invoice(id: String!): InvoiceHandler!
+}
+type InvoiceHandler {
+	appendLineItem(item: LineItem!): Boolean!
+	removeLineItemByPosition(position: Int!): Boolean!
+}
+input LineItem {
+	date: String!
+	price: Money!
+	quantity: Float!
+	timeBased: Boolean!
+	title: String!
+}
+input Money {
+	amount: Float!
+	currency: String!
+}

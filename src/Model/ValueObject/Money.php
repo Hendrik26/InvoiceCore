@@ -2,6 +2,7 @@
 /**
  * @author hendrik
  */
+
 namespace Irvobmagturs\InvoiceCore\Model\ValueObject;
 
 use Irvobmagturs\InvoiceCore\Infrastructure\AbstractValueObjectBase;
@@ -15,8 +16,8 @@ use Irvobmagturs\InvoiceCore\Infrastructure\Serializable;
  */
 class Money extends AbstractValueObjectBase
 {
-
-    public function __construct(float $amount, string $currency) {
+    public function __construct(float $amount, string $currency)
+    {
         $this->init('amount', $amount);
         $this->init('currency', $currency);
     }
