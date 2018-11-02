@@ -9,6 +9,7 @@ use Buttercup\Protects\AggregateRoot;
 use Irvobmagturs\InvoiceCore\Infrastructure\RecordedEvent;
 use Irvobmagturs\InvoiceCore\Model\Entity\Invoice;
 use Irvobmagturs\InvoiceCore\Model\Event\LineItemWasAppended;
+use Irvobmagturs\InvoiceCore\Model\Exception\InvalidLineItemPosition;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidLineItemTitle;
 use Irvobmagturs\InvoiceCore\Model\Id\InvoiceId;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\LineItem;
@@ -71,6 +72,42 @@ class InvoiceSpec extends ObjectBehavior
         $this->shouldThrow(InvalidLineItemTitle::class)->duringAppendLineItem($item);
         $this->getRecordedEvents()->shouldHaveCount(0);
     }
+
+    function it_rejects_a_deleting_position_smaller_than_zero ()
+    {
+        $this->shouldThrow(InvalidLineItemPosition::class)->duringRemoveLineItemByPosition(-1);
+        $this->getRecordedEvents()->shouldHaveCount(0);
+    }
+
+    function it_rejects_a_deleting_position_greater_than_max (LineItem $item, LineItem $secondItem)
+    {
+        $item->beConstructedWith($this->itemConstructorArgsFromTitle('some proper title'));
+        $secondItem->beConstructedWith($this->itemConstructorArgsFromTitle('something else'));
+        $this->appendLineItem($item);
+        $this->appendLineItem($secondItem);
+        $this->appendLineItem($item);
+        $this->appendLineItem($secondItem);
+        $this->clearRecordedEvents();
+        $this->shouldThrow(InvalidLineItemPosition::class)->duringRemoveLineItemByPosition(4);
+        $this->getRecordedEvents()->shouldHaveCount(0);
+    }
+
+    function it_deletes_item_by_valid_position (LineItem $item, LineItem $secondItem)
+    {
+        $item->beConstructedWith($this->itemConstructorArgsFromTitle('some proper title'));
+        $secondItem->beConstructedWith($this->itemConstructorArgsFromTitle('something else'));
+        $this->appendLineItem($item);
+        $this->appendLineItem($secondItem);
+        $this->appendLineItem($item);
+        $this->appendLineItem($secondItem);
+        $this->clearRecordedEvents();
+        $this->removeLineItemByPosition(0);
+        $this->removeLineItemByPosition(1);
+        $this->shouldThrow(InvalidLineItemPosition::class)->duringRemoveLineItemByPosition(2);
+        $this->getRecordedEvents()->shouldHaveCount(2);
+    }
+
+
 
     function let()
     {
