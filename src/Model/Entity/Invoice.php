@@ -41,6 +41,20 @@ class Invoice implements AggregateRoot
     }
 
     /**
+     * @param AggregateHistory $aggregateHistory
+     * @return RecordsEvents
+     * @throws InvalidInvoiceId
+     */
+    public static function reconstituteFrom(AggregateHistory $aggregateHistory)
+    {
+        $invoice = new self(InvoiceId::fromString(strval($aggregateHistory->getAggregateId())));
+        foreach ($aggregateHistory as $event) {
+            $invoice->apply($event);
+        }
+        return $invoice;
+    }
+
+    /**
      * @param LineItem $item
      * @throws InvalidLineItemTitle
      */
@@ -50,10 +64,16 @@ class Invoice implements AggregateRoot
         $this->recordThat(new LineItemWasAppended(count($this->lineItems), $item));
     }
 
+    public function getAggregateId(): IdentifiesAggregate
+    {
+        return $this->aggregateId;
+    }
+
     /**
      * @param int $position
      */
-    public function removeLineItemByPosition(int $position){
+    public function removeLineItemByPosition(int $position)
+    {
         $this->guardInvalidPosition($position);
         $this->recordThat(new LineItemWasRemoved($position));
     }
@@ -92,27 +112,6 @@ class Invoice implements AggregateRoot
      */
     private function whenLineItemWasRemoved(LineItemWasRemoved $event)
     {
-       array_splice( $this->lineItems, $event->getPosition(), 1);
-    }
-
-
-    /**
-     * @param AggregateHistory $aggregateHistory
-     * @return RecordsEvents
-     * @throws InvalidInvoiceId
-     */
-    public static function reconstituteFrom(AggregateHistory $aggregateHistory)
-    {
-        $invoice = new self(InvoiceId::fromString(strval($aggregateHistory->getAggregateId())));
-        foreach ($aggregateHistory as $event)
-        {
-            $invoice->apply($event);
-        }
-        return $invoice;
-    }
-
-    public function getAggregateId(): IdentifiesAggregate
-    {
-        return $this->aggregateId;
+        array_splice($this->lineItems, $event->getPosition(), 1);
     }
 }

@@ -8,7 +8,6 @@
 
 namespace Irvobmagturs\InvoiceCore\Model\Event;
 
-
 use Irvobmagturs\InvoiceCore\Infrastructure\Serializable;
 
 class LineItemWasRemoved implements Serializable
@@ -24,7 +23,18 @@ class LineItemWasRemoved implements Serializable
         $this->position = $position;
     }
 
-    public function getPosition(): int {
+    /**
+     * @param array $data
+     * @return static
+     * @throws Exception
+     */
+    static function deserialize(array $data): Serializable
+    {
+        return new self($data[0]);
+    }
+
+    public function getPosition(): int
+    {
         return $this->position;
     }
 
@@ -37,16 +47,5 @@ class LineItemWasRemoved implements Serializable
             $this->position,
         ];
     }
-
-    /**
-     * @param array $data
-     * @return static
-     * @throws Exception
-     */
-    static function deserialize(array $data): Serializable
-    {
-        return new self($data[0]);
-    }
-
 
 }

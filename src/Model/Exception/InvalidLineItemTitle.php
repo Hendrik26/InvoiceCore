@@ -8,8 +8,6 @@
 
 namespace Irvobmagturs\InvoiceCore\Model\Exception;
 
-use InvalidArgumentException;
-
 /**
  * Thrown if LineItemTitle is empty
  */

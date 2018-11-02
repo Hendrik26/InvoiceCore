@@ -32,6 +32,24 @@ class LineItemWasAppended implements Serializable
     }
 
     /**
+     * @param array $data
+     * @return static
+     * @throws Exception
+     */
+    static function deserialize(array $data): Serializable
+    {
+        return new self($data[0], LineItem::deserialize($data[1]));
+    }
+
+    /**
+     * @return LineItem
+     */
+    public function getItem(): LineItem
+    {
+        return $this->item;
+    }
+
+    /**
      * @return int
      */
     public function getPosition(): int
@@ -48,23 +66,5 @@ class LineItemWasAppended implements Serializable
             $this->position,
             $this->item->serialize()
         ];
-    }
-
-    /**
-     * @param array $data
-     * @return static
-     * @throws Exception
-     */
-    static function deserialize(array $data): Serializable
-    {
-        return new self($data[0], LineItem::deserialize($data[1]));
-    }
-
-    /**
-     * @return LineItem
-     */
-    public function getItem(): LineItem
-    {
-        return $this->item;
     }
 }

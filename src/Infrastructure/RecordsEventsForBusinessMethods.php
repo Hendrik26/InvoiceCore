@@ -35,6 +35,14 @@ trait RecordsEventsForBusinessMethods
     }
 
     /**
+     * @return bool
+     */
+    public function hasChanges()
+    {
+        return count($this->recordedEvents) > 0;
+    }
+
+    /**
      * Records the first occurrence of this event from the method that caused it.
      * @param Serializable $event
      */
@@ -49,13 +57,5 @@ trait RecordsEventsForBusinessMethods
         $recordedEvent = new RecordedEvent($event, $this->getAggregateId(), $now);
         $this->apply($recordedEvent);
         $this->recordedEvents[] = $recordedEvent;
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasChanges()
-    {
-        return count($this->recordedEvents) > 0;
     }
 }
