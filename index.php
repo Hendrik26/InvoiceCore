@@ -11,34 +11,9 @@ use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\CustomizedGraphqlServerConfi
 use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\SchemaFileCache;
 use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\TypeResolver;
 
-if (!($_SERVER['REQUEST_METHOD'] ?? null)) {
-    $_SERVER['REQUEST_METHOD'] = 'POST';
-    $_SERVER['CONTENT_TYPE'] = 'application/x-www-form-urlencoded';
-    $_POST['query'] = /** @lang GraphQL */
-        'mutation m($id: String! $item: LineItem!) {
-            Invoice(id: $id) {
-                appendLineItem(item: $item)
-            }
-        }';
-    $_POST['variables'] = /** @lang JSON */
-        '{
-            "id": "2757f42e-6018-4719-b44b-39fa1338b477",
-            "item": {
-                "date": "now",
-                "price": {
-                    "amount": 1.23,
-                    "currency": "EUR"
-                },
-                "quantity": 2.0,
-                "timeBased": false,
-                "title": "some item"
-            }
-        }';
-}
-
+require_once __DIR__ . '/vendor/autoload.php';
 $schemaCache = __DIR__ . '/data/cache/schema';
 $schemaFile = __DIR__ . '/cqrs.graphqls';
-require_once __DIR__ . '/vendor/autoload.php';
 $context = null;
 $rootValue = null;
 $serverConfig = null;
