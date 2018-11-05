@@ -41,7 +41,7 @@ class CustomerAddressWasChanged implements Serializable
      */
     function serialize(): array
     {
-        return [$this->customerAddress];
+        return [$this->customerAddress->serialize()];
     }
 
     /**
@@ -50,6 +50,6 @@ class CustomerAddressWasChanged implements Serializable
      */
     static function deserialize(array $data): Serializable
     {
-        return new self($data[0]);
+        return new self(Address::deserialize($data[0]));
     }
 }
