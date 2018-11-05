@@ -9,6 +9,7 @@ use Irvobmagturs\InvoiceCore\Infrastructure\AggregateHistory;
 use Irvobmagturs\InvoiceCore\Infrastructure\AggregateRoot;
 use Irvobmagturs\InvoiceCore\Model\Entity\Customer;
 use Irvobmagturs\InvoiceCore\Model\Id\CustomerId;
+use Irvobmagturs\InvoiceCore\Model\ValueObject\Address;
 use PhpSpec\ObjectBehavior;
 
 class CustomerSpec extends ObjectBehavior
@@ -21,6 +22,11 @@ class CustomerSpec extends ObjectBehavior
     function it_is_initializable()
     {
         $this->shouldHaveType(Customer::class);
+    }
+
+    function it_is_created_by_engaging_in(Address $address) {
+        $this->beConstructedThroughEngageInBusiness('name', $address);
+        $this->shouldBeAnInstanceOf(Customer::class);
     }
 
     function it_reconstitutes_from_aggregate_history(AggregateHistory $aggregateHistory)
