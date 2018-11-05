@@ -19,6 +19,14 @@ class CustomerSalesTaxNumberWasChanged implements Serializable
     private $customerSalesTaxNumber;
 
     /**
+     * @return mixed
+     */
+    public function getCustomerSalesTaxNumber()
+    {
+        return $this->customerSalesTaxNumber;
+    }
+
+    /**
      * CustomerSalesTaxNumberWasChanged constructor.
      * @param $customerAdress
      */
@@ -34,7 +42,7 @@ class CustomerSalesTaxNumberWasChanged implements Serializable
     static function deserialize(array $data): Serializable
     {
         // TODO: Implement deserialize() method.
-        return new self(data[0]);
+        return new self($data[0]);
     }
 
     /**
