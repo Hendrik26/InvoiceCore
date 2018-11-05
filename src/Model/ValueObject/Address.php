@@ -11,14 +11,18 @@ namespace Irvobmagturs\InvoiceCore\Model\ValueObject;
 use Irvobmagturs\InvoiceCore\Infrastructure\AbstractValueObjectBase;
 
 /**
- * Class Address
- * @package Irvobmagturs\InvoiceCore\Model\ValueObject
- *  * @property-read string $countryCode
- *  *  * @property-read string $postalCode
- *  *  * @property-read string $city
- *  *  * @property-read string $adressLine1
- *  *  * @property-read string $adressLine2
- *  *  * @property-read string $adressLine3
+ * @property-read string $countryCode
+ * @property-read string $postalCode
+ * @property-read string $city
+ * @property-read ?string $addressLine1
+ * @property-read ?string $addressLine2
+ * @property-read ?string $addressLine3
+ * @method self withCountryCode(string $v)
+ * @method self withPostalCode(string $v)
+ * @method self withCity(string $v)
+ * @method self withAddressLine1(string $v)
+ * @method self withAddressLine2(string $v)
+ * @method self withAddressLine3(string $v)
  */
 class Address extends AbstractValueObjectBase
 {
@@ -26,8 +30,8 @@ class Address extends AbstractValueObjectBase
     /**
      * Address constructor.
      */
-    public function __construct(string $countryCode, string $postalCode, string $city, string $adressLine1,
-                                string $adressLine2, string $adressLine3)
+    public function __construct(string $countryCode, string $postalCode, string $city, ?string $addressLine1 = null,
+                                ?string $addressLine2 = null, ?string $addressLine3 = null)
     {
         $this->init('countryCode', $countryCode);
         $this->init('postalCode', $postalCode);
