@@ -1,7 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author I. R. Vobmagturs <i+r+vobmagturs@commodea.com>
  */
+
 namespace spec\Irvobmagturs\InvoiceCore\Model\Id;
 
 use Irvobmagturs\InvoiceCore\Model\Id\CustomerId;
