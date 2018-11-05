@@ -30,7 +30,7 @@ class Customer implements AggregateRoot
      */
     private $customerId;
     private $customerAddress;
-    private $salesTaxNumber;
+    private $customerSalesTaxNumber;
 
 
     /**
