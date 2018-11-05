@@ -10,30 +10,30 @@ namespace Irvobmagturs\InvoiceCore\Model\Event;
 
 
 use Irvobmagturs\InvoiceCore\Infrastructure\Serializable;
+use Irvobmagturs\InvoiceCore\Model\ValueObject\Address;
 
-class CustomerAdressWasChanged implements Serializable
+class CustomerAddressWasChanged implements Serializable
 {
     /**
      * @var string
      */
-    private $customerAdress;
-    private $salesTaxNumber;
+    private $customerAddress;
 
     /**
-     * CustomerAdressWasChanged constructor.
-     * @param string $customerAdress
+     * CustomerAddressWasChanged constructor.
+     * @param Address $customerAddress
      */
-    public function __construct(string $customerAdress)
+    public function __construct(Address $customerAddress)
     {
-        $this->customerAdress = $customerAdress;
+        $this->customerAddress = $customerAddress;
     }
 
     /**
      * @return string
      */
-    public function getCustomerAdress(): string
+    public function getCustomerAddress(): Address
     {
-        return $this->customerAdress;
+        return $this->customerAddress;
     }
 
     /**
@@ -41,7 +41,7 @@ class CustomerAdressWasChanged implements Serializable
      */
     function serialize(): array
     {
-        return [$this->customerAdress];
+        return [$this->customerAddress];
     }
 
     /**

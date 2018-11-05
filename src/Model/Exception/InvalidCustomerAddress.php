@@ -16,6 +16,6 @@ use InvalidArgumentException;
  * @package Irvobmagturs\InvoiceCore\Model\Exception
  */
 
-class InvalidCustomerAdress extends InvalidArgumentException
+class InvalidCustomerAddress extends InvalidArgumentException
 {
 }

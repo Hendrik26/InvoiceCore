@@ -15,8 +15,10 @@ use Irvobmagturs\InvoiceCore\Infrastructure\AggregateHistory;
 use Irvobmagturs\InvoiceCore\Infrastructure\AggregateRoot;
 use Irvobmagturs\InvoiceCore\Infrastructure\ApplyCallsWhenMethod;
 use Irvobmagturs\InvoiceCore\Infrastructure\RecordsEventsForBusinessMethods;
-use Irvobmagturs\InvoiceCore\Model\Event\CustomerAdressWasChanged;
+use Irvobmagturs\InvoiceCore\Model\Event\CustomerAddressWasChanged;
+use Irvobmagturs\InvoiceCore\Model\Exception\InvalidCustomerSalesTaxNumber;
 use Irvobmagturs\InvoiceCore\Model\Id\CustomerId;
+use Irvobmagturs\InvoiceCore\Model\ValueObject\Address;
 
 class Customer implements AggregateRoot
 {
@@ -26,7 +28,7 @@ class Customer implements AggregateRoot
      * @var CustomerId
      */
     private $customerId;
-    private $customerAdress;
+    private $customerAddress;
     private $salesTaxNumber;
 
 
@@ -61,36 +63,39 @@ class Customer implements AggregateRoot
 
 
     /**
-     * @param string $customerAdress
+     * @param Address $customerAddress
      */
-    public function changeCustomerAdress(string $customerAdress)
+    public function changeCustomerAddress(Address $customerAddress)
     {
-      $this->guardEmptyCustomerAdress($customerAdress);
-      $this->recordThat(new CustomerAdressWasChanged($customerAdress));
+      $this->guardInvalidCustomerAddress($customerAddress);
+      $this->recordThat(new CustomerAddressWasChanged($customerAddress));
     }
 
     /**
-     * @param string $customerAdress
+     * @param string $customerAddress
      */
-    private function guardEmptyCustomerAdress(string $customerAdress)
+    private function guardInvalidCustomerAddress(Address $customerAddress)
     {
-        if (trim($customerAdress) === "") {
-            throw new InvalidCustomerAdress();
+        if (trim($customerAddress->countryCode) === "") {
+            throw new InvalidCustomerAddress();
         }
     }
 
-    private function whenCustomerAdressWasChanged(CustomerAdressWasChanged $event)
+    /**
+     * @param CustomerAddressWasChanged $event
+     */
+    private function whenCustomerAddressWasChanged(CustomerAddressWasChanged $event)
     {
-        $this->customerAdress = $event->getCustomerAdress();
+        $this->customerAddress = $event->getCustomerAddress();
     }
 
     /**
-     * @param string $customerAdress
+     * @param string $salesTaxNumber
      */
     public function changeCustomerSalesTaxNumber(string $salesTaxNumber)
     {
         $this->guardEmptySalesTaxNumber($salesTaxNumber);
-        $this->recordThat(new CustomerAdressWasChanged($customerAdress));
+        $this->recordThat(new CustomerSalesTaxNumberWasChanged($salesTaxNumber));
     }
 
     /**

@@ -9,13 +9,9 @@
 namespace Irvobmagturs\InvoiceCore\Model\Exception;
 
 
-class InvalidCustomerSalesTaxNumber
+use InvalidArgumentException;
+
+class InvalidCustomerSalesTaxNumber extends InvalidArgumentException
 {
 
-    /**
-     * InvalidCustomerSalesTaxNumber constructor.
-     */
-    public function __construct()
-    {
-    }
 }
