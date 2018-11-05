@@ -17,6 +17,7 @@ class CustomerAdressWasChanged implements Serializable
      * @var string
      */
     private $customerAdress;
+    private $salesTaxNumber;
 
     /**
      * CustomerAdressWasChanged constructor.

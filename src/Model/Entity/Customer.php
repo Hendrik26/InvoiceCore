@@ -15,6 +15,7 @@ use Irvobmagturs\InvoiceCore\Infrastructure\AggregateHistory;
 use Irvobmagturs\InvoiceCore\Infrastructure\AggregateRoot;
 use Irvobmagturs\InvoiceCore\Infrastructure\ApplyCallsWhenMethod;
 use Irvobmagturs\InvoiceCore\Infrastructure\RecordsEventsForBusinessMethods;
+use Irvobmagturs\InvoiceCore\Model\Event\CustomerAdressWasChanged;
 use Irvobmagturs\InvoiceCore\Model\Id\CustomerId;
 
 class Customer implements AggregateRoot
@@ -25,6 +26,9 @@ class Customer implements AggregateRoot
      * @var CustomerId
      */
     private $customerId;
+    private $customerAdress;
+    private $salesTaxNumber;
+
 
     /**
      * Customer constructor.
@@ -56,6 +60,10 @@ class Customer implements AggregateRoot
         return $this->customerId;
     }
 
+
+    /**
+     * @param string $customerAdress
+     */
     public function changeCustomerAdress(string $customerAdress)
     {
       $this->guardEmptyCustomerAdress($customerAdress);
@@ -70,6 +78,10 @@ class Customer implements AggregateRoot
         if ($customerAdress === "") {
             throw new InvalidCustomerAdress();
         }
+    }
 
+    private function whenCustomerAdressWasChanged(CustomerAdressWasChanged $event)
+    {
+        $this->customerAdress = $event->getCustomerAdress();
     }
 }
