@@ -6,11 +6,27 @@ type CqrsQuery {
 	loadFoo: String
 }
 type CqrsCommandHandlers {
+	Customer(id: String!): CustomerHandler!
 	Invoice(id: String!): InvoiceHandler!
+}
+
+# handlers, alphabetically
+type CustomerHandler {
+	engageInBusiness(name: String! billingAddress: Address!): Boolean!
 }
 type InvoiceHandler {
 	appendLineItem(item: LineItem!): Boolean!
 	removeLineItemByPosition(position: Int!): Boolean!
+}
+
+# input types, alphabetically
+input Address {
+	addressLine1: String
+	addressLine2: String
+	addressLine3: String
+	city: String!
+	countryCode: String!
+	postalCode: String!
 }
 input LineItem {
 	date: String!

@@ -6,6 +6,7 @@
 
 use Buttercup\Protects\DomainEvent;
 use GraphQL\Server\StandardServer;
+use Irvobmagturs\InvoiceCore\CommandHandler\CustomerHandler;
 use Irvobmagturs\InvoiceCore\CommandHandler\InvoiceHandler;
 use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\CqrsCommandHandlersResolver;
 use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\CustomizedGraphqlServerConfig;
@@ -46,6 +47,7 @@ $typeResolver->addResolverForField('CqrsQuery', 'loadFoo', function () {
 });
 $typeResolver = new CqrsCommandHandlersResolver($typeResolver);
 $typeResolver = new InvoiceHandler($typeResolver);
+$typeResolver = new CustomerHandler($typeResolver);
 try {
     $schemaFileCache = new SchemaFileCache($schemaCache);
     $schema = $schemaFileCache->loadCacheForFile($schemaFile, $typeResolver->generateTypeConfigDecorator());
