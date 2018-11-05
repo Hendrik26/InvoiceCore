@@ -44,7 +44,6 @@ class Customer implements AggregateRoot
      */
     public static function reconstituteFrom(AggregateHistory $aggregateHistory)
     {
-        // TODO: Implement reconstituteFrom() method.
         $customer = new self(CustomerId::fromString(strval($aggregateHistory->getAggregateId())));
         foreach ($aggregateHistory as $event) {
             $customer->apply($event);
@@ -75,7 +74,7 @@ class Customer implements AggregateRoot
      */
     private function guardEmptyCustomerAdress(string $customerAdress)
     {
-        if ($customerAdress === "") {
+        if (trim($customerAdress) === "") {
             throw new InvalidCustomerAdress();
         }
     }
@@ -84,4 +83,25 @@ class Customer implements AggregateRoot
     {
         $this->customerAdress = $event->getCustomerAdress();
     }
+
+    /**
+     * @param string $customerAdress
+     */
+    public function changeCustomerSalesTaxNumber(string $salesTaxNumber)
+    {
+        $this->guardEmptySalesTaxNumber($salesTaxNumber);
+        $this->recordThat(new CustomerAdressWasChanged($customerAdress));
+    }
+
+    /**
+     * @param string $salesTaxNumber
+     */
+    private function guardEmptySalesTaxNumber(string $salesTaxNumber)
+    {
+        if (trim($salesTaxNumber) === "") {
+            throw new InvalidCustomerSalesTaxNumber();
+        }
+
+    }
+
 }
