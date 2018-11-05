@@ -11,7 +11,7 @@ interface Serializable
      * @param array $data
      * @return static The object instance
      */
-    static function deserialize(array $data): self;
+    static function deserialize(array $data);
 
     /**
      * @return array
