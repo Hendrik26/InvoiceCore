@@ -19,13 +19,7 @@ class CustomerSpec extends ObjectBehavior
         $this->shouldImplement(AggregateRoot::class);
     }
 
-    function it_is_initializable()
-    {
-        $this->shouldHaveType(Customer::class);
-    }
-
-    function it_is_created_by_engaging_in(Address $address) {
-        $this->beConstructedThroughEngageInBusiness('name', $address);
+    function it_is_created_by_engaging_in() {
         $this->shouldBeAnInstanceOf(Customer::class);
     }
 
@@ -39,8 +33,9 @@ class CustomerSpec extends ObjectBehavior
     }
 
 
-    function let()
+    function let(Address $address)
     {
-        $this->beConstructedWith(CustomerId::fromString('e7dc804f-3eeb-41af-8efb-5c8c17cfd51e'));
+        $customerId = CustomerId::fromString('efe80649-220e-45ab-909f-bf57e146270f');
+        $this->beConstructedThroughEngageInBusiness($customerId, 'name', $address);
     }
 }

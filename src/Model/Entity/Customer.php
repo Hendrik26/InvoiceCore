@@ -36,9 +36,16 @@ class Customer implements AggregateRoot
     /**
      * Customer constructor.
      */
-    public function __construct(CustomerId $customerId)
+    private function __construct(CustomerId $customerId)
     {
         $this->customerId = $customerId;
+    }
+
+    public static function engageInBusiness(CustomerId $customerId, string $customerName, Address $billingAddress): self
+    {
+        $customer = new self($customerId);
+        $customer->recordThat(new CustomerHasEngagedInBusiness($customerName, $billingAddress));
+        return $customer;
     }
 
     /**
