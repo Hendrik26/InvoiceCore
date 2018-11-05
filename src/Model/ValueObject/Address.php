@@ -8,6 +8,8 @@
 
 namespace Irvobmagturs\InvoiceCore\Model\ValueObject;
 
+use Irvobmagturs\InvoiceCore\Infrastructure\AbstractValueObjectBase;
+
 /**
  * Class Address
  * @package Irvobmagturs\InvoiceCore\Model\ValueObject
@@ -30,16 +32,16 @@ class Address extends AbstractValueObjectBase
         $this->init('countryCode', $countryCode);
         $this->init('postalCode', $postalCode);
         $this->init('city', $city);
-        $this->init('adressLine1', $adressLine1);
-        $this->init('adressLine2', $adressLine2);
-        $this->init('adressLine3', $adressLine3);
+        $this->init('addressLine1', $addressLine1);
+        $this->init('addressLine2', $addressLine2);
+        $this->init('addressLine3', $addressLine3);
     }
 
     /**
      * @param array $data
-     * @return Serializables
+     * @return Address
      */
-    static function deserialize(array $data): Serializable
+    static function deserialize(array $data): self
     {
         return new self(
             $data[0],
@@ -47,7 +49,7 @@ class Address extends AbstractValueObjectBase
             $data[2],
             $data[3],
             $data[4],
-            $data[5],
+            $data[5]
         );
     }
 
@@ -60,9 +62,9 @@ class Address extends AbstractValueObjectBase
             $this->countryCode,
             $this->postalCode,
             $this->city,
-            $this->adressLine1,
-            $this->adressLine2,
-            $this->adressLine3
+            $this->addressLine1,
+            $this->addressLine2,
+            $this->addressLine3
         ];
     }
 
