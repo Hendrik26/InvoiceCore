@@ -22,7 +22,7 @@ class CustomerSalesTaxNumberWasChanged implements Serializable
      * CustomerSalesTaxNumberWasChanged constructor.
      * @param $customerAdress
      */
-    public function __construct($salesTaxNumber)
+    public function __construct(string $salesTaxNumber)
     {
         $this->customerSalesTaxNumber = $salesTaxNumber;
     }
@@ -34,6 +34,7 @@ class CustomerSalesTaxNumberWasChanged implements Serializable
     static function deserialize(array $data): Serializable
     {
         // TODO: Implement deserialize() method.
+        return new self(data[0]);
     }
 
     /**
@@ -42,5 +43,8 @@ class CustomerSalesTaxNumberWasChanged implements Serializable
     function serialize(): array
     {
         // TODO: Implement serialize() method.
+        return[
+            $this->customerSalesTaxNumber
+        ];
     }
 }
