@@ -110,4 +110,13 @@ class Customer implements AggregateRoot
 
     }
 
+    /**
+     * @param CustomerAddressWasChanged $event
+     */
+    private function whenCustomerSalesTaxNumberWasChanged(CustomerSalesTaxNumberWasChanged $event)
+    {
+        $this->customerSalesTaxNumber = $event->getCustomerSalesTaxNumber();
+    }
+
+
 }
