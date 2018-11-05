@@ -12,7 +12,7 @@ class AddressSpec extends ObjectBehavior
 {
     function it_allows_instantiation_without_any_address_lines()
     {
-        $this->beConstructedWith('countryCode', 'city', 'postalCode');
+        $this->beConstructedWith('countryCode', 'postalCode', 'city');
         $this->addressLine1->shouldBe(null);
         $this->addressLine2->shouldBe(null);
         $this->addressLine3->shouldBe(null);
@@ -22,8 +22,8 @@ class AddressSpec extends ObjectBehavior
     {
         $this->beConstructedThroughDeserialize([
             'countryCode',
-            'city',
             'postalCode',
+            'city',
             'addressLine1',
             'addressLine2',
             'addressLine3'
@@ -75,8 +75,8 @@ class AddressSpec extends ObjectBehavior
     {
         $this->serialize()->shouldBe([
             'countryCode',
-            'city',
             'postalCode',
+            'city',
             'addressLine1',
             'addressLine2',
             'addressLine3'
@@ -87,8 +87,8 @@ class AddressSpec extends ObjectBehavior
     {
         $this->beConstructedWith(
             'countryCode',
-            'city',
             'postalCode',
+            'city',
             'addressLine1',
             'addressLine2',
             'addressLine3'
