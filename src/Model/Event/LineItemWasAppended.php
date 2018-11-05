@@ -14,6 +14,9 @@ use Irvobmagturs\InvoiceCore\Model\ValueObject\LineItem;
 
 class LineItemWasAppended implements Serializable
 {
+    /**
+     * @var LineItem
+     */
     private $item;
     /**
      * @var int
