@@ -18,19 +18,20 @@ use Irvobmagturs\InvoiceCore\Infrastructure\RecordsEventsForBusinessMethods;
 use Irvobmagturs\InvoiceCore\Model\Event\CustomerAddressWasChanged;
 use Irvobmagturs\InvoiceCore\Model\Event\CustomerHasEngagedInBusiness;
 use Irvobmagturs\InvoiceCore\Model\Event\CustomerSalesTaxNumberWasChanged;
+use Irvobmagturs\InvoiceCore\Model\Exception\InvalidCustomerId;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidCustomerSalesTaxNumber;
 use Irvobmagturs\InvoiceCore\Model\Id\CustomerId;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\Address;
 
 class Customer implements AggregateRoot
 {
-   use ApplyCallsWhenMethod;
-   use RecordsEventsForBusinessMethods;
+    use ApplyCallsWhenMethod;
+    use RecordsEventsForBusinessMethods;
+    private $customerAddress;
     /**
      * @var CustomerId
      */
     private $customerId;
-    private $customerAddress;
     private $customerSalesTaxNumber;
 
 
@@ -52,6 +53,7 @@ class Customer implements AggregateRoot
     /**
      * @param AggregateHistory $aggregateHistory
      * @return RecordsEvents
+     * @throws InvalidCustomerId
      */
     public static function reconstituteFrom(AggregateHistory $aggregateHistory)
     {
@@ -63,6 +65,26 @@ class Customer implements AggregateRoot
     }
 
     /**
+     * @param Address $customerAddress
+     * @throws InvalidCustomerAddress
+     */
+    public function changeCustomerAddress(Address $customerAddress)
+    {
+        $this->guardInvalidCustomerAddress($customerAddress);
+        $this->recordThat(new CustomerAddressWasChanged($customerAddress));
+    }
+
+    /**
+     * @param string $salesTaxNumber
+     * @throws InvalidCustomerSalesTaxNumber
+     */
+    public function changeCustomerSalesTaxNumber(string $salesTaxNumber)
+    {
+        $this->guardEmptySalesTaxNumber($salesTaxNumber);
+        $this->recordThat(new CustomerSalesTaxNumberWasChanged($salesTaxNumber));
+    }
+
+    /**
      * @return IdentifiesAggregate
      */
     public function getAggregateId()
@@ -70,18 +92,21 @@ class Customer implements AggregateRoot
         return $this->customerId;
     }
 
-
     /**
-     * @param Address $customerAddress
+     * @param string $salesTaxNumber
+     * @throws InvalidCustomerSalesTaxNumber
      */
-    public function changeCustomerAddress(Address $customerAddress)
+    private function guardEmptySalesTaxNumber(string $salesTaxNumber)
     {
-      $this->guardInvalidCustomerAddress($customerAddress);
-      $this->recordThat(new CustomerAddressWasChanged($customerAddress));
+        if (trim($salesTaxNumber) === "") {
+            throw new InvalidCustomerSalesTaxNumber();
+        }
+
     }
 
     /**
      * @param string $customerAddress
+     * @throws InvalidCustomerAddress
      */
     private function guardInvalidCustomerAddress(Address $customerAddress)
     {
@@ -98,33 +123,16 @@ class Customer implements AggregateRoot
         $this->customerAddress = $event->getCustomerAddress();
     }
 
-    /**
-     * @param string $salesTaxNumber
-     */
-    public function changeCustomerSalesTaxNumber(string $salesTaxNumber)
+    private function whenCustomerHasEngagedInBusiness(CustomerHasEngagedInBusiness $event)
     {
-        $this->guardEmptySalesTaxNumber($salesTaxNumber);
-        $this->recordThat(new CustomerSalesTaxNumberWasChanged($salesTaxNumber));
+        // TODO
     }
 
     /**
-     * @param string $salesTaxNumber
-     */
-    private function guardEmptySalesTaxNumber(string $salesTaxNumber)
-    {
-        if (trim($salesTaxNumber) === "") {
-            throw new InvalidCustomerSalesTaxNumber();
-        }
-
-    }
-
-    /**
-     * @param CustomerAddressWasChanged $event
+     * @param CustomerSalesTaxNumberWasChanged $event
      */
     private function whenCustomerSalesTaxNumberWasChanged(CustomerSalesTaxNumberWasChanged $event)
     {
         $this->customerSalesTaxNumber = $event->getCustomerSalesTaxNumber();
     }
-
-
 }
