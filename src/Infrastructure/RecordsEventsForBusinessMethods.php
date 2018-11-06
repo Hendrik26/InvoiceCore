@@ -9,6 +9,7 @@ use Buttercup\Protects\DomainEvent;
 use Buttercup\Protects\DomainEvents;
 use DateTimeImmutable;
 use DateTimeZone;
+use Exception;
 
 trait RecordsEventsForBusinessMethods
 {
@@ -50,8 +51,8 @@ trait RecordsEventsForBusinessMethods
     {
         $now = null;
         try {
-            $now = new DateTimeImmutable(null, new DateTimeZone('UTC'));
-        } catch (\Exception $e) {
+            $now = new DateTimeImmutable('now', new DateTimeZone('UTC'));
+        } catch (Exception $e) {
             // cannot happen
         }
         $recordedEvent = new RecordedEvent($event, $this->getAggregateId(), $now);
