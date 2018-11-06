@@ -28,46 +28,26 @@ class Customer implements AggregateRoot
 {
     use ApplyCallsWhenMethod;
     use RecordsEventsForBusinessMethods;
+
+    /**
+     * @var
+     */
     private $customerName;
 
     /**
-     * @return mixed
+     * @var
      */
-    public function getCustomerName()
-    {
-        return $this->customerName;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCustomerAddress()
-    {
-        return $this->customerAddress;
-    }
-
-    /**
-     * @return CustomerId
-     */
-    public function getCustomerId(): CustomerId
-    {
-        return $this->customerId;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCustomerSalesTaxNumber()
-    {
-        return $this->customerSalesTaxNumber;
-    }
     private $customerAddress;
+
     /**
      * @var CustomerId
      */
     private $customerId;
-    private $customerSalesTaxNumber;
 
+    /**
+     * @var
+     */
+    private $customerSalesTaxNumber;
 
     /**
      * Customer constructor.
@@ -104,10 +84,23 @@ class Customer implements AggregateRoot
         return $customer;
     }
 
+    /**
+     * @param string $customerName
+     */
     public function changeCustomerName(string $customerName)
     {
         $this->guardEmptyCustomerName($customerName);
         $this->recordThat(new CustomerNameWasChanged($customerName));
+    }
+
+    /**
+     * @param string $customerName
+     */
+    private function guardEmptyCustomerName(string $customerName)
+    {
+        if (trim($customerName) === "") {
+            throw new InvalidCustomerName();
+        }
     }
 
     /**
@@ -121,6 +114,17 @@ class Customer implements AggregateRoot
     }
 
     /**
+     * @param string $customerAddress
+     * @throws InvalidCustomerAddress
+     */
+    private function guardInvalidCustomerAddress(Address $customerAddress)
+    {
+        if (trim($customerAddress->countryCode) === "") {
+            throw new InvalidCustomerAddress();
+        }
+    }
+
+    /**
      * @param string $salesTaxNumber
      * @throws InvalidCustomerSalesTaxNumber
      */
@@ -128,14 +132,6 @@ class Customer implements AggregateRoot
     {
         $this->guardEmptySalesTaxNumber($salesTaxNumber);
         $this->recordThat(new CustomerSalesTaxNumberWasChanged($salesTaxNumber));
-    }
-
-    /**
-     * @return IdentifiesAggregate
-     */
-    public function getAggregateId()
-    {
-        return $this->customerId;
     }
 
     /**
@@ -150,14 +146,11 @@ class Customer implements AggregateRoot
     }
 
     /**
-     * @param string $customerAddress
-     * @throws InvalidCustomerAddress
+     * @return IdentifiesAggregate
      */
-    private function guardInvalidCustomerAddress(Address $customerAddress)
+    public function getAggregateId()
     {
-        if (trim($customerAddress->countryCode) === "") {
-            throw new InvalidCustomerAddress();
-        }
+        return $this->customerId;
     }
 
     /**
@@ -184,16 +177,6 @@ class Customer implements AggregateRoot
     private function whenCustomerSalesTaxNumberWasChanged(CustomerSalesTaxNumberWasChanged $event)
     {
         $this->customerSalesTaxNumber = $event->getCustomerSalesTaxNumber();
-    }
-
-    /**
-     * @param string $customerName
-     */
-    private function guardEmptyCustomerName(string $customerName)
-    {
-        if (trim($customerName) === "") {
-            throw new InvalidCustomerName();
-        }
     }
 
     /**
