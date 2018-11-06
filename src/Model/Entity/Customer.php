@@ -27,6 +27,7 @@ class Customer implements AggregateRoot
 {
     use ApplyCallsWhenMethod;
     use RecordsEventsForBusinessMethods;
+    private $customerName;
     private $customerAddress;
     /**
      * @var CustomerId
@@ -126,6 +127,8 @@ class Customer implements AggregateRoot
     private function whenCustomerHasEngagedInBusiness(CustomerHasEngagedInBusiness $event)
     {
         // TODO
+        $this->customerName = $event->getCustomerName();
+        $this->customerAddress = $event->getBillingAddress();
     }
 
     /**
