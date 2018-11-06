@@ -77,6 +77,12 @@ class Customer implements AggregateRoot
         $this->customerId = $customerId;
     }
 
+    /**
+     * @param CustomerId $customerId
+     * @param string $customerName
+     * @param Address $billingAddress
+     * @return Customer
+     */
     public static function engageInBusiness(CustomerId $customerId, string $customerName, Address $billingAddress): self
     {
         $customer = new self($customerId);
@@ -103,7 +109,6 @@ class Customer implements AggregateRoot
         $this->guardEmptyCustomerName($customerName);
         $this->recordThat(new CustomerNameWasChanged($customerName));
     }
-
 
     /**
      * @param Address $customerAddress
@@ -142,7 +147,6 @@ class Customer implements AggregateRoot
         if (trim($salesTaxNumber) === "") {
             throw new InvalidCustomerSalesTaxNumber();
         }
-
     }
 
     /**
@@ -164,6 +168,9 @@ class Customer implements AggregateRoot
         $this->customerAddress = $event->getCustomerAddress();
     }
 
+    /**
+     * @param CustomerHasEngagedInBusiness $event
+     */
     private function whenCustomerHasEngagedInBusiness(CustomerHasEngagedInBusiness $event)
     {
         // TODO
@@ -179,11 +186,21 @@ class Customer implements AggregateRoot
         $this->customerSalesTaxNumber = $event->getCustomerSalesTaxNumber();
     }
 
+    /**
+     * @param string $customerName
+     */
     private function guardEmptyCustomerName(string $customerName)
     {
         if (trim($customerName) === "") {
             throw new InvalidCustomerName();
         }
+    }
 
+    /**
+     * @param CustomerNameWasChanged $event
+     */
+    private function whenCustomerNameWasChanged(CustomerNameWasChanged $event)
+    {
+        $this->customerName = $event->getCustomerName();
     }
 }
