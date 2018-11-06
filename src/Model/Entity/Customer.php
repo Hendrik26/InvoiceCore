@@ -66,6 +66,7 @@ class Customer implements AggregateRoot
     public static function engageInBusiness(CustomerId $customerId, string $customerName, Address $billingAddress): self
     {
         $customer = new self($customerId);
+        $customer->guardEmptyCustomerName($customerName);
         $customer->recordThat(new CustomerHasEngagedInBusiness($customerName, $billingAddress));
         return $customer;
     }

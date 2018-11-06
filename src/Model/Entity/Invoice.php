@@ -35,9 +35,15 @@ class Invoice implements AggregateRoot
      * Invoice constructor.
      * @param InvoiceId $aggregateId
      */
-    public function __construct(InvoiceId $aggregateId)
+    private function __construct(InvoiceId $aggregateId)
     {
         $this->aggregateId = $aggregateId;
+    }
+
+    public static function billProvisions(InvoiceId $invoiceId, CustomerId $customerId): self
+    {
+        $invoice = new self($invoiceId);
+        return $invoice;
     }
 
     /**

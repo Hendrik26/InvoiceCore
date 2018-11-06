@@ -9,6 +9,7 @@
 namespace Irvobmagturs\InvoiceCore\Model\ValueObject;
 
 use Irvobmagturs\InvoiceCore\Infrastructure\AbstractValueObjectBase;
+use Irvobmagturs\InvoiceCore\Model\Exception\EmptyCountryCode;
 
 /**
  * @property-read string $countryCode
@@ -33,6 +34,9 @@ class Address extends AbstractValueObjectBase
     public function __construct(string $countryCode, string $postalCode, string $city, ?string $addressLine1 = null,
                                 ?string $addressLine2 = null, ?string $addressLine3 = null)
     {
+        $this->guardEmptyCountryCode($countryCode);
+        $this->guardEmptyPostalCode($postalCode);
+        $this->guardEmptyCity($city);
         $this->init('countryCode', $countryCode);
         $this->init('postalCode', $postalCode);
         $this->init('city', $city);
@@ -70,6 +74,30 @@ class Address extends AbstractValueObjectBase
             $this->addressLine2,
             $this->addressLine3
         ];
+    }
+
+    private function guardEmptyCountryCode(string $countryCode)
+    {
+        if (trim($countryCode) === "") {
+            throw new EmptyCountryCode();
+        }
+
+    }
+
+    private function guardEmptyPostalCode(string $postalCode)
+    {
+        if (trim($postalCode) === "") {
+            throw new EmptyPostalCode();
+        }
+
+    }
+
+    private function guardEmptyCity(string $city)
+    {
+        if (trim($city) === "") {
+            throw new EmptyCity;
+        }
+
     }
 
 }
