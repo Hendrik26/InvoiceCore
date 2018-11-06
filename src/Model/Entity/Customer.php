@@ -28,6 +28,38 @@ class Customer implements AggregateRoot
     use ApplyCallsWhenMethod;
     use RecordsEventsForBusinessMethods;
     private $customerName;
+
+    /**
+     * @return mixed
+     */
+    public function getCustomerName()
+    {
+        return $this->customerName;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCustomerAddress()
+    {
+        return $this->customerAddress;
+    }
+
+    /**
+     * @return CustomerId
+     */
+    public function getCustomerId(): CustomerId
+    {
+        return $this->customerId;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCustomerSalesTaxNumber()
+    {
+        return $this->customerSalesTaxNumber;
+    }
     private $customerAddress;
     /**
      * @var CustomerId
