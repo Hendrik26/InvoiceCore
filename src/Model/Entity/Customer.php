@@ -97,6 +97,12 @@ class Customer implements AggregateRoot
         return $customer;
     }
 
+    public function changeCustomerName(string $customerName)
+    {
+        $this->guardEmptyCustomerName($customerName);
+    }
+
+
     /**
      * @param Address $customerAddress
      * @throws InvalidCustomerAddress
@@ -169,5 +175,13 @@ class Customer implements AggregateRoot
     private function whenCustomerSalesTaxNumberWasChanged(CustomerSalesTaxNumberWasChanged $event)
     {
         $this->customerSalesTaxNumber = $event->getCustomerSalesTaxNumber();
+    }
+
+    private function guardEmptyCustomerName(string $customerName)
+    {
+        if (trim($customerName) === "") {
+            throw new InvalidCustomerName();
+        }
+
     }
 }
