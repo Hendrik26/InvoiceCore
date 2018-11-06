@@ -10,12 +10,15 @@ namespace Irvobmagturs\InvoiceCore\Model\Entity;
 
 use Buttercup\Protects\IdentifiesAggregate;
 use Buttercup\Protects\RecordsEvents;
+use DateTimeInterface;
 use Irvobmagturs\InvoiceCore\Infrastructure\AggregateHistory;
 use Irvobmagturs\InvoiceCore\Infrastructure\AggregateRoot;
 use Irvobmagturs\InvoiceCore\Infrastructure\ApplyCallsWhenMethod;
 use Irvobmagturs\InvoiceCore\Infrastructure\RecordsEventsForBusinessMethods;
+use Irvobmagturs\InvoiceCore\Model\Event\InvoiceWasBilled;
 use Irvobmagturs\InvoiceCore\Model\Event\LineItemWasAppended;
 use Irvobmagturs\InvoiceCore\Model\Event\LineItemWasRemoved;
+use Irvobmagturs\InvoiceCore\Model\Exception\EmptyInvoiceNumber;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidInvoiceId;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidLineItemPosition;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidLineItemTitle;
@@ -23,12 +26,30 @@ use Irvobmagturs\InvoiceCore\Model\Id\CustomerId;
 use Irvobmagturs\InvoiceCore\Model\Id\InvoiceId;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\LineItem;
 
+
 class Invoice implements AggregateRoot
 {
     use RecordsEventsForBusinessMethods;
     use ApplyCallsWhenMethod;
+
     /** @var InvoiceId */
     private $aggregateId;
+
+    /**
+     * @var
+     */
+    private $customerId;
+
+    /**
+     * @var
+     */
+    private $invoiceNumber;
+
+    /**
+     * @var
+     */
+    private $invoiceDate;
+
     /** @var LineItem[] */
     private $lineItems = [];
 
@@ -41,9 +62,20 @@ class Invoice implements AggregateRoot
         $this->aggregateId = $aggregateId;
     }
 
-    public static function billProvisions(InvoiceId $invoiceId, CustomerId $customerId): self
+    /**
+     * @param InvoiceId $invoiceId
+     * @param CustomerId $customerId
+     * @param string $invoiceNumber
+     * @param DateTimeInterface $invoiceDate
+     * @return Invoice
+     */
+    public static function billProvisions(InvoiceId $invoiceId, CustomerId $customerId, string $invoiceNumber,
+                                          DateTimeInterface $invoiceDate): self
     {
         $invoice = new self($invoiceId);
+        $invoice->customerId = $customerId;
+        $invoice->guardEmptyInvoiceNumber($invoiceNumber);
+        $invoice->recordThat(new InvoiceWasBilled($customerId, $invoiceNumber, $invoiceDate));
         return $invoice;
     }
 
@@ -71,6 +103,9 @@ class Invoice implements AggregateRoot
         $this->recordThat(new LineItemWasAppended(count($this->lineItems), $item));
     }
 
+    /**
+     * @return IdentifiesAggregate
+     */
     public function getAggregateId(): IdentifiesAggregate
     {
         return $this->aggregateId;
@@ -121,4 +156,25 @@ class Invoice implements AggregateRoot
     {
         array_splice($this->lineItems, $event->getPosition(), 1);
     }
+
+    /**
+     * @param string $invoiceNumber
+     */
+    private function guardEmptyInvoiceNumber(string $invoiceNumber)
+    {
+        if (trim($invoiceNumber) === "") {
+            throw new EmptyInvoiceNumber();
+        }
+    }
+
+    /**
+     * @param InvoiceWasBilled $event
+     */
+    private function whenInvoiceWasBilled(InvoiceWasBilled $event)
+    {
+        $this->customerId = $event->getCustomerId();
+        $this->invoiceNumber = $event->getInvoiceNumber();
+        $this->invoiceDate = $event->getInvoiceDate();
+    }
+
 }

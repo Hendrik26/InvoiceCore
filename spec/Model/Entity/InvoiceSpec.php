@@ -12,6 +12,7 @@ use Irvobmagturs\InvoiceCore\Model\Entity\Invoice;
 use Irvobmagturs\InvoiceCore\Model\Event\LineItemWasAppended;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidLineItemPosition;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidLineItemTitle;
+use Irvobmagturs\InvoiceCore\Model\Id\CustomerId;
 use Irvobmagturs\InvoiceCore\Model\Id\InvoiceId;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\LineItem;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\Money;
@@ -21,6 +22,7 @@ class InvoiceSpec extends ObjectBehavior
 {
     function it_appends_an_item_with_a_proper_title(LineItem $item)
     {
+        $this->clearRecordedEvents();
         $item->beConstructedWith($this->itemConstructorArgsFromTitle('some proper title'));
         $this->appendLineItem($item);
         /** @var RecordedEvent[] $recordedEvents */
@@ -35,6 +37,7 @@ class InvoiceSpec extends ObjectBehavior
 
     function it_increments_the_position_when_appending_items(LineItem $item, LineItem $secondItem)
     {
+        $this->clearRecordedEvents();
         $item->beConstructedWith($this->itemConstructorArgsFromTitle('some proper title'));
         $secondItem->beConstructedWith($this->itemConstructorArgsFromTitle('something else'));
         $this->appendLineItem($item);
@@ -52,16 +55,19 @@ class InvoiceSpec extends ObjectBehavior
 
     function it_is_an_aggregate_root()
     {
+        $this->clearRecordedEvents();
         $this->shouldImplement(AggregateRoot::class);
     }
 
     function it_is_initializable()
     {
+        $this->clearRecordedEvents();
         $this->shouldHaveType(Invoice::class);
     }
 
     function it_rejects_an_item_with_an_empty_title(LineItem $item, Money $money)
     {
+        $this->clearRecordedEvents();
         $item->beConstructedWith($this->itemConstructorArgsFromTitle(''));
         $this->shouldThrow(InvalidLineItemTitle::class)->duringAppendLineItem($item);
         $this->getRecordedEvents()->shouldHaveCount(0);
@@ -69,6 +75,7 @@ class InvoiceSpec extends ObjectBehavior
 
     function it_rejects_an_item_with_a_blank_title(LineItem $item, Money $money)
     {
+        $this->clearRecordedEvents();
         $item->beConstructedWith($this->itemConstructorArgsFromTitle(' '));
         $this->shouldThrow(InvalidLineItemTitle::class)->duringAppendLineItem($item);
         $this->getRecordedEvents()->shouldHaveCount(0);
@@ -76,12 +83,14 @@ class InvoiceSpec extends ObjectBehavior
 
     function it_rejects_a_deleting_position_smaller_than_zero ()
     {
+        $this->clearRecordedEvents();
         $this->shouldThrow(InvalidLineItemPosition::class)->duringRemoveLineItemByPosition(-1);
         $this->getRecordedEvents()->shouldHaveCount(0);
     }
 
     function it_rejects_a_deleting_position_greater_than_max (LineItem $item, LineItem $secondItem)
     {
+        $this->clearRecordedEvents();
         $item->beConstructedWith($this->itemConstructorArgsFromTitle('some proper title'));
         $secondItem->beConstructedWith($this->itemConstructorArgsFromTitle('something else'));
         $this->appendLineItem($item);
@@ -95,6 +104,7 @@ class InvoiceSpec extends ObjectBehavior
 
     function it_deletes_item_by_valid_position (LineItem $item, LineItem $secondItem)
     {
+        $this->clearRecordedEvents();
         $item->beConstructedWith($this->itemConstructorArgsFromTitle('some proper title'));
         $secondItem->beConstructedWith($this->itemConstructorArgsFromTitle('something else'));
         $this->appendLineItem($item);
@@ -117,10 +127,14 @@ class InvoiceSpec extends ObjectBehavior
         $this->getAggregateId()->shouldBeLike($invoiceId);
     }
 
-
+    /**
+     * @throws \Exception
+     */
     function let()
     {
-        $this->beConstructedWith(InvoiceId::fromString('afc788eb-d60b-4de6-b409-3aab54d46945'));
+        $this->beConstructedThroughBillProvisions(InvoiceId::fromString('afc788eb-d60b-4de6-b409-3aab54d46945'),
+            CustomerId::fromString('da23f23f-57b7-47fe-b5b7-b9929f6b1aea'), 'Inv12345',
+            new \DateTimeImmutable('now'));
     }
 
     /**
