@@ -19,6 +19,7 @@ use Irvobmagturs\InvoiceCore\Model\Event\CustomerAddressWasChanged;
 use Irvobmagturs\InvoiceCore\Model\Event\CustomerHasEngagedInBusiness;
 use Irvobmagturs\InvoiceCore\Model\Event\CustomerSalesTaxNumberWasChanged;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidCustomerId;
+use Irvobmagturs\InvoiceCore\Model\Exception\InvalidCustomerName;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidCustomerSalesTaxNumber;
 use Irvobmagturs\InvoiceCore\Model\Id\CustomerId;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\Address;

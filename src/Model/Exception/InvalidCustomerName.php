@@ -9,6 +9,8 @@
 namespace Irvobmagturs\InvoiceCore\Model\Exception;
 
 
-class InvalidCustomerName
+use InvalidArgumentException;
+
+class InvalidCustomerName extends InvalidArgumentException
 {
 }
