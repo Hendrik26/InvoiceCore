@@ -101,6 +101,7 @@ class Customer implements AggregateRoot
     public function changeCustomerName(string $customerName)
     {
         $this->guardEmptyCustomerName($customerName);
+        $this->customerName = $customerName;
     }
 
 
