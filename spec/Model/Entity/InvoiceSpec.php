@@ -61,7 +61,7 @@ class InvoiceSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->clearRecordedEvents();
+        $this->getRecordedEvents()->shouldHaveCount(1);
         $this->shouldHaveType(Invoice::class);
     }
 

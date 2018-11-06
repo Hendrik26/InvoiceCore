@@ -17,6 +17,7 @@ class CustomerSpec extends ObjectBehavior
     function it_can_engage_in_business()
     {
         $this->shouldBeAnInstanceOf(Customer::class);
+        $this->getRecordedEvents()->shouldHaveCount(1);
     }
 
     function it_is_an_aggregate_root()
