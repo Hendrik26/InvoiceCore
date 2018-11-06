@@ -19,6 +19,7 @@ use Irvobmagturs\InvoiceCore\Model\Event\LineItemWasRemoved;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidInvoiceId;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidLineItemPosition;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidLineItemTitle;
+use Irvobmagturs\InvoiceCore\Model\Id\CustomerId;
 use Irvobmagturs\InvoiceCore\Model\Id\InvoiceId;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\LineItem;
 
