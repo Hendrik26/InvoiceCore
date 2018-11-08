@@ -24,6 +24,14 @@ class BecomeInternational implements Serializable
     private $customerSalesTaxNumber;
 
     /**
+     * @return mixed
+     */
+    public function getCustomerSalesTaxNumber()
+    {
+        return $this->customerSalesTaxNumber;
+    }
+
+    /**
      * BecomeInternational constructor.
      * @param string $countryCode
      * @param string $customerSalesTaxNumber
