@@ -162,7 +162,6 @@ class InvoiceSpec extends ObjectBehavior
         $recordedEvents = $this->getRecordedEvents();
         $recordedEvents->shouldHaveCount(1);
         $recordedEvents[0]->shouldBeAnInstanceOf(RecordedEvent::class);
-        /** @var LineItemWasAppended $payload */
         $payload = $recordedEvents[0]->getPayload();
         $payload->shouldBeAnInstanceOf(InvoiceBecameInternational::class);
         $payload->getPosition()->shouldBe(0);
@@ -178,7 +177,6 @@ class InvoiceSpec extends ObjectBehavior
         $recordedEvents = $this->getRecordedEvents();
         $recordedEvents->shouldHaveCount(1);
         $recordedEvents[0]->shouldBeAnInstanceOf(RecordedEvent::class);
-        /** @var LineItemWasAppended $payload */
         $payload = $recordedEvents[0]->getPayload();
         $payload->shouldBeAnInstanceOf(InvoiceBecameNational::class);
         $payload->getPosition()->shouldBe(0);
