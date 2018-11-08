@@ -15,7 +15,7 @@ use Irvobmagturs\InvoiceCore\Infrastructure\AggregateHistory;
 use Irvobmagturs\InvoiceCore\Infrastructure\AggregateRoot;
 use Irvobmagturs\InvoiceCore\Infrastructure\ApplyCallsWhenMethod;
 use Irvobmagturs\InvoiceCore\Infrastructure\RecordsEventsForBusinessMethods;
-use Irvobmagturs\InvoiceCore\Model\Event\InvoiceWasBilled;
+use Irvobmagturs\InvoiceCore\Model\Event\InvoiceWasOpened;
 use Irvobmagturs\InvoiceCore\Model\Event\LineItemWasAppended;
 use Irvobmagturs\InvoiceCore\Model\Event\LineItemWasRemoved;
 use Irvobmagturs\InvoiceCore\Model\Exception\EmptyInvoiceNumber;
@@ -68,14 +68,18 @@ class Invoice implements AggregateRoot
      * @param string $invoiceNumber
      * @param DateTimeInterface $invoiceDate
      * @return Invoice
+     * @throws EmptyInvoiceNumber
      */
-    public static function billProvisions(InvoiceId $invoiceId, CustomerId $customerId, string $invoiceNumber,
-                                          DateTimeInterface $invoiceDate): self
-    {
+    public static function chargeCustomer(
+        InvoiceId $invoiceId,
+        CustomerId $customerId,
+        string $invoiceNumber,
+        DateTimeInterface $invoiceDate
+    ): self {
         $invoice = new self($invoiceId);
         $invoice->customerId = $customerId;
         $invoice->guardEmptyInvoiceNumber($invoiceNumber);
-        $invoice->recordThat(new InvoiceWasBilled($customerId, $invoiceNumber, $invoiceDate));
+        $invoice->recordThat(new InvoiceWasOpened($customerId, $invoiceNumber, $invoiceDate));
         return $invoice;
     }
 
@@ -168,9 +172,9 @@ class Invoice implements AggregateRoot
     }
 
     /**
-     * @param InvoiceWasBilled $event
+     * @param InvoiceWasOpened $event
      */
-    private function whenInvoiceWasBilled(InvoiceWasBilled $event)
+    private function whenInvoiceWasOpened(InvoiceWasOpened $event)
     {
         $this->customerId = $event->getCustomerId();
         $this->invoiceNumber = $event->getInvoiceNumber();

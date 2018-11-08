@@ -15,7 +15,7 @@ use Irvobmagturs\InvoiceCore\Infrastructure\Serializable;
 use Irvobmagturs\InvoiceCore\Model\Id\InvoiceId;
 use Irvobmagturs\InvoiceCore\Model\Id\CustomerId;
 
-class InvoiceWasBilled implements Serializable
+class InvoiceWasOpened implements Serializable
 {
 
 
@@ -60,7 +60,7 @@ class InvoiceWasBilled implements Serializable
 
 
     /**
-     * InvoiceWasBilled constructor.
+     * InvoiceWasOpened constructor.
      * @param InvoiceId $invoiceId
      * @param CustomerId $customerId
      * @param string $invoiceNumber
@@ -76,7 +76,7 @@ class InvoiceWasBilled implements Serializable
 
     /**
      * @param array $data
-     * @return InvoiceWasBilled
+     * @return InvoiceWasOpened
      * @throws Exception
      */
     public static function deserialize(array $data): self

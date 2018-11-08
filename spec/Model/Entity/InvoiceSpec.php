@@ -5,10 +5,12 @@
 
 namespace spec\Irvobmagturs\InvoiceCore\Model\Entity;
 
+use Buttercup\Protects\DomainEvents;
 use Irvobmagturs\InvoiceCore\Infrastructure\AggregateHistory;
 use Irvobmagturs\InvoiceCore\Infrastructure\AggregateRoot;
 use Irvobmagturs\InvoiceCore\Infrastructure\RecordedEvent;
 use Irvobmagturs\InvoiceCore\Model\Entity\Invoice;
+use Irvobmagturs\InvoiceCore\Model\Event\InvoiceWasOpened;
 use Irvobmagturs\InvoiceCore\Model\Event\LineItemWasAppended;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidLineItemPosition;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidLineItemTitle;
@@ -59,10 +61,14 @@ class InvoiceSpec extends ObjectBehavior
         $this->shouldImplement(AggregateRoot::class);
     }
 
-    function it_is_initializable()
+    function it_is_initializable_by_charging_a_customer()
     {
-        $this->getRecordedEvents()->shouldHaveCount(1);
         $this->shouldHaveType(Invoice::class);
+        /** @var DomainEvents $domainEvents */
+        $domainEvents = $this->getRecordedEvents();
+        $domainEvents->shouldHaveCount(1);
+        $domainEvents[0]->shouldBeAnInstanceOf(RecordedEvent::class);
+        $domainEvents[0]->getPayload()->shouldBeAnInstanceOf(InvoiceWasOpened::class);
     }
 
     function it_rejects_an_item_with_an_empty_title(LineItem $item, Money $money)
@@ -132,7 +138,7 @@ class InvoiceSpec extends ObjectBehavior
      */
     function let()
     {
-        $this->beConstructedThroughBillProvisions(InvoiceId::fromString('afc788eb-d60b-4de6-b409-3aab54d46945'),
+        $this->beConstructedThroughChargeCustomer(InvoiceId::fromString('afc788eb-d60b-4de6-b409-3aab54d46945'),
             CustomerId::fromString('da23f23f-57b7-47fe-b5b7-b9929f6b1aea'), 'Inv12345',
             new \DateTimeImmutable('now'));
     }
