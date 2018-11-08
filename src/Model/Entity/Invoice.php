@@ -233,13 +233,13 @@ class Invoice implements AggregateRoot
      */
     public function becomeNational()
     {
-        $this->recordThat(new BecomeNational());
+        $this->recordThat(new InvoiceBecameNational());
     }
 
     /**
-     * @param BecomeNational $event
+     * @param InvoiceBecameNational $event
      */
-    private function whenBecameNational(BecomeNational $event)
+    private function whenBecameNational(InvoiceBecameNational $event)
     {
         // nothing to do
     }

@@ -11,7 +11,7 @@ namespace Irvobmagturs\InvoiceCore\Model\Entity;
 
 use Irvobmagturs\InvoiceCore\Infrastructure\Serializable;
 
-class BecomeNational implements Serializable
+class InvoiceBecameNational implements Serializable
 {
 
     /**
@@ -31,7 +31,7 @@ class BecomeNational implements Serializable
 
     /**
      * @param array $data
-     * @return BecomeNational
+     * @return InvoiceBecameNational
      */
     public static function deserialize(array $data): self
     {
