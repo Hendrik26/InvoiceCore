@@ -183,4 +183,35 @@ class InvoiceSpec extends ObjectBehavior
         $payload->getPosition()->shouldBe(0);
     }
 
+    /**
+     * @param \PhpSpec\Wrapper\Collaborator $SEPA_Number
+     */
+    function it_employs_direct_debit($SEPA_Number)
+    {
+        $this->clearRecordedEvents();
+        $this->employDirectDebit($SEPA_Number);
+        $recordedEvents = $this->getRecordedEvents();
+        $recordedEvents->shouldHaveCount(1);
+        $recordedEvents[0]->shouldBeAnInstanceOf(RecordedEvent::class);
+        $payload = $recordedEvents[0]->getPayload();
+        $payload->shouldBeAnInstanceOf(DirectDebitWasEmployed::class);
+        $payload->getPosition()->shouldBe(0);
+    }
+
+
+    /**
+     * @param \PhpSpec\Wrapper\Collaborator $SEPA_Number
+     */
+    function it_refrains_from_direct_debit($SEPA_Number)
+    {
+        $this->clearRecordedEvents();
+        $this->refrainFromDirectDebit($SEPA_Number);
+        $recordedEvents = $this->getRecordedEvents();
+        $recordedEvents->shouldHaveCount(1);
+        $recordedEvents[0]->shouldBeAnInstanceOf(RecordedEvent::class);
+        $payload = $recordedEvents[0]->getPayload();
+        $payload->shouldBeAnInstanceOf(DirectDebitWasRefrainedFrom::class);
+        $payload->getPosition()->shouldBe(0);
+    }
+
 }
