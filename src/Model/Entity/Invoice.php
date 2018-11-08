@@ -15,7 +15,7 @@ use Irvobmagturs\InvoiceCore\Infrastructure\AggregateHistory;
 use Irvobmagturs\InvoiceCore\Infrastructure\AggregateRoot;
 use Irvobmagturs\InvoiceCore\Infrastructure\ApplyCallsWhenMethod;
 use Irvobmagturs\InvoiceCore\Infrastructure\RecordsEventsForBusinessMethods;
-use Irvobmagturs\InvoiceCore\Model\Event\BecomeInternational;
+use Irvobmagturs\InvoiceCore\Model\Event\InvoiceBecameInternational;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceWasOpened;
 use Irvobmagturs\InvoiceCore\Model\Event\LineItemWasAppended;
 use Irvobmagturs\InvoiceCore\Model\Event\LineItemWasRemoved;
@@ -197,7 +197,7 @@ class Invoice implements AggregateRoot
     {
         $this->guardEmptyCountryCode($countryCode);
         $this->guardEmptyCustomerSalesTaxNumber($customerSalesTaxNumber);
-        $this->recordThat(new BecomeInternational($countryCode, $customerSalesTaxNumber));
+        $this->recordThat(new InvoiceBecameInternational($countryCode, $customerSalesTaxNumber));
     }
 
     /**
@@ -221,9 +221,9 @@ class Invoice implements AggregateRoot
     }
 
     /**
-     * @param BecomeInternational $event
+     * @param InvoiceBecameInternational $event
      */
-    private function whenBecameInternational(BecomeInternational $event)
+    private function whenBecameInternational(InvoiceBecameInternational $event)
     {
         $this->customerSalesTaxNumber = $event->getCustomerSalesTaxNumber();
     }
