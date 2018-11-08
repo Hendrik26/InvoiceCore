@@ -228,5 +228,21 @@ class Invoice implements AggregateRoot
         $this->customerSalesTaxNumber = $event->getCustomerSalesTaxNumber();
     }
 
+    /**
+     *
+     */
+    public function becomeNational()
+    {
+        $this->recordThat(new BecomeNational());
+    }
+
+    /**
+     * @param BecomeNational $event
+     */
+    private function whenBecameNational(BecomeNational $event)
+    {
+        // nothing to do
+    }
+
 
 }
