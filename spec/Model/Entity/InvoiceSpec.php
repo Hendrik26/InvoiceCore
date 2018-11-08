@@ -156,7 +156,7 @@ class InvoiceSpec extends ObjectBehavior
      * @param \PhpSpec\Wrapper\Collaborator $country
      * @param \PhpSpec\Wrapper\Collaborator $customerSalesTaxNumber
      */
-    function it_becomes_international($country, $customerSalesTaxNumber)
+    function it_becomes_international(string $country, string $customerSalesTaxNumber)
     {
         $this->clearRecordedEvents();
         $this->becomeInternational($country, $customerSalesTaxNumber);
@@ -186,7 +186,7 @@ class InvoiceSpec extends ObjectBehavior
     /**
      * @param \PhpSpec\Wrapper\Collaborator $SEPA_Number
      */
-    function it_employs_direct_debit($SEPA_Number)
+    function it_employs_direct_debit(string $SEPA_Number)
     {
         $this->clearRecordedEvents();
         $this->employDirectDebit($SEPA_Number);
