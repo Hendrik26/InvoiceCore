@@ -28,6 +28,7 @@ use Irvobmagturs\InvoiceCore\Model\Exception\InvalidLineItemTitle;
 use Irvobmagturs\InvoiceCore\Model\Id\CustomerId;
 use Irvobmagturs\InvoiceCore\Model\Id\InvoiceId;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\LineItem;
+use Irvobmagturs\InvoiceCore\Model\ValueObject\SepaDirectDebitMandate;
 
 
 class Invoice implements AggregateRoot
@@ -242,6 +243,24 @@ class Invoice implements AggregateRoot
     private function whenBecameNational(InvoiceBecameNational $event)
     {
         // nothing to do
+    }
+
+    public function employDirectDebit($argument1): void
+    {
+        // TODO: write logic here // primary TODO
+        $this->guardInvalidSepaDirectDebitMandate($mandate);
+        $this->recordThat(new InvoiceBecameInternational($countryCode, $customerSalesTaxNumber));
+
+    }
+
+    public function refrainFromDirectDebit(): void
+    {
+        // TODO: write logic here
+    }
+
+    public function dropBillingPeriodl(): void
+    {
+        // TODO: write logic here
     }
 
 

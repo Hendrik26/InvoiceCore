@@ -11,6 +11,7 @@ use Irvobmagturs\InvoiceCore\Infrastructure\AggregateHistory;
 use Irvobmagturs\InvoiceCore\Infrastructure\AggregateRoot;
 use Irvobmagturs\InvoiceCore\Infrastructure\RecordedEvent;
 use Irvobmagturs\InvoiceCore\Model\Entity\Invoice;
+use Irvobmagturs\InvoiceCore\Model\Event\InvoiceBecameInternational;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceWasOpened;
 use Irvobmagturs\InvoiceCore\Model\Event\LineItemWasAppended;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidLineItemPosition;
@@ -158,16 +159,17 @@ class InvoiceSpec extends ObjectBehavior
      * @param \PhpSpec\Wrapper\Collaborator $country
      * @param \PhpSpec\Wrapper\Collaborator $customerSalesTaxNumber
      */
-    function it_becomes_international(string $country, string $customerSalesTaxNumber)
+    function it_becomes_international()
     {
         $this->clearRecordedEvents();
-        $this->becomeInternational($country, $customerSalesTaxNumber);
+        $this->becomeInternational('testCountry', 'testCustomerSalesTaxNumber');
         $recordedEvents = $this->getRecordedEvents();
         $recordedEvents->shouldHaveCount(1);
         $recordedEvents[0]->shouldBeAnInstanceOf(RecordedEvent::class);
         $payload = $recordedEvents[0]->getPayload();
         $payload->shouldBeAnInstanceOf(InvoiceBecameInternational::class);
-        $payload->getPosition()->shouldBe(0);
+        $payload->getCountryCode()->shouldBe('testCountry');
+        $payload->getCustomerSalasTaxNumber()->shouldBe('testCustomerSalesTaxNumber');
     }
 
     /**
