@@ -18,6 +18,7 @@ use Irvobmagturs\InvoiceCore\Model\Id\CustomerId;
 use Irvobmagturs\InvoiceCore\Model\Id\InvoiceId;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\LineItem;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\Money;
+use Irvobmagturs\InvoiceCore\Model\ValueObject\SepaDirectDebitMandate;
 use PhpSpec\ObjectBehavior;
 
 class InvoiceSpec extends ObjectBehavior
@@ -183,19 +184,16 @@ class InvoiceSpec extends ObjectBehavior
         $payload->getPosition()->shouldBe(0);
     }
 
-    /**
-     * @param \PhpSpec\Wrapper\Collaborator $SEPA_Number
-     */
-    function it_employs_direct_debit(string $SEPA_Number)
+    function it_employs_direct_debit(SepaDirectDebitMandate $mandate)
     {
         $this->clearRecordedEvents();
-        $this->employDirectDebit($SEPA_Number);
+        $this->employDirectDebit($mandate);
         $recordedEvents = $this->getRecordedEvents();
         $recordedEvents->shouldHaveCount(1);
         $recordedEvents[0]->shouldBeAnInstanceOf(RecordedEvent::class);
         $payload = $recordedEvents[0]->getPayload();
         $payload->shouldBeAnInstanceOf(DirectDebitWasEmployed::class);
-        $payload->getPosition()->shouldBe(0);
+        $payload->getMandate()->shouldBeLike($mandate);
     }
 
 
@@ -211,6 +209,5 @@ class InvoiceSpec extends ObjectBehavior
         $recordedEvents[0]->shouldBeAnInstanceOf(RecordedEvent::class);
         $payload = $recordedEvents[0]->getPayload();
         $payload->shouldBeAnInstanceOf(DirectDebitWasRefrainedFrom::class);
-        $payload->getPosition()->shouldBe(0);
     }
 }
