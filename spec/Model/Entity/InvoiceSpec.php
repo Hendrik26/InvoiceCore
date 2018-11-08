@@ -6,6 +6,7 @@
 namespace spec\Irvobmagturs\InvoiceCore\Model\Entity;
 
 use Buttercup\Protects\DomainEvents;
+use DateTime;
 use Irvobmagturs\InvoiceCore\Infrastructure\AggregateHistory;
 use Irvobmagturs\InvoiceCore\Infrastructure\AggregateRoot;
 use Irvobmagturs\InvoiceCore\Infrastructure\RecordedEvent;
@@ -209,5 +210,18 @@ class InvoiceSpec extends ObjectBehavior
         $recordedEvents[0]->shouldBeAnInstanceOf(RecordedEvent::class);
         $payload = $recordedEvents[0]->getPayload();
         $payload->shouldBeAnInstanceOf(DirectDebitWasRefrainedFrom::class);
+    }
+
+    /**  */
+    function it_becomes_timebased(DateTime $startDate, DateTime $Date)
+    {
+        $this->clearRecordedEvents();
+        $this->employDirectDebit($SEPA_Number);
+        $recordedEvents = $this->getRecordedEvents();
+        $recordedEvents->shouldHaveCount(1);
+        $recordedEvents[0]->shouldBeAnInstanceOf(RecordedEvent::class);
+        $payload = $recordedEvents[0]->getPayload();
+        $payload->shouldBeAnInstanceOf(DirectDebitWasEmployed::class);
+        $payload->getPosition()->shouldBe(0);
     }
 }
