@@ -46,6 +46,11 @@ class Invoice implements AggregateRoot
     /**
      * @var
      */
+    private $customerSalesTaxNumber;
+
+    /**
+     * @var
+     */
     private $invoiceNumber;
 
     /**
@@ -214,5 +219,11 @@ class Invoice implements AggregateRoot
             throw new InvalidCustomerSalesTaxNumber();
         }
     }
+
+    private function whenBecameInternational(BecomeInternational $event)
+    {
+        $this->customerSalesTaxNumber = $this->customerSalesTaxNumber;
+    }
+
 
 }
