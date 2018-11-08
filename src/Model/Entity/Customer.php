@@ -120,6 +120,7 @@ class Customer implements AggregateRoot
      */
     private function guardInvalidCustomerAddress(Address $customerAddress)
     {
+        // TODO
         if (trim($customerAddress->countryCode) === "") {
             throw new InvalidCustomerAddress();
         }

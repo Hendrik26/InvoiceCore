@@ -18,6 +18,7 @@ use Irvobmagturs\InvoiceCore\Infrastructure\RecordsEventsForBusinessMethods;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceWasOpened;
 use Irvobmagturs\InvoiceCore\Model\Event\LineItemWasAppended;
 use Irvobmagturs\InvoiceCore\Model\Event\LineItemWasRemoved;
+use Irvobmagturs\InvoiceCore\Model\Exception\EmptyCountryCode;
 use Irvobmagturs\InvoiceCore\Model\Exception\EmptyInvoiceNumber;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidInvoiceId;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidLineItemPosition;
@@ -179,6 +180,27 @@ class Invoice implements AggregateRoot
         $this->customerId = $event->getCustomerId();
         $this->invoiceNumber = $event->getInvoiceNumber();
         $this->invoiceDate = $event->getInvoiceDate();
+    }
+
+    public function becomeInternational(string $countryCode, string $customerSalesTaxNumber)
+    {
+        $this->guardEmptyCountryCode($countryCode);
+        $this->guardEmptyCustomerSalesTaxNumber($customerSalesTaxNumber);
+        $this->recordThat(new BecomeInternational($countryCode, $customerSalesTaxNumber));
+    }
+
+    private function guardEmptyCountryCode(string $countryCode)
+    {
+        if (trim($countryCode) === "") {
+            throw new EmptyCountryCode();
+        }
+    }
+
+    private function guardEmptyCustomerSalesTaxNumber(string $salesTaxNumber)
+    {
+        if (trim($salesTaxNumber) === "") {
+            throw new InvalidCustomerSalesTaxNumber();
+        }
     }
 
 }
