@@ -70,7 +70,7 @@ class Invoice implements AggregateRoot
      * @return Invoice
      * @throws EmptyInvoiceNumber
      */
-    public static function chargeCustomer(
+    public static function chargeCustomer( // Factory-Method for Invoice
         InvoiceId $invoiceId,
         CustomerId $customerId,
         string $invoiceNumber,
