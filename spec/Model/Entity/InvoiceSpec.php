@@ -159,8 +159,13 @@ class InvoiceSpec extends ObjectBehavior
     {
         $this->clearRecordedEvents();
         $this->becomeInternational($country, $customerSalesTaxNumber);
-        $this->getRecordedEvents()->shouldHaveCount(1);
-
+        $recordedEvents = $this->getRecordedEvents();
+        $recordedEvents->shouldHaveCount(1);
+        $recordedEvents[0]->shouldBeAnInstanceOf(RecordedEvent::class);
+        /** @var LineItemWasAppended $payload */
+        $payload = $recordedEvents[0]->getPayload();
+        $payload->shouldBeAnInstanceOf(InvoiceBecameInternational::class);
+        $payload->getPosition()->shouldBe(0);
     }
 
     /**
@@ -170,7 +175,13 @@ class InvoiceSpec extends ObjectBehavior
     {
         $this->clearRecordedEvents();
         $this->becomeNational();
-        $this->getRecordedEvents()->shouldHaveCount(1);
+        $recordedEvents = $this->getRecordedEvents();
+        $recordedEvents->shouldHaveCount(1);
+        $recordedEvents[0]->shouldBeAnInstanceOf(RecordedEvent::class);
+        /** @var LineItemWasAppended $payload */
+        $payload = $recordedEvents[0]->getPayload();
+        $payload->shouldBeAnInstanceOf(InvoiceBecameNational::class);
+        $payload->getPosition()->shouldBe(0);
     }
 
 }
