@@ -220,6 +220,9 @@ class Invoice implements AggregateRoot
         }
     }
 
+    /**
+     * @param BecomeInternational $event
+     */
     private function whenBecameInternational(BecomeInternational $event)
     {
         $this->customerSalesTaxNumber = $this->customerSalesTaxNumber;
