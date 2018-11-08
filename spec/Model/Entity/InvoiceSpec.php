@@ -212,16 +212,33 @@ class InvoiceSpec extends ObjectBehavior
         $payload->shouldBeAnInstanceOf(DirectDebitWasRefrainedFrom::class);
     }
 
-    /**  */
-    function it_becomes_timebased(DateTime $startDate, DateTime $Date)
+    /**
+     * @param \PhpSpec\Wrapper\Collaborator|BillingPeriod $period
+     */
+    function it_coveres_billing_period(BillingPeriod $period)
     {
         $this->clearRecordedEvents();
-        $this->employDirectDebit($SEPA_Number);
+        $this->covereBillingPeriod($period);
         $recordedEvents = $this->getRecordedEvents();
         $recordedEvents->shouldHaveCount(1);
         $recordedEvents[0]->shouldBeAnInstanceOf(RecordedEvent::class);
         $payload = $recordedEvents[0]->getPayload();
-        $payload->shouldBeAnInstanceOf(DirectDebitWasEmployed::class);
+        $payload->shouldBeAnInstanceOf(InvoiceHasCoveredBillingPeriod::class);
+        $payload->getPosition()->shouldBe(0);
+    }
+
+    /**
+     *
+     */
+    function it_drops_billing_period()
+    {
+        $this->clearRecordedEvents();
+        $this->dropBillingPeriodl();
+        $recordedEvents = $this->getRecordedEvents();
+        $recordedEvents->shouldHaveCount(1);
+        $recordedEvents[0]->shouldBeAnInstanceOf(RecordedEvent::class);
+        $payload = $recordedEvents[0]->getPayload();
+        $payload->shouldBeAnInstanceOf(InvoiceHasDroppedBillingPeriod::class);
         $payload->getPosition()->shouldBe(0);
     }
 }
