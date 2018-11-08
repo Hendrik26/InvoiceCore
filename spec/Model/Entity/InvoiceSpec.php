@@ -151,4 +151,26 @@ class InvoiceSpec extends ObjectBehavior
     {
         return [0, new Money(0, ''), .0, $title, false];
     }
+
+    /**
+     *
+     */
+    function it_becomes_international($country, $customerSalesTaxNumber)
+    {
+        $this->clearRecordedEvents();
+        $this->becomeInternational($country, $customerSalesTaxNumber);
+        $this->getRecordedEvents()->shouldHaveCount(1);
+
+    }
+
+    /**
+     *
+     */
+    function it_becomes_national()
+    {
+        $this->clearRecordedEvents();
+        $this->becomeNational();
+        $this->getRecordedEvents()->shouldHaveCount(1);
+    }
+
 }
