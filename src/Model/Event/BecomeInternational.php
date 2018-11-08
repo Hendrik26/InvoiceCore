@@ -9,7 +9,9 @@
 namespace Irvobmagturs\InvoiceCore\Model\Event;
 
 
-class BecomeInternational
+use Irvobmagturs\InvoiceCore\Infrastructure\Serializable;
+
+class BecomeInternational implements Serializable
 {
     /**
      * @var
@@ -42,11 +44,11 @@ class BecomeInternational
 
     /**
      * @param array $data
-     * @return Self
+     * @return BecomeInternational
      */
-    static function deserialize(array $data): Self
+    static function deserialize(array $data): self
     {
-        return new self(data[0], data[1]);
+        return new self($data[0], $data[1]);
     }
 
 

@@ -15,11 +15,13 @@ use Irvobmagturs\InvoiceCore\Infrastructure\AggregateHistory;
 use Irvobmagturs\InvoiceCore\Infrastructure\AggregateRoot;
 use Irvobmagturs\InvoiceCore\Infrastructure\ApplyCallsWhenMethod;
 use Irvobmagturs\InvoiceCore\Infrastructure\RecordsEventsForBusinessMethods;
+use Irvobmagturs\InvoiceCore\Model\Event\BecomeInternational;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceWasOpened;
 use Irvobmagturs\InvoiceCore\Model\Event\LineItemWasAppended;
 use Irvobmagturs\InvoiceCore\Model\Event\LineItemWasRemoved;
 use Irvobmagturs\InvoiceCore\Model\Exception\EmptyCountryCode;
 use Irvobmagturs\InvoiceCore\Model\Exception\EmptyInvoiceNumber;
+use Irvobmagturs\InvoiceCore\Model\Exception\InvalidCustomerSalesTaxNumber;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidInvoiceId;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidLineItemPosition;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidLineItemTitle;
@@ -182,6 +184,10 @@ class Invoice implements AggregateRoot
         $this->invoiceDate = $event->getInvoiceDate();
     }
 
+    /**
+     * @param string $countryCode
+     * @param string $customerSalesTaxNumber
+     */
     public function becomeInternational(string $countryCode, string $customerSalesTaxNumber)
     {
         $this->guardEmptyCountryCode($countryCode);
@@ -189,6 +195,9 @@ class Invoice implements AggregateRoot
         $this->recordThat(new BecomeInternational($countryCode, $customerSalesTaxNumber));
     }
 
+    /**
+     * @param string $countryCode
+     */
     private function guardEmptyCountryCode(string $countryCode)
     {
         if (trim($countryCode) === "") {
@@ -196,6 +205,9 @@ class Invoice implements AggregateRoot
         }
     }
 
+    /**
+     * @param string $salesTaxNumber
+     */
     private function guardEmptyCustomerSalesTaxNumber(string $salesTaxNumber)
     {
         if (trim($salesTaxNumber) === "") {
