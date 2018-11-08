@@ -200,12 +200,12 @@ class InvoiceSpec extends ObjectBehavior
 
 
     /**
-     * @param \PhpSpec\Wrapper\Collaborator $SEPA_Number
+     *
      */
-    function it_refrains_from_direct_debit($SEPA_Number)
+    function it_refrains_from_direct_debit()
     {
         $this->clearRecordedEvents();
-        $this->refrainFromDirectDebit($SEPA_Number);
+        $this->refrainFromDirectDebit();
         $recordedEvents = $this->getRecordedEvents();
         $recordedEvents->shouldHaveCount(1);
         $recordedEvents[0]->shouldBeAnInstanceOf(RecordedEvent::class);
@@ -213,5 +213,4 @@ class InvoiceSpec extends ObjectBehavior
         $payload->shouldBeAnInstanceOf(DirectDebitWasRefrainedFrom::class);
         $payload->getPosition()->shouldBe(0);
     }
-
 }
