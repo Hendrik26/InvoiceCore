@@ -153,7 +153,8 @@ class InvoiceSpec extends ObjectBehavior
     }
 
     /**
-     *
+     * @param \PhpSpec\Wrapper\Collaborator $country
+     * @param \PhpSpec\Wrapper\Collaborator $customerSalesTaxNumber
      */
     function it_becomes_international($country, $customerSalesTaxNumber)
     {
