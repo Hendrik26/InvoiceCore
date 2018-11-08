@@ -14,12 +14,12 @@ class SepaDirectDebitMandateSpec extends ObjectBehavior
     {
         $this->beConstructedThroughDeserialize(['m1234567', 'DE12345678901234567890']);
         $this->mandateReference->shouldBe('m1234567');
-        $this->customerIBAN->shouldBe('DE12345678901234567890');
+        $this->customerIban->shouldBe('DE12345678901234567890');
     }
 
     function it_exposes_the_IBAN_of_the_customer()
     {
-        $this->customerIBAN->shouldBe('DE12345678901234567890');
+        $this->customerIban->shouldBe('DE12345678901234567890');
     }
 
     function it_exposes_the_mandate_reference()
