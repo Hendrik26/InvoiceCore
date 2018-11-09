@@ -16,6 +16,7 @@ use Irvobmagturs\InvoiceCore\Infrastructure\AggregateRoot;
 use Irvobmagturs\InvoiceCore\Infrastructure\ApplyCallsWhenMethod;
 use Irvobmagturs\InvoiceCore\Infrastructure\RecordsEventsForBusinessMethods;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceBecameInternational;
+use Irvobmagturs\InvoiceCore\Model\Event\InvoiceBecameNational;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceEmployedSepaDirectDebit;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceRefrainedSepaDirectDebit;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceWasOpened;
@@ -244,7 +245,7 @@ class Invoice implements AggregateRoot
     /**
      * @param InvoiceBecameNational $event
      */
-    private function whenBecameNational(InvoiceBecameNational $event)
+    private function whenInvoiceBecameNational(InvoiceBecameNational $event)
     {
         // nothing to do
     }
