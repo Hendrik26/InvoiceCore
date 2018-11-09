@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 /**
- * @author hendrik
+ * @author Hendrik26
  */
 
 namespace Irvobmagturs\InvoiceCore\Model\ValueObject;
@@ -14,8 +14,13 @@ use Irvobmagturs\InvoiceCore\Infrastructure\Serializable;
  * @method Money withAmount(float $v)
  * @method Money withCurrency(string $v)
  */
-class Money extends AbstractValueObjectBase
+class Money extends AbstractValueObjectBase implements Serializable
 {
+    /**
+     * Money constructor.
+     * @param float $amount
+     * @param string $currency
+     */
     public function __construct(float $amount, string $currency)
     {
         $this->init('amount', $amount);
