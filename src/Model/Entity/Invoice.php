@@ -64,6 +64,11 @@ class Invoice implements AggregateRoot
      */
     private $invoiceDate;
 
+    /**
+     * @var
+     */
+    private $mandate;
+
     /** @var LineItem[] */
     private $lineItems = [];
 
@@ -274,12 +279,23 @@ class Invoice implements AggregateRoot
 
     }
 
+    private function whenInvoiceEmployedSepaDirectDebit(InvoiceEmployedSepaDirectDebit $event)
+    {
+        $this->mandate = $event->getMandate();
+
+    }
 
     public function refrainFromSepaDirectDebit(): void
     {
         // TODO: write logic here
         $this->recordThat(new InvoiceRefrainedSepaDirectDebit());
     }
+
+    private function whenInvoiceRefrainedSepaDirectDebit(InvoiceRefrainedSepaDirectDebit $event)
+    {
+        // nothing to do
+    }
+
 
     public function dropBillingPeriodl(): void
     {
