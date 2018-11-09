@@ -13,6 +13,7 @@ use Irvobmagturs\InvoiceCore\Infrastructure\RecordedEvent;
 use Irvobmagturs\InvoiceCore\Model\Entity\Invoice;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceBecameNational;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceBecameInternational;
+use Irvobmagturs\InvoiceCore\Model\Event\InvoiceEmployedSepaDirectDebit;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceRefrainedSepaDirectDebit;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceWasOpened;
 use Irvobmagturs\InvoiceCore\Model\Event\LineItemWasAppended;
@@ -199,8 +200,8 @@ class InvoiceSpec extends ObjectBehavior
         $recordedEvents->shouldHaveCount(1);
         $recordedEvents[0]->shouldBeAnInstanceOf(RecordedEvent::class);
         $payload = $recordedEvents[0]->getPayload();
-        // $payload->shouldBeAnInstanceOf(DirectDebitWasEmployed::class);
-        // $payload->getMandate()->shouldBeLike($mandate);
+        $payload->shouldBeAnInstanceOf(InvoiceEmployedSepaDirectDebit::class);
+        $payload->getMandate()->shouldBeLike($mandate);
     }
 
 
