@@ -190,7 +190,7 @@ class InvoiceSpec extends ObjectBehavior
     function it_employs_direct_debit(SepaDirectDebitMandate $mandate)
     {
         $this->clearRecordedEvents();
-        $this->employDirectDebit($mandate);
+        $this->employSepaDirectDebit($mandate);
         $recordedEvents = $this->getRecordedEvents();
         $recordedEvents->shouldHaveCount(1);
         $recordedEvents[0]->shouldBeAnInstanceOf(RecordedEvent::class);
