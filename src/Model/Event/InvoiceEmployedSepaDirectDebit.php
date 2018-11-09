@@ -12,7 +12,7 @@ namespace Irvobmagturs\InvoiceCore\Model\Event;
 use Irvobmagturs\InvoiceCore\Infrastructure\Serializable;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\SepaDirectDebitMandate;
 
-class InvoiceGotSepaDirectDebit implements Serializable
+class InvoiceEmployedSepaDirectDebit implements Serializable
 {
     /**
      * @var SepaDirectDebitMandate
@@ -20,7 +20,7 @@ class InvoiceGotSepaDirectDebit implements Serializable
     private $mandate;
 
     /**
-     * InvoiceGotSepaDirectDebit constructor.
+     * InvoiceEmployedSepaDirectDebit constructor.
      * @param SepaDirectDebitMandate $mandate
      */
     public function __construct(SepaDirectDebitMandate $mandate)
@@ -38,7 +38,7 @@ class InvoiceGotSepaDirectDebit implements Serializable
 
     /**
      * @param array $data
-     * @return InvoiceGotSepaDirectDebit
+     * @return InvoiceEmployedSepaDirectDebit
      */
     static function deserialize(array $data): self
     {
