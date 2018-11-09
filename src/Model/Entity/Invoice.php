@@ -21,10 +21,12 @@ use Irvobmagturs\InvoiceCore\Model\Event\LineItemWasAppended;
 use Irvobmagturs\InvoiceCore\Model\Event\LineItemWasRemoved;
 use Irvobmagturs\InvoiceCore\Model\Exception\EmptyCountryCode;
 use Irvobmagturs\InvoiceCore\Model\Exception\EmptyInvoiceNumber;
+use Irvobmagturs\InvoiceCore\Model\Exception\InvalidCustomerIban;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidCustomerSalesTaxNumber;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidInvoiceId;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidLineItemPosition;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidLineItemTitle;
+use Irvobmagturs\InvoiceCore\Model\Exception\InvalidSepaDirectDebitMandateReference;
 use Irvobmagturs\InvoiceCore\Model\Id\CustomerId;
 use Irvobmagturs\InvoiceCore\Model\Id\InvoiceId;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\LineItem;
@@ -245,13 +247,30 @@ class Invoice implements AggregateRoot
         // nothing to do
     }
 
-    public function employDirectDebit($argument1): void
+    /**
+     * @param SepaDirectDebitMandate $mandate
+     */
+    public function employDirectDebit(SepaDirectDebitMandate $mandate): void
     {
         // TODO: write logic here // primary TODO
         $this->guardInvalidSepaDirectDebitMandate($mandate);
-        $this->recordThat(new InvoiceBecameInternational($countryCode, $customerSalesTaxNumber));
+        $this->recordThat(new InvoiceGotSepaDirectDebit($mandate));
+    }
+
+    /**
+     * @param SepaDirectDebitMandate $mandate
+     */
+    private function guardInvalidSepaDirectDebitMandate(SepaDirectDebitMandate $mandate)
+    {
+        if (trim($mandate->getCustomerIban()) === "") {
+            throw new InvalidCustomerIban();
+        }
+        if (trim($mandate->getMandateReference()) === "") {
+            throw new InvalidSepaDirectDebitMandateReference();
+        }
 
     }
+
 
     public function refrainFromDirectDebit(): void
     {
@@ -262,6 +281,7 @@ class Invoice implements AggregateRoot
     {
         // TODO: write logic here
     }
+
 
 
 }
