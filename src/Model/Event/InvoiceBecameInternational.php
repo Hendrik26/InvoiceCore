@@ -19,6 +19,14 @@ class InvoiceBecameInternational implements Serializable
     private $countryCode;
 
     /**
+     * @return mixed
+     */
+    public function getCountryCode()
+    {
+        return $this->countryCode;
+    }
+
+    /**
      * @var
      */
     private $customerSalesTaxNumber;

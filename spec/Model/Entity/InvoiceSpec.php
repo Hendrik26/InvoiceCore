@@ -11,6 +11,7 @@ use Irvobmagturs\InvoiceCore\Infrastructure\AggregateHistory;
 use Irvobmagturs\InvoiceCore\Infrastructure\AggregateRoot;
 use Irvobmagturs\InvoiceCore\Infrastructure\RecordedEvent;
 use Irvobmagturs\InvoiceCore\Model\Entity\Invoice;
+use Irvobmagturs\InvoiceCore\Model\Event\InvoiceBecameNational;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceBecameInternational;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceWasOpened;
 use Irvobmagturs\InvoiceCore\Model\Event\LineItemWasAppended;
@@ -169,7 +170,7 @@ class InvoiceSpec extends ObjectBehavior
         $payload = $recordedEvents[0]->getPayload();
         $payload->shouldBeAnInstanceOf(InvoiceBecameInternational::class);
         $payload->getCountryCode()->shouldBe('testCountry');
-        $payload->getCustomerSalasTaxNumber()->shouldBe('testCustomerSalesTaxNumber');
+        $payload->getCustomerSalesTaxNumber()->shouldBe('testCustomerSalesTaxNumber');
     }
 
     /**

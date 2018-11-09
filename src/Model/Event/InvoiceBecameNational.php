@@ -6,7 +6,7 @@
  * Time: 14:04
  */
 
-namespace Irvobmagturs\InvoiceCore\Model\Entity;
+namespace Irvobmagturs\InvoiceCore\Model\Event;
 
 
 use Irvobmagturs\InvoiceCore\Infrastructure\Serializable;
