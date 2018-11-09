@@ -206,7 +206,7 @@ class InvoiceSpec extends ObjectBehavior
     function it_refrains_from_direct_debit()
     {
         $this->clearRecordedEvents();
-        $this->refrainFromDirectDebit();
+        $this->refrainFromSepaDirectDebit();
         $recordedEvents = $this->getRecordedEvents();
         $recordedEvents->shouldHaveCount(1);
         $recordedEvents[0]->shouldBeAnInstanceOf(RecordedEvent::class);

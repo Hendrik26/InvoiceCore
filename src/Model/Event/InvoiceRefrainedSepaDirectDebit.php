@@ -1,25 +1,23 @@
-<?php declare(strict_types=1);
+<?php
 /**
  * Created by PhpStorm.
- * User: hendrik
- * Date: 08.11.18
- * Time: 14:04
+ * User: hendr
+ * Date: 09.11.2018
+ * Time: 12:10
  */
 
-namespace Irvobmagturs\InvoiceCore\Model\Entity;
-
+namespace Irvobmagturs\InvoiceCore\Model\Event;
 
 use Irvobmagturs\InvoiceCore\Infrastructure\Serializable;
 
-class InvoiceBecameNational implements Serializable
+class InvoiceRefrainedSepaDirectDebit implements Serializable
 {
 
     /**
-     * BecomeNational constructor.
+     * InvoiceRefrainedSepaDirectDebit constructor.
      */
     public function __construct()
     {
-        // nothing to do
     }
 
     /**
@@ -32,12 +30,11 @@ class InvoiceBecameNational implements Serializable
 
     /**
      * @param array $data
-     * @return InvoiceBecameNational
+     * @return InvoiceRefrainedSepaDirectDebit
      */
     public static function deserialize(array $data): self
     {
         return new self();
     }
-
 
 }

@@ -17,6 +17,7 @@ use Irvobmagturs\InvoiceCore\Infrastructure\ApplyCallsWhenMethod;
 use Irvobmagturs\InvoiceCore\Infrastructure\RecordsEventsForBusinessMethods;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceBecameInternational;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceEmployedSepaDirectDebit;
+use Irvobmagturs\InvoiceCore\Model\Event\InvoiceRefrainedSepaDirectDebit;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceWasOpened;
 use Irvobmagturs\InvoiceCore\Model\Event\LineItemWasAppended;
 use Irvobmagturs\InvoiceCore\Model\Event\LineItemWasRemoved;
@@ -273,9 +274,10 @@ class Invoice implements AggregateRoot
     }
 
 
-    public function refrainFromDirectDebit(): void
+    public function refrainFromSepaDirectDebit(): void
     {
         // TODO: write logic here
+        $this->recordThat(new InvoiceRefrainedSepaDirectDebit());
     }
 
     public function dropBillingPeriodl(): void
