@@ -26,7 +26,19 @@ class Period extends AbstractValueObjectBase implements Serializable
 
     function serialize(): array
     {
-        return [$this->s, $this->amount];
+        return [$this->startDate->format(DATE_ATOM), $this->endDate->format(DATE_ATOM)];
+    }
+
+    public static function deserializeOld(array $data): self
+    {
+        return new self($data[0] ? new DateTimeImmutable($data[0]) : null,
+            $data[1] ? new DateTimeImmutable($data[1]) : null);
+    }
+
+    public static function deserializeOld(array $data): self
+    {
+        return new self( CustomerId::fromString($data[1]), $data[2],
+            $data[3] ? new DateTimeImmutable($data[3]) : null);
     }
 
 
