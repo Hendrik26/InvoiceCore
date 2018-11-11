@@ -7,6 +7,7 @@ namespace Irvobmagturs\InvoiceCore\Model\ValueObject;
 
 use DateTimeImmutable;
 use DateTimeInterface;
+use DateInterval;
 use Exception;
 use Irvobmagturs\InvoiceCore\Infrastructure\AbstractValueObjectBase;
 use Irvobmagturs\InvoiceCore\Infrastructure\Serializable;
@@ -47,7 +48,7 @@ class Period extends AbstractValueObjectBase implements Serializable
      */
     public function getIinterval()
     {
-        DateInterval $interval = $this->startDate->diff($this->endDate);
+        $interval = $this->startDate->diff($this->endDate); // DateInterval
         return $interval;
     }
 
