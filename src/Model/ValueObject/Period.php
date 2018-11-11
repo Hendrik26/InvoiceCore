@@ -32,7 +32,7 @@ class Period extends AbstractValueObjectBase implements Serializable
      */
     public function getStartDate()
     {
-        return $this->startDate()
+        return $this->startDate();
     }
 
     /**
