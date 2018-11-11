@@ -6,6 +6,8 @@
 namespace Irvobmagturs\InvoiceCore\Model\ValueObject;
 
 use DateTimeImmutable;
+use DateTimeInterface;
+use Exception;
 use Irvobmagturs\InvoiceCore\Infrastructure\AbstractValueObjectBase;
 use Irvobmagturs\InvoiceCore\Infrastructure\Serializable;
 
@@ -24,22 +26,47 @@ class Period extends AbstractValueObjectBase implements Serializable
         $this->init('endDate', $end);
     }
 
+    /**
+     * @return mixed
+     */
+    public function getStartDate()
+    {
+        return $this->startDate()
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEndDate()
+    {
+        return $this->endDate();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIinterval()
+    {
+        DateInterval $interval = $this->startDate->diff($this->endDate);
+        return $interval;
+    }
+
+    /**
+     * @return array
+     */
     function serialize(): array
     {
         return [$this->startDate->format(DATE_ATOM), $this->endDate->format(DATE_ATOM)];
     }
 
-    public static function deserializeOld(array $data): self
+    /**
+     * @param array $data
+     * @return Period
+     * @throws Exception
+     */
+    public static function deserialize(array $data): self
     {
         return new self($data[0] ? new DateTimeImmutable($data[0]) : null,
             $data[1] ? new DateTimeImmutable($data[1]) : null);
     }
-
-    public static function deserializeOld(array $data): self
-    {
-        return new self( CustomerId::fromString($data[1]), $data[2],
-            $data[3] ? new DateTimeImmutable($data[3]) : null);
-    }
-
-
 }
