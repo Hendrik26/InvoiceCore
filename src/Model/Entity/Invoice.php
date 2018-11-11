@@ -279,18 +279,27 @@ class Invoice implements AggregateRoot
 
     }
 
+    /**
+     * @param InvoiceEmployedSepaDirectDebit $event
+     */
     private function whenInvoiceEmployedSepaDirectDebit(InvoiceEmployedSepaDirectDebit $event)
     {
         $this->mandate = $event->getMandate();
 
     }
 
+    /**
+     *
+     */
     public function refrainFromSepaDirectDebit(): void
     {
         // TODO: write logic here
         $this->recordThat(new InvoiceRefrainedSepaDirectDebit());
     }
 
+    /**
+     * @param InvoiceRefrainedSepaDirectDebit $event
+     */
     private function whenInvoiceRefrainedSepaDirectDebit(InvoiceRefrainedSepaDirectDebit $event)
     {
         // nothing to do
