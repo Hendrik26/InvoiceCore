@@ -33,6 +33,7 @@ use Irvobmagturs\InvoiceCore\Model\Exception\InvalidSepaDirectDebitMandateRefere
 use Irvobmagturs\InvoiceCore\Model\Id\CustomerId;
 use Irvobmagturs\InvoiceCore\Model\Id\InvoiceId;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\LineItem;
+use Irvobmagturs\InvoiceCore\Model\ValueObject\Period;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\SepaDirectDebitMandate;
 
 
@@ -303,6 +304,19 @@ class Invoice implements AggregateRoot
     private function whenInvoiceRefrainedSepaDirectDebit(InvoiceRefrainedSepaDirectDebit $event)
     {
         // nothing to do
+    }
+
+    public function covereBillingPeriod(Period $period)
+    {
+        // TODO: write logic here
+        $this->guardBillingPeriod($period);
+    }
+
+    private function guardBillingPeriod(Period $period)
+    {
+        if ($period->getIinterval() < 0){
+            throw new InvalidBillingPeriod();
+        }
     }
 
 
