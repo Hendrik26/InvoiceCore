@@ -14,6 +14,7 @@ use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\CqrsCommandHandler;
 use Irvobmagturs\InvoiceCore\Model\Entity\Invoice;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidInvoiceId;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidLineItemTitle;
+use Irvobmagturs\InvoiceCore\Model\Id\CustomerId;
 use Irvobmagturs\InvoiceCore\Model\Id\InvoiceId;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\LineItem;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\Money;
@@ -27,7 +28,7 @@ class InvoiceHandler extends CqrsCommandHandler
     {
         $invoice = Invoice::chargeCustomer(
             InvoiceId::fromString($aggregateId),
-            $args['customerId'],
+            CustomerId::fromString($args['customerId']),
             $args['invoiceNumber'],
             $this->nullableStringToDate($args['invoiceDate'] ?? null)
         );
