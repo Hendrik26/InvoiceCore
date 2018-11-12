@@ -15,13 +15,11 @@ use Irvobmagturs\InvoiceCore\Infrastructure\AbstractValueObjectBase;
 use Irvobmagturs\InvoiceCore\Infrastructure\Serializable;
 
 /**
- * @property-read int $position
  * @property-read Money $price
  * @property-read float $quantity
  * @property-read string $title
  * @property-read bool $timeBased
  * @property-read ?DateTimeInterface $date
- * @method self withPosition(int $v)
  * @method self withPrice(Money $v)
  * @method self withQuantity(float $v)
  * @method self withTitle(string $v)
@@ -31,14 +29,12 @@ use Irvobmagturs\InvoiceCore\Infrastructure\Serializable;
 class LineItem extends AbstractValueObjectBase
 {
     public function __construct(
-        int $position,
         Money $price,
         float $quantity,
         string $title,
         bool $timeBased,
         ?DateTimeInterface $date = null
     ) {
-        $this->init('position', $position);
         $this->init('price', $price);
         $this->init('quantity', $quantity);
         $this->init('title', $title);
@@ -53,8 +49,8 @@ class LineItem extends AbstractValueObjectBase
      */
     static function deserialize(array $data): Serializable
     {
+        // $data[0] skipped for back-compat
         return new self(
-            $data[0],
             Money::deserialize($data[1]),
             $data[2],
             $data[3],
@@ -69,7 +65,7 @@ class LineItem extends AbstractValueObjectBase
     function serialize(): array
     {
         return [
-            $this->position,
+            0, // for back-compat
             $this->price->serialize(),
             $this->quantity,
             $this->title,
