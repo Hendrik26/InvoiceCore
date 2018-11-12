@@ -10,6 +10,7 @@ namespace Irvobmagturs\InvoiceCore\Model\Entity;
 
 use Buttercup\Protects\IdentifiesAggregate;
 use Buttercup\Protects\RecordsEvents;
+use DateTimeImmutable;
 use DateTimeInterface;
 use Irvobmagturs\InvoiceCore\Infrastructure\AggregateHistory;
 use Irvobmagturs\InvoiceCore\Infrastructure\AggregateRoot;
@@ -17,6 +18,7 @@ use Irvobmagturs\InvoiceCore\Infrastructure\ApplyCallsWhenMethod;
 use Irvobmagturs\InvoiceCore\Infrastructure\RecordsEventsForBusinessMethods;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceBecameInternational;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceBecameNational;
+use Irvobmagturs\InvoiceCore\Model\Event\InvoiceDateHasBeenSet;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceEmployedSepaDirectDebit;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceHasCoveredBillingPeriod;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceHasDroppedBillingPeriod;
@@ -33,6 +35,8 @@ use Irvobmagturs\InvoiceCore\Model\Exception\InvalidInvoiceId;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidLineItemPosition;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidLineItemTitle;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidSepaDirectDebitMandateReference;
+use Irvobmagturs\InvoiceCore\Model\Exception\toEarlyInvoiceDate;
+use Irvobmagturs\InvoiceCore\Model\Exception\toLateInvoiceDate;
 use Irvobmagturs\InvoiceCore\Model\Id\CustomerId;
 use Irvobmagturs\InvoiceCore\Model\Id\InvoiceId;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\BillingPeriod;
@@ -354,8 +358,46 @@ class Invoice implements AggregateRoot
     /**
      *
      */
-    private function whenInvoiceHasDroppedBillingPeriod()// nothing to do
+    private function whenInvoiceHasDroppedBillingPeriod(InvoiceHasDroppedBillingPeriod $event)// nothing to do
     {
         // nothing to do
+    }
+
+    /**
+     * @param DateTimeInterface $date
+     * @throws \Exception
+     */
+    public function setInvoiceDate(DateTimeInterface $date)
+    {
+        $this->guardInvoiceDate($date);
+        $this->recordThat(new InvoiceDateHasBeenSet($date));
+    }
+
+    /**
+     * @param DateTimeInterface $date
+     * @throws \Exception
+     */
+    private function guardInvoiceDate(DateTimeInterface $date)
+    {
+        $minDate = new DateTimeImmutable('1949-05-23');
+        $maxDate = new DateTimeImmutable('2100-01-01');
+        $interval = $minDate->diff($date); // DateInterval
+        $interval2 = $date->diff($maxDate); // DateInterval
+        if ($interval->d < 0)
+        {
+            throw new toEarlyInvoiceDate;
+        }
+        if ($interval2->d < 0)
+        {
+            throw new toLateInvoiceDate;
+        }
+    }
+
+    /**
+     * @param InvoiceDateHasBeenSet $event
+     */
+    private function whenInvoiceDateHasBeenSet(InvoiceDateHasBeenSet $event)
+    {
+        $this->invoiceDate = $event->getInvoiceDate();
     }
 }
