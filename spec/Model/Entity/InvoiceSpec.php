@@ -158,7 +158,7 @@ class InvoiceSpec extends ObjectBehavior
      */
     private function itemConstructorArgsFromTitle($title): array
     {
-        return [0, new Money(0, ''), .0, $title, false];
+        return [new Money(0, ''), .0, $title, false];
     }
 
     /**

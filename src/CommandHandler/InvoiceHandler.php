@@ -9,6 +9,7 @@ use Buttercup\Protects\DomainEvents;
 use DateTimeImmutable;
 use DateTimeZone;
 use Exception;
+use Irvobmagturs\InvoiceCore\Infrastructure\AggregateHistory;
 use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\CqrsCommandHandler;
 use Irvobmagturs\InvoiceCore\Model\Entity\Invoice;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidInvoiceId;
@@ -32,11 +33,10 @@ class InvoiceHandler extends CqrsCommandHandler
      */
     public function appendLineItem(string $aggregateId, array $args): DomainEvents
     {
-        $this->invoice[$aggregateId] = $this->invoice[$aggregateId] ?? new Invoice(InvoiceId::fromString($aggregateId));
+        $this->invoice[$aggregateId] = $this->invoice[$aggregateId] ?? Invoice::reconstituteFrom(new AggregateHistory(InvoiceId::fromString($aggregateId), []));
         $itemSpec = $args['item'];
         $this->invoice[$aggregateId]->appendLineItem(
             new LineItem(
-                0, // TODO remove explicit position
                 new Money($itemSpec['price']['amount'], $itemSpec['price']['currency']),
                 $itemSpec['quantity'],
                 $itemSpec['title'],
