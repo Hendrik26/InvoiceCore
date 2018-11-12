@@ -14,7 +14,7 @@ use Irvobmagturs\InvoiceCore\Infrastructure\Serializable;
 
 
 
-class Period extends AbstractValueObjectBase implements Serializable
+class BillingPeriod extends AbstractValueObjectBase implements Serializable
 {
     /**
      * Period constructor.
@@ -62,7 +62,7 @@ class Period extends AbstractValueObjectBase implements Serializable
 
     /**
      * @param array $data
-     * @return Period
+     * @return BillingPeriod
      * @throws Exception
      */
     public static function deserialize(array $data): self
