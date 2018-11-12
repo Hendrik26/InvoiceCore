@@ -13,6 +13,7 @@ use Irvobmagturs\InvoiceCore\Infrastructure\AggregateHistory;
 use Irvobmagturs\InvoiceCore\Infrastructure\AggregateRoot;
 use Irvobmagturs\InvoiceCore\Infrastructure\RecordedEvent;
 use Irvobmagturs\InvoiceCore\Model\Entity\Invoice;
+use Irvobmagturs\InvoiceCore\Model\Event\InvoiceDateHasBeenSet;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceBecameNational;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceBecameInternational;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceEmployedSepaDirectDebit;
@@ -195,6 +196,9 @@ class InvoiceSpec extends ObjectBehavior
         // $payload->getPosition()->shouldBe(0); // no equivalent test possible
     }
 
+    /**
+     * @param SepaDirectDebitMandate|\PhpSpec\Wrapper\Collaborator $mandate
+     */
     function it_employs_direct_debit(SepaDirectDebitMandate $mandate)
     {
         $this->clearRecordedEvents();
@@ -258,16 +262,20 @@ class InvoiceSpec extends ObjectBehavior
         // $payload->getPosition()->shouldBe(0); // no equivalent test
     }
 
-    function it_sets_invoice_date(DateTimeInterface $date)
+    /**
+     * @param DateTimeInterface|\PhpSpec\Wrapper\Collaborator $date
+     * @throws \Exception
+     */
+    function it_sets_invoice_date()
     {
         $this->clearRecordedEvents();
-        $this->setInvoiceDate();
+        $date = new DateTimeImmutable('2018-09-03');
+        $this->setInvoiceDate($date);
         $recordedEvents = $this->getRecordedEvents();
         $recordedEvents->shouldHaveCount(1);
         $recordedEvents[0]->shouldBeAnInstanceOf(RecordedEvent::class);
         $payload = $recordedEvents[0]->getPayload();
         $payload->shouldBeAnInstanceOf(InvoiceDateHasBeenSet::class);
-        $payload->getInvoiceDate->shouldBeLike($date); // no equivalent test
+        $payload->getInvoiceDate()->shouldBeLike($date); // no equivalent test
     }
-
 }
