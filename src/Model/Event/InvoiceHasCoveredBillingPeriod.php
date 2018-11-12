@@ -12,13 +12,14 @@ namespace Irvobmagturs\InvoiceCore\Model\Event;
 use Irvobmagturs\InvoiceCore\Infrastructure\Serializable;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\BillingPeriod;
 
-class InvoiceBillingPeriodCovered implements Serializable
+class InvoiceHasCoveredBillingPeriod implements Serializable
 {
 
     /**
      * @var
      */
     private $period;
+
 
     /**
      * InvoiceBillingPeriodCovered constructor.
@@ -36,7 +37,7 @@ class InvoiceBillingPeriodCovered implements Serializable
 
     /**
      * @param array $data
-     * @return InvoiceBillingPeriodCovered
+     * @return InvoiceHasCoveredBillingPeriod
      * @throws \Exception
      */
     public static function deserialize(array $data): self

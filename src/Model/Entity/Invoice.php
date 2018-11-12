@@ -17,7 +17,7 @@ use Irvobmagturs\InvoiceCore\Infrastructure\ApplyCallsWhenMethod;
 use Irvobmagturs\InvoiceCore\Infrastructure\RecordsEventsForBusinessMethods;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceBecameInternational;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceBecameNational;
-use Irvobmagturs\InvoiceCore\Model\Event\InvoiceBillingPeriodCovered;
+use Irvobmagturs\InvoiceCore\Model\Event\InvoiceHasCoveredBillingPeriod;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceEmployedSepaDirectDebit;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceRefrainedSepaDirectDebit;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceWasOpened;
@@ -312,7 +312,7 @@ class Invoice implements AggregateRoot
     {
         // TODO: write logic here
         $this->guardBillingPeriod($period);
-        $this->recordThat(new InvoiceBillingPeriodCovered($period));
+        $this->recordThat(new InvoiceHasCoveredBillingPeriod($period));
 
     }
 
