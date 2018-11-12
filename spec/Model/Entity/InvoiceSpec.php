@@ -8,6 +8,7 @@ namespace spec\Irvobmagturs\InvoiceCore\Model\Entity;
 use Buttercup\Protects\DomainEvents;
 use DateTime;
 use DateTimeImmutable;
+use DateTimeInterface;
 use Irvobmagturs\InvoiceCore\Infrastructure\AggregateHistory;
 use Irvobmagturs\InvoiceCore\Infrastructure\AggregateRoot;
 use Irvobmagturs\InvoiceCore\Infrastructure\RecordedEvent;
@@ -256,4 +257,17 @@ class InvoiceSpec extends ObjectBehavior
         $payload->shouldBeAnInstanceOf(InvoiceHasDroppedBillingPeriod::class);
         // $payload->getPosition()->shouldBe(0); // no equivalent test
     }
+
+    function it_sets_invoice_date(DateTimeInterface $date)
+    {
+        $this->clearRecordedEvents();
+        $this->setInvoiceDate();
+        $recordedEvents = $this->getRecordedEvents();
+        $recordedEvents->shouldHaveCount(1);
+        $recordedEvents[0]->shouldBeAnInstanceOf(RecordedEvent::class);
+        $payload = $recordedEvents[0]->getPayload();
+        $payload->shouldBeAnInstanceOf(InvoiceDateHasBeenSet::class);
+        $payload->getInvoiceDate->shouldBeLike($date); // no equivalent test
+    }
+
 }
