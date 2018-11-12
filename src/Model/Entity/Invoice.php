@@ -17,8 +17,9 @@ use Irvobmagturs\InvoiceCore\Infrastructure\ApplyCallsWhenMethod;
 use Irvobmagturs\InvoiceCore\Infrastructure\RecordsEventsForBusinessMethods;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceBecameInternational;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceBecameNational;
-use Irvobmagturs\InvoiceCore\Model\Event\InvoiceHasCoveredBillingPeriod;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceEmployedSepaDirectDebit;
+use Irvobmagturs\InvoiceCore\Model\Event\InvoiceHasCoveredBillingPeriod;
+use Irvobmagturs\InvoiceCore\Model\Event\InvoiceHasDroppedBillingPeriod;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceRefrainedSepaDirectDebit;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceWasOpened;
 use Irvobmagturs\InvoiceCore\Model\Event\LineItemWasAppended;
@@ -34,8 +35,8 @@ use Irvobmagturs\InvoiceCore\Model\Exception\InvalidLineItemTitle;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidSepaDirectDebitMandateReference;
 use Irvobmagturs\InvoiceCore\Model\Id\CustomerId;
 use Irvobmagturs\InvoiceCore\Model\Id\InvoiceId;
-use Irvobmagturs\InvoiceCore\Model\ValueObject\LineItem;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\BillingPeriod;
+use Irvobmagturs\InvoiceCore\Model\ValueObject\LineItem;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\SepaDirectDebitMandate;
 
 
@@ -333,16 +334,28 @@ class Invoice implements AggregateRoot
         }
     }
 
+    /**
+     * @param InvoiceHasCoveredBillingPeriod $event
+     */
     private function whenInvoiceHasCoveredBillingPeriod(InvoiceHasCoveredBillingPeriod $event)
     {
         $this->period = $event->getPeriod();
     }
 
+    /**
+     *
+     */
     public function dropBillingPeriodl(): void
     {
         // TODO: write logic here
+        $this->recordThat(new InvoiceHasDroppedBillingPeriod());
     }
 
-
-
+    /**
+     *
+     */
+    private function whenInvoiceHasDroppedBillingPeriod()// nothing to do
+    {
+        // nothing to do
+    }
 }
