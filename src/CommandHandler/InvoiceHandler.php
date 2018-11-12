@@ -23,6 +23,19 @@ class InvoiceHandler extends CqrsCommandHandler
     /** @var Invoice[] */
     private $invoice = [];
 
+    public function chargeCustomer(string $aggregateId, array $args): DomainEvents
+    {
+        $invoice = Invoice::chargeCustomer(
+            InvoiceId::fromString($aggregateId),
+            $args['customerId'],
+            $args['invoiceNumber'],
+            $args['invoiceDate'] ?? null
+        );
+        $domainEvents = $invoice->getRecordedEvents();
+        $invoice->clearRecordedEvents();
+        return $domainEvents;
+    }
+
     /**
      * @param string $aggregateId
      * @param array $args
