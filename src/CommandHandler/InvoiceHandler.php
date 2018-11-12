@@ -29,7 +29,7 @@ class InvoiceHandler extends CqrsCommandHandler
             InvoiceId::fromString($aggregateId),
             $args['customerId'],
             $args['invoiceNumber'],
-            $args['invoiceDate'] ?? null
+            $this->nullableStringToDate($args['invoiceDate'] ?? null)
         );
         $domainEvents = $invoice->getRecordedEvents();
         $invoice->clearRecordedEvents();
@@ -73,5 +73,15 @@ class InvoiceHandler extends CqrsCommandHandler
         $domainEvents = $this->invoice[$aggregateId]->getRecordedEvents();
         $this->invoice[$aggregateId]->clearRecordedEvents();
         return $domainEvents;
+    }
+
+    /**
+     * @param $invoiceDate
+     * @return DateTimeImmutable|null
+     * @throws Exception
+     */
+    private function nullableStringToDate($invoiceDate)
+    {
+        return $invoiceDate ? new DateTimeImmutable($invoiceDate) : null;
     }
 }

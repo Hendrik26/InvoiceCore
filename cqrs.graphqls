@@ -15,7 +15,7 @@ type CustomerHandler {
 	engageInBusiness(name: String! billingAddress: Address!): Boolean!
 }
 type InvoiceHandler {
-	chargeCustomer(aggregateId: string!, args: array!): Boolean!
+	chargeCustomer(customerId: String!, invoiceNumber: String!, invoiceDate: String!): Boolean!
 	appendLineItem(item: LineItem!): Boolean!
 	removeLineItemByPosition(position: Int!): Boolean!
 	# !: Wert ist weder optional noch nullable
