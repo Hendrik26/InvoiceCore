@@ -306,10 +306,12 @@ class Invoice implements AggregateRoot
         // nothing to do
     }
 
-    public function covereBillingPeriod(Period $period)
+    public function coverBillingPeriod(Period $period)
     {
         // TODO: write logic here
         $this->guardBillingPeriod($period);
+        $this->recordThat(new InvoiceBillingPeriodCovered($period));
+
     }
 
     private function guardBillingPeriod(Period $period)

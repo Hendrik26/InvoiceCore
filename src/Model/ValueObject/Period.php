@@ -46,7 +46,7 @@ class Period extends AbstractValueObjectBase implements Serializable
     /**
      * @return mixed
      */
-    public function getIinterval()
+    public function getIinterval(): DateInterval
     {
         $interval = $this->startDate->diff($this->endDate); // DateInterval
         return $interval;

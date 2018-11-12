@@ -225,7 +225,7 @@ class InvoiceSpec extends ObjectBehavior
     function it_coveres_billing_period(BillingPeriod $period)
     {
         $this->clearRecordedEvents();
-        $this->covereBillingPeriod($period);
+        $this->coverBillingPeriod($period);
         $recordedEvents = $this->getRecordedEvents();
         $recordedEvents->shouldHaveCount(1);
         $recordedEvents[0]->shouldBeAnInstanceOf(RecordedEvent::class);
