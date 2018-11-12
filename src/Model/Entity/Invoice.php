@@ -72,6 +72,11 @@ class Invoice implements AggregateRoot
      */
     private $mandate;
 
+    /**
+     * @var
+     */
+    private $period;
+
     /** @var LineItem[] */
     private $lineItems = [];
 
@@ -308,14 +313,19 @@ class Invoice implements AggregateRoot
         // nothing to do
     }
 
+    /**
+     * @param BillingPeriod $period
+     */
     public function coverBillingPeriod(BillingPeriod $period)
     {
         // TODO: write logic here
         $this->guardBillingPeriod($period);
         $this->recordThat(new InvoiceHasCoveredBillingPeriod($period));
-
     }
 
+    /**
+     * @param BillingPeriod $period
+     */
     private function guardBillingPeriod(BillingPeriod $period)
     {
         if ($period->getInterval()->d < 0){
@@ -323,6 +333,10 @@ class Invoice implements AggregateRoot
         }
     }
 
+    private function whenInvoiceHasCoveredBillingPeriod(InvoiceHasCoveredBillingPeriod $event)
+    {
+        $this->period = $event->getPeriod();
+    }
 
     public function dropBillingPeriodl(): void
     {
