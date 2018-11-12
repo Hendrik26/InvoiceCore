@@ -318,7 +318,7 @@ class Invoice implements AggregateRoot
 
     private function guardBillingPeriod(BillingPeriod $period)
     {
-        if ($period->getIinterval() < 0){
+        if ($period->getInterval()-> < 0){
             throw new InvalidBillingPeriod();
         }
     }

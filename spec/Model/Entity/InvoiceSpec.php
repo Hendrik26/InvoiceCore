@@ -7,6 +7,7 @@ namespace spec\Irvobmagturs\InvoiceCore\Model\Entity;
 
 use Buttercup\Protects\DomainEvents;
 use DateTime;
+use DateTimeImmutable;
 use Irvobmagturs\InvoiceCore\Infrastructure\AggregateHistory;
 use Irvobmagturs\InvoiceCore\Infrastructure\AggregateRoot;
 use Irvobmagturs\InvoiceCore\Infrastructure\RecordedEvent;
@@ -14,6 +15,7 @@ use Irvobmagturs\InvoiceCore\Model\Entity\Invoice;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceBecameNational;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceBecameInternational;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceEmployedSepaDirectDebit;
+use Irvobmagturs\InvoiceCore\Model\Event\InvoiceHasCoveredBillingPeriod;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceRefrainedSepaDirectDebit;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceWasOpened;
 use Irvobmagturs\InvoiceCore\Model\Event\LineItemWasAppended;
@@ -200,6 +202,7 @@ class InvoiceSpec extends ObjectBehavior
         $recordedEvents = $this->getRecordedEvents();
         $recordedEvents->shouldHaveCount(1);
         $recordedEvents[0]->shouldBeAnInstanceOf(RecordedEvent::class);
+        /** @var InvoiceEmployedSepaDirectDebit $payload */
         $payload = $recordedEvents[0]->getPayload();
         $payload->shouldBeAnInstanceOf(InvoiceEmployedSepaDirectDebit::class);
         $payload->getMandate()->shouldBeLike($mandate);
@@ -222,17 +225,20 @@ class InvoiceSpec extends ObjectBehavior
 
     /**
      * @param \PhpSpec\Wrapper\Collaborator|BillingPeriod $period
+     * @throws \Exception
      */
     function it_coveres_billing_period(BillingPeriod $period)
     {
         $this->clearRecordedEvents();
+        $period = new BillingPeriod(new DateTimeImmutable('2018-09-03'), new DateTimeImmutable('2018-11-28'));
         $this->coverBillingPeriod($period);
         $recordedEvents = $this->getRecordedEvents();
         $recordedEvents->shouldHaveCount(1);
         $recordedEvents[0]->shouldBeAnInstanceOf(RecordedEvent::class);
+        /** @var InvoiceHasCoveredBillingPeriod $payload */
         $payload = $recordedEvents[0]->getPayload();
         $payload->shouldBeAnInstanceOf(InvoiceHasCoveredBillingPeriod::class);
-        $payload->getPosition()->shouldBe(0);
+        $payload->getPeriod()->shouldBeLike($period);
     }
 
     /**

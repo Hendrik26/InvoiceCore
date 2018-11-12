@@ -46,7 +46,7 @@ class BillingPeriod extends AbstractValueObjectBase implements Serializable
     /**
      * @return mixed
      */
-    public function getIinterval(): DateInterval
+    public function getInterval(): DateInterval
     {
         $interval = $this->startDate->diff($this->endDate); // DateInterval
         return $interval;

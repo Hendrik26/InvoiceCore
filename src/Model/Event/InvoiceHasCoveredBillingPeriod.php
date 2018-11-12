@@ -20,6 +20,14 @@ class InvoiceHasCoveredBillingPeriod implements Serializable
      */
     private $period;
 
+    /**
+     * @return mixed
+     */
+    public function getPeriod()
+    {
+        return $this->period;
+    }
+
 
     /**
      * InvoiceBillingPeriodCovered constructor.
