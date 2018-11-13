@@ -349,7 +349,7 @@ class Invoice implements AggregateRoot
     /**
      *
      */
-    public function dropBillingPeriodl(): void
+    public function dropBillingPeriod(): void
     {
         // TODO: write logic here
         $this->recordThat(new InvoiceHasDroppedBillingPeriod());
