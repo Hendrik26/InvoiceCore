@@ -17,15 +17,14 @@ type CustomerHandler {
 type InvoiceHandler {
 	chargeCustomer(customerId: String!, invoiceNumber: String!, invoiceDate: String!): Boolean!
 	appendLineItem(item: LineItem!): Boolean!
-	removeLineItemByPosition(position: Int!): Boolean!
 	becomeInternational(countryCode: String!, customerSalesTaxNumber: String!): Boolean!
-	becomeNational(): Boolean!
-	employSepaDirectDebit(mandate: SepaDirectDebitMandate!): Booplean!
-	refrainFromSepaDirectDebit(): Boolean!
-	coverBillingPeriod(period: BillingPeriod!): Booplean!
-    dropBillingPeriod(): Boolean!
-    setInvoiceDate(invoiceDate: Date!): Boolean!
-    # !: Wert ist weder optional noch nullable
+	becomeNational: Boolean!
+	coverBillingPeriod(period: BillingPeriod!): Boolean!
+	dropBillingPeriod: Boolean!
+	employSepaDirectDebit(mandate: SepaDirectDebitMandate!): Boolean!
+	refrainFromSepaDirectDebit: Boolean!
+	removeLineItemByPosition(position: Int!): Boolean!
+	setInvoiceDate(invoiceDate: Date!): Boolean!
 }
 
 # input types, alphabetically
@@ -38,11 +37,11 @@ input Address {
 	postalCode: String!
 }
 input BillingPeriod {
-    startDate: Date!
-    endDate: Date!
+	endDate: Date!
+	startDate: Date!
 }
 input Date {
-    iso8601value: String!
+	iso8601value: String!
 }
 input LineItem {
 	date: String!
@@ -56,6 +55,6 @@ input Money {
 	currency: String!
 }
 input SepaDirectDebitMandate{
-    mandateReference: String!
-    customerIban: String!
+	customerIban: String!
+	mandateReference: String!
 }
