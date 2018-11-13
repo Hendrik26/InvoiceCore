@@ -18,7 +18,14 @@ type InvoiceHandler {
 	chargeCustomer(customerId: String!, invoiceNumber: String!, invoiceDate: String!): Boolean!
 	appendLineItem(item: LineItem!): Boolean!
 	removeLineItemByPosition(position: Int!): Boolean!
-	# !: Wert ist weder optional noch nullable
+	becomeInternational(countryCode: String!, customerSalesTaxNumber: String!): Boolean!
+	becomeNational(): Boolean!
+	employSepaDirectDebit(mandate: SepaDirectDebitMandate!): Booplean!
+	refrainFromSepaDirectDebit(): Boolean!
+	coverBillingPeriod(period: BillingPeriod!): Booplean!
+    dropBillingPeriod(): Boolean!
+    setInvoiceDate(invoiceDate: Date!): Boolean!
+    # !: Wert ist weder optional noch nullable
 }
 
 # input types, alphabetically
@@ -30,6 +37,13 @@ input Address {
 	countryCode: String!
 	postalCode: String!
 }
+input BillingPeriod {
+    startDate: Date!
+    endDate: Date!
+}
+input Date {
+    iso8601value: String!
+}
 input LineItem {
 	date: String!
 	price: Money!
@@ -40,4 +54,8 @@ input LineItem {
 input Money {
 	amount: Float!
 	currency: String!
+}
+input SepaDirectDebitMandate{
+    mandateReference: String!
+    customerIban: String!
 }

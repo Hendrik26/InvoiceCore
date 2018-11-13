@@ -253,7 +253,7 @@ class InvoiceSpec extends ObjectBehavior
     function it_drops_billing_period()
     {
         $this->clearRecordedEvents();
-        $this->dropBillingPeriodl();
+        $this->dropBillingPeriod();
         $recordedEvents = $this->getRecordedEvents();
         $recordedEvents->shouldHaveCount(1);
         $recordedEvents[0]->shouldBeAnInstanceOf(RecordedEvent::class);
