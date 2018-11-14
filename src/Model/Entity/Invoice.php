@@ -107,7 +107,8 @@ class Invoice implements AggregateRoot
         CustomerId $customerId,
         string $invoiceNumber,
         DateTimeInterface $invoiceDate
-    ): self {
+    ): self
+    {
         $invoice = new self($invoiceId);
         $invoice->customerId = $customerId;
         $invoice->guardEmptyInvoiceNumber($invoiceNumber);
@@ -334,7 +335,7 @@ class Invoice implements AggregateRoot
      */
     private function guardBillingPeriod(BillingPeriod $period)
     {
-        if ($period->getInterval()->d < 0){
+        if ($period->getInterval()->d < 0) {
             throw new InvalidBillingPeriod();
         }
     }
@@ -384,12 +385,10 @@ class Invoice implements AggregateRoot
         $maxDate = new DateTimeImmutable('2100-01-01');
         $interval = $minDate->diff($date); // DateInterval
         $interval2 = $date->diff($maxDate); // DateInterval
-        if ($interval->d < 0)
-        {
+        if ($interval->d < 0) {
             throw new toEarlyInvoiceDate;
         }
-        if ($interval2->d < 0)
-        {
+        if ($interval2->d < 0) {
             throw new toLateInvoiceDate;
         }
     }
