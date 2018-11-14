@@ -50,40 +50,40 @@ class Invoice implements AggregateRoot
     use ApplyCallsWhenMethod;
 
     /** @var InvoiceId */
-    private $aggregateId;
+    private $aggregateId; // done???
 
     /**
      * @var
      */
-    private $customerId;
+    private $customerId; // done
 
     /**
      * @var
      */
-    private $customerSalesTaxNumber;
+    private $customerSalesTaxNumber; // done
 
     /**
      * @var
      */
-    private $invoiceNumber;
+    private $invoiceNumber; // done
 
     /**
      * @var
      */
-    private $invoiceDate;
+    private $invoiceDate; // done
 
     /**
      * @var
      */
-    private $mandate;
+    private $mandate; // done
 
     /**
      * @var
      */
-    private $period;
+    private $period; // done
 
     /** @var LineItem[] */
-    private $lineItems = [];
+    private $lineItems = []; // done
 
     /**
      * Invoice constructor.
@@ -100,7 +100,7 @@ class Invoice implements AggregateRoot
      * @param string $invoiceNumber
      * @param DateTimeInterface $invoiceDate
      * @return Invoice
-     * @throws EmptyInvoiceNumber
+     * @throws \Exception
      */
     public static function chargeCustomer( // Factory-Method for Invoice
         InvoiceId $invoiceId,
@@ -111,6 +111,7 @@ class Invoice implements AggregateRoot
         $invoice = new self($invoiceId);
         $invoice->customerId = $customerId;
         $invoice->guardEmptyInvoiceNumber($invoiceNumber);
+        $invoice->guardInvoiceDate($invoiceDate);
         $invoice->recordThat(new InvoiceWasOpened($customerId, $invoiceNumber, $invoiceDate));
         return $invoice;
     }
