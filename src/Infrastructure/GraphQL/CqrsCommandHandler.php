@@ -7,7 +7,7 @@ namespace Irvobmagturs\InvoiceCore\Infrastructure\GraphQL;
 
 use GraphQL\Type\Definition\ResolveInfo;
 use Jubjubbird\Respects\DomainEvent;
-use Verraes\ClassFunctions\ClassFunctions;
+use function Verraes\ClassFunctions\short;
 
 /**
  * The class name of a subclass matches one of the result types defined in CqrsCommandHandlers from the GraphQL schema
@@ -29,7 +29,7 @@ abstract class CqrsCommandHandler extends TypeResolver
         parent::__construct($base);
         foreach (get_class_methods($this) as $method) {
             $this->addResolverForField(
-                ClassFunctions::short($this),
+                short($this),
                 $method,
                 function ($typeValue, array $args, HoldsEventBus $context, ResolveInfo $info) use ($method) {
                     /** @var DomainEvent $event */

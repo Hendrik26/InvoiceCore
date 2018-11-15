@@ -6,7 +6,7 @@
 namespace Irvobmagturs\InvoiceCore\Infrastructure;
 
 use Jubjubbird\Respects\RecordedEvent;
-use Verraes\ClassFunctions\ClassFunctions;
+use function Verraes\ClassFunctions\short;
 
 trait ApplyCallsWhenMethod
 {
@@ -17,7 +17,7 @@ trait ApplyCallsWhenMethod
      */
     protected function apply(RecordedEvent $event): void
     {
-        $method = 'when' . ClassFunctions::short($event->getPayload());
+        $method = 'when' . short($event->getPayload());
         $this->$method($event->getPayload(), $event);
     }
 }
