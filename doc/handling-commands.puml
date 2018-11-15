@@ -1,0 +1,36 @@
+@startuml
+-> aCommandHandler: aCommand
+activate aCommandHandler
+aCommandHandler -> aRepository: load(id)
+activate aRepository
+aRepository -> anEventStore: listEventsForId(id)
+activate anEventStore
+aRepository <-- anEventStore: events
+deactivate anEventStore
+aRepository -> anAggregate: reconstituteFrom(aHistory)
+activate anAggregate
+loop
+anAggregate -> anAggregate: apply(anEvent)
+activate anAggregate
+deactivate anAggregate
+end
+aRepository <-- anAggregate: anAggregate
+aCommandHandler <-- aRepository: anAggregate
+deactivate aRepository
+loop
+aCommandHandler -> anAggregate: someMethod(...)
+anAggregate -> anAggregate: recordThat(anEvent)
+activate anAggregate
+deactivate anAggregate
+end
+aCommandHandler -> aRepository: save(anAggregate)
+activate aRepository
+aRepository -> anAggregate: getRecordedEvents()
+aRepository <-- anAggregate: events
+deactivate anAggregate
+aRepository -> anEventStore: append(events)
+activate anEventStore
+deactivate aRepository
+deactivate anEventStore
+deactivate aCommandHandler
+@enduml
