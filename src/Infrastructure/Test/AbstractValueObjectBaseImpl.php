@@ -6,7 +6,7 @@
 namespace Irvobmagturs\InvoiceCore\Infrastructure\Test;
 
 use Irvobmagturs\InvoiceCore\Infrastructure\AbstractValueObjectBase;
-use Irvobmagturs\InvoiceCore\Infrastructure\Serializable;
+use Jubjubbird\Respects\Serializable;
 
 class AbstractValueObjectBaseImpl extends AbstractValueObjectBase
 {

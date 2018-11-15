@@ -8,7 +8,7 @@ namespace spec\Irvobmagturs\InvoiceCore\Infrastructure;
 use Buttercup\Protects\IdentifiesAggregate;
 use DateTimeImmutable;
 use Irvobmagturs\InvoiceCore\Infrastructure\RecordedEvent;
-use Irvobmagturs\InvoiceCore\Infrastructure\Serializable;
+use Jubjubbird\Respects\Serializable;
 use PhpSpec\ObjectBehavior;
 
 class RecordedEventSpec extends ObjectBehavior

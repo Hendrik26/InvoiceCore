@@ -6,7 +6,7 @@
 namespace Irvobmagturs\InvoiceCore\Model\ValueObject;
 
 use Irvobmagturs\InvoiceCore\Infrastructure\AbstractValueObjectBase;
-use Irvobmagturs\InvoiceCore\Infrastructure\Serializable;
+use Jubjubbird\Respects\Serializable;
 
 /**
  * @property-read float $amount

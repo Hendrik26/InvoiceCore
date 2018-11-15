@@ -12,7 +12,7 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use Exception;
 use Irvobmagturs\InvoiceCore\Infrastructure\AbstractValueObjectBase;
-use Irvobmagturs\InvoiceCore\Infrastructure\Serializable;
+use Jubjubbird\Respects\Serializable;
 
 /**
  * @property-read Money $price

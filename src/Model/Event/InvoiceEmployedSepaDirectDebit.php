@@ -8,9 +8,8 @@
 
 namespace Irvobmagturs\InvoiceCore\Model\Event;
 
-
-use Irvobmagturs\InvoiceCore\Infrastructure\Serializable;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\SepaDirectDebitMandate;
+use Jubjubbird\Respects\Serializable;
 
 class InvoiceEmployedSepaDirectDebit implements Serializable
 {

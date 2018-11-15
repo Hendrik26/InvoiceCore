@@ -8,9 +8,8 @@
 
 namespace Irvobmagturs\InvoiceCore\Model\Event;
 
-
-use Irvobmagturs\InvoiceCore\Infrastructure\Serializable;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\Address;
+use Jubjubbird\Respects\Serializable;
 
 class CustomerAddressWasChanged implements Serializable
 {

@@ -10,6 +10,7 @@ use Buttercup\Protects\DomainEvents;
 use DateTimeImmutable;
 use DateTimeZone;
 use Exception;
+use Jubjubbird\Respects\Serializable;
 
 trait RecordsEventsForBusinessMethods
 {

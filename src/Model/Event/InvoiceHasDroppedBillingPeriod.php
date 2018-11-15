@@ -8,8 +8,7 @@
 
 namespace Irvobmagturs\InvoiceCore\Model\Event;
 
-
-use Irvobmagturs\InvoiceCore\Infrastructure\Serializable;
+use Jubjubbird\Respects\Serializable;
 
 /**
  * Class InvoiceHasDroppedBillingPeriod
