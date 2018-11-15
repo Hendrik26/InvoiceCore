@@ -72,7 +72,7 @@ class SqLiteEventStore implements EventStore
 
     private function openDataBaseConnection(): PDO
     {
-        return new PDO($this->createConnectionString(), self::USERNAME, self::PASSWORD);
+        return new PDO($this->createConnectionString());
     }
 
 
