@@ -6,6 +6,7 @@
 namespace Irvobmagturs\InvoiceCore\CommandHandler;
 
 use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\CqrsCommandHandler;
+use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\TypeResolver;
 use Irvobmagturs\InvoiceCore\Model\Entity\Customer;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidCustomerId;
 use Irvobmagturs\InvoiceCore\Model\Id\CustomerId;
@@ -18,7 +19,7 @@ class CustomerHandler extends CqrsCommandHandler
 {
     private $repository;
 
-    public function __construct(?parent $base, CustomerRepository $repository)
+    public function __construct(?TypeResolver $base, CustomerRepository $repository)
     {
         parent::__construct($base);
         $this->repository = $repository;

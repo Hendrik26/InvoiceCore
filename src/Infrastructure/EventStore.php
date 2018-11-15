@@ -8,10 +8,8 @@
 
 namespace Irvobmagturs\InvoiceCore\Infrastructure;
 
-
 use Buttercup\Protects\IdentifiesAggregate;
 use Jubjubbird\Respects\RecordedEvent;
-use Traversable;
 
 interface EventStore
 {
@@ -25,5 +23,5 @@ interface EventStore
      * @return RecordedEvent[]
      * @throws NoEventsStored when there are no events for that ID.
      */
-    public function listEventsForId(IdentifiesAggregate $id): Traversable;
+    public function listEventsForId(IdentifiesAggregate $id): iterable;
 }
