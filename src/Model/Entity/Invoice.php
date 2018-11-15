@@ -117,10 +117,10 @@ class Invoice implements AggregateRoot
 
     /**
      * @param AggregateHistory $aggregateHistory
-     * @return RecordsEvents
+     * @return Invoice
      * @throws InvalidInvoiceId
      */
-    public static function reconstituteFrom(AggregateHistory $aggregateHistory)
+    public static function reconstituteFrom(AggregateHistory $aggregateHistory): self
     {
         $invoice = new self(InvoiceId::fromString(strval($aggregateHistory->getAggregateId())));
         foreach ($aggregateHistory as $event) {
