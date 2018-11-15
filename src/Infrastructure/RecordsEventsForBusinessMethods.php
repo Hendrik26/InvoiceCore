@@ -10,6 +10,7 @@ use DateTimeZone;
 use Exception;
 use Jubjubbird\Respects\DomainEvent;
 use Jubjubbird\Respects\DomainEvents;
+use Jubjubbird\Respects\RecordedEvent;
 use Jubjubbird\Respects\Serializable;
 
 trait RecordsEventsForBusinessMethods

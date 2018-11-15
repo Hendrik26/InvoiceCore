@@ -6,9 +6,9 @@
 namespace spec\Irvobmagturs\InvoiceCore\CommandHandler;
 
 use Irvobmagturs\InvoiceCore\CommandHandler\CustomerHandler;
-use Irvobmagturs\InvoiceCore\Infrastructure\RecordedEvent;
 use Irvobmagturs\InvoiceCore\Model\Event\CustomerHasEngagedInBusiness;
 use Jubjubbird\Respects\DomainEvents;
+use Jubjubbird\Respects\RecordedEvent;
 use PhpSpec\ObjectBehavior;
 
 class CustomerHandlerSpec extends ObjectBehavior

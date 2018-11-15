@@ -5,6 +5,7 @@
 
 namespace Irvobmagturs\InvoiceCore\Infrastructure;
 
+use Jubjubbird\Respects\RecordedEvent;
 use Verraes\ClassFunctions\ClassFunctions;
 
 trait ApplyCallsWhenMethod

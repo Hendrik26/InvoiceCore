@@ -13,8 +13,8 @@ use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\EventBus;
 use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\HoldsEventBus;
 use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\SchemaFileCache;
 use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\TypeResolver;
-use Irvobmagturs\InvoiceCore\Infrastructure\RecordedEvent;
 use Jubjubbird\Respects\DomainEvent;
+use Jubjubbird\Respects\RecordedEvent;
 
 require_once __DIR__ . '/vendor/autoload.php';
 $schemaCache = __DIR__ . '/data/cache/schema';
