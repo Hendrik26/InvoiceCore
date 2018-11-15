@@ -8,10 +8,9 @@
 
 namespace Irvobmagturs\InvoiceCore\Model\Event;
 
-
 use DateTimeImmutable;
 use DateTimeInterface;
-use Irvobmagturs\InvoiceCore\Infrastructure\Serializable;
+use Jubjubbird\Respects\Serializable;
 
 class InvoiceDateHasBeenSet implements Serializable
 {

@@ -5,14 +5,11 @@
 
 namespace Irvobmagturs\InvoiceCore\Model\ValueObject;
 
-use DateTimeImmutable;
-use DateTimeInterface;
 use DateInterval;
+use DateTimeImmutable;
 use Exception;
 use Irvobmagturs\InvoiceCore\Infrastructure\AbstractValueObjectBase;
-use Irvobmagturs\InvoiceCore\Infrastructure\Serializable;
-
-
+use Jubjubbird\Respects\Serializable;
 
 class BillingPeriod extends AbstractValueObjectBase implements Serializable
 {

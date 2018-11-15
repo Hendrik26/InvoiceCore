@@ -8,8 +8,7 @@
 
 namespace Irvobmagturs\InvoiceCore\Model\Entity;
 
-
-use Irvobmagturs\InvoiceCore\Infrastructure\Serializable;
+use Jubjubbird\Respects\Serializable;
 
 class CustomerNameWasChanged implements Serializable
 {

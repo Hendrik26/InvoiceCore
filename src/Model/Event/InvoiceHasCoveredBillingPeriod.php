@@ -8,9 +8,8 @@
 
 namespace Irvobmagturs\InvoiceCore\Model\Event;
 
-
-use Irvobmagturs\InvoiceCore\Infrastructure\Serializable;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\BillingPeriod;
+use Jubjubbird\Respects\Serializable;
 
 class InvoiceHasCoveredBillingPeriod implements Serializable
 {

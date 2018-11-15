@@ -7,7 +7,6 @@ namespace spec\Irvobmagturs\InvoiceCore\Infrastructure\Test;
 
 use Irvobmagturs\InvoiceCore\Infrastructure\Test\AbstractValueObjectBaseImpl;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class AbstractValueObjectBaseImplSpec extends ObjectBehavior
 {

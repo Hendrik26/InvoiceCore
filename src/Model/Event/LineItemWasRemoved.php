@@ -8,7 +8,7 @@
 
 namespace Irvobmagturs\InvoiceCore\Model\Event;
 
-use Irvobmagturs\InvoiceCore\Infrastructure\Serializable;
+use Jubjubbird\Respects\Serializable;
 
 class LineItemWasRemoved implements Serializable
 {

@@ -5,7 +5,7 @@
 
 namespace Irvobmagturs\InvoiceCore\Infrastructure\GraphQL;
 
-use Buttercup\Protects\DomainEvent;
+use Jubjubbird\Respects\DomainEvent;
 
 interface EventBus
 {

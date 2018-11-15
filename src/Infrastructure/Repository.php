@@ -9,6 +9,7 @@
 namespace Irvobmagturs\InvoiceCore\Infrastructure;
 
 use Buttercup\Protects\IdentifiesAggregate;
+use Jubjubbird\Respects\AggregateRoot;
 
 interface Repository
 {

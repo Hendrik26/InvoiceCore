@@ -12,10 +12,6 @@ use Buttercup\Protects\IdentifiesAggregate;
 use Buttercup\Protects\RecordsEvents;
 use DateTimeImmutable;
 use DateTimeInterface;
-use Irvobmagturs\InvoiceCore\Infrastructure\AggregateHistory;
-use Irvobmagturs\InvoiceCore\Infrastructure\AggregateRoot;
-use Irvobmagturs\InvoiceCore\Infrastructure\ApplyCallsWhenMethod;
-use Irvobmagturs\InvoiceCore\Infrastructure\RecordsEventsForBusinessMethods;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceBecameInternational;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceBecameNational;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceDateHasBeenSet;
@@ -42,7 +38,10 @@ use Irvobmagturs\InvoiceCore\Model\Id\InvoiceId;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\BillingPeriod;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\LineItem;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\SepaDirectDebitMandate;
-
+use Jubjubbird\Respects\AggregateHistory;
+use Jubjubbird\Respects\AggregateRoot;
+use Jubjubbird\Respects\ApplyCallsWhenMethod;
+use Jubjubbird\Respects\RecordsEventsForBusinessMethods;
 
 class Invoice implements AggregateRoot
 {
@@ -107,8 +106,7 @@ class Invoice implements AggregateRoot
         CustomerId $customerId,
         string $invoiceNumber,
         DateTimeInterface $invoiceDate
-    ): self
-    {
+    ): self {
         $invoice = new self($invoiceId);
         $invoice->customerId = $customerId;
         $invoice->guardEmptyInvoiceNumber($invoiceNumber);
@@ -142,11 +140,68 @@ class Invoice implements AggregateRoot
     }
 
     /**
+     * @param string $countryCode
+     * @param string $customerSalesTaxNumber
+     */
+    public function becomeInternational(string $countryCode, string $customerSalesTaxNumber)
+    {
+        $this->guardEmptyCountryCode($countryCode);
+        $this->guardEmptyCustomerSalesTaxNumber($customerSalesTaxNumber);
+        $this->recordThat(new InvoiceBecameInternational($countryCode, $customerSalesTaxNumber));
+    }
+
+    /**
+     *
+     */
+    public function becomeNational()
+    {
+        $this->recordThat(new InvoiceBecameNational());
+    }
+
+    /**
+     * @param BillingPeriod $period
+     */
+    public function coverBillingPeriod(BillingPeriod $period)
+    {
+        // TODO: write logic here
+        $this->guardBillingPeriod($period);
+        $this->recordThat(new InvoiceHasCoveredBillingPeriod($period));
+    }
+
+    /**
+     *
+     */
+    public function dropBillingPeriod(): void
+    {
+        // TODO: write logic here
+        $this->recordThat(new InvoiceHasDroppedBillingPeriod());
+    }
+
+    /**
+     * @param SepaDirectDebitMandate $mandate
+     */
+    public function employSepaDirectDebit(SepaDirectDebitMandate $mandate): void
+    {
+        // TODO: write logic here // primary TODO
+        $this->guardInvalidSepaDirectDebitMandate($mandate);
+        $this->recordThat(new InvoiceEmployedSepaDirectDebit($mandate));
+    }
+
+    /**
      * @return IdentifiesAggregate
      */
     public function getAggregateId(): IdentifiesAggregate
     {
         return $this->aggregateId;
+    }
+
+    /**
+     *
+     */
+    public function refrainFromSepaDirectDebit(): void
+    {
+        // TODO: write logic here
+        $this->recordThat(new InvoiceRefrainedSepaDirectDebit());
     }
 
     /**
@@ -156,6 +211,56 @@ class Invoice implements AggregateRoot
     {
         $this->guardInvalidPosition($position);
         $this->recordThat(new LineItemWasRemoved($position));
+    }
+
+    /**
+     * @param DateTimeInterface $date
+     * @throws \Exception
+     */
+    public function setInvoiceDate(DateTimeInterface $date)
+    {
+        $this->guardInvoiceDate($date);
+        $this->recordThat(new InvoiceDateHasBeenSet($date));
+    }
+
+    /**
+     * @param BillingPeriod $period
+     */
+    private function guardBillingPeriod(BillingPeriod $period)
+    {
+        if ($period->getInterval()->d < 0) {
+            throw new InvalidBillingPeriod();
+        }
+    }
+
+    /**
+     * @param string $countryCode
+     */
+    private function guardEmptyCountryCode(string $countryCode)
+    {
+        if (trim($countryCode) === "") {
+            throw new EmptyCountryCode();
+        }
+    }
+
+    /**
+     * @param string $salesTaxNumber
+     */
+    private function guardEmptyCustomerSalesTaxNumber(string $salesTaxNumber)
+    {
+        if (trim($salesTaxNumber) === "") {
+            throw new InvalidCustomerSalesTaxNumber();
+        }
+    }
+
+    /**
+     * @param string $invoiceNumber
+     */
+    private function guardEmptyInvoiceNumber(string $invoiceNumber)
+    {
+        if (trim($invoiceNumber) === "") {
+            throw new EmptyInvoiceNumber();
+        }
     }
 
     /**
@@ -180,107 +285,6 @@ class Invoice implements AggregateRoot
     }
 
     /**
-     * @param LineItemWasAppended $event
-     */
-    private function whenLineItemWasAppended(LineItemWasAppended $event)
-    {
-        $this->lineItems[] = $event->getItem();
-    }
-
-    /**
-     * @param LineItemWasAppended $event
-     */
-    private function whenLineItemWasRemoved(LineItemWasRemoved $event)
-    {
-        array_splice($this->lineItems, $event->getPosition(), 1);
-    }
-
-    /**
-     * @param string $invoiceNumber
-     */
-    private function guardEmptyInvoiceNumber(string $invoiceNumber)
-    {
-        if (trim($invoiceNumber) === "") {
-            throw new EmptyInvoiceNumber();
-        }
-    }
-
-    /**
-     * @param InvoiceWasOpened $event
-     */
-    private function whenInvoiceWasOpened(InvoiceWasOpened $event)
-    {
-        $this->customerId = $event->getCustomerId();
-        $this->invoiceNumber = $event->getInvoiceNumber();
-        $this->invoiceDate = $event->getInvoiceDate();
-    }
-
-    /**
-     * @param string $countryCode
-     * @param string $customerSalesTaxNumber
-     */
-    public function becomeInternational(string $countryCode, string $customerSalesTaxNumber)
-    {
-        $this->guardEmptyCountryCode($countryCode);
-        $this->guardEmptyCustomerSalesTaxNumber($customerSalesTaxNumber);
-        $this->recordThat(new InvoiceBecameInternational($countryCode, $customerSalesTaxNumber));
-    }
-
-    /**
-     * @param string $countryCode
-     */
-    private function guardEmptyCountryCode(string $countryCode)
-    {
-        if (trim($countryCode) === "") {
-            throw new EmptyCountryCode();
-        }
-    }
-
-    /**
-     * @param string $salesTaxNumber
-     */
-    private function guardEmptyCustomerSalesTaxNumber(string $salesTaxNumber)
-    {
-        if (trim($salesTaxNumber) === "") {
-            throw new InvalidCustomerSalesTaxNumber();
-        }
-    }
-
-    /**
-     * @param InvoiceBecameInternational $event
-     */
-    private function whenInvoiceBecameInternational(InvoiceBecameInternational $event)
-    {
-        $this->customerSalesTaxNumber = $event->getCustomerSalesTaxNumber();
-    }
-
-    /**
-     *
-     */
-    public function becomeNational()
-    {
-        $this->recordThat(new InvoiceBecameNational());
-    }
-
-    /**
-     * @param InvoiceBecameNational $event
-     */
-    private function whenInvoiceBecameNational(InvoiceBecameNational $event)
-    {
-        // nothing to do
-    }
-
-    /**
-     * @param SepaDirectDebitMandate $mandate
-     */
-    public function employSepaDirectDebit(SepaDirectDebitMandate $mandate): void
-    {
-        // TODO: write logic here // primary TODO
-        $this->guardInvalidSepaDirectDebitMandate($mandate);
-        $this->recordThat(new InvoiceEmployedSepaDirectDebit($mandate));
-    }
-
-    /**
      * @param SepaDirectDebitMandate $mandate
      */
     private function guardInvalidSepaDirectDebitMandate(SepaDirectDebitMandate $mandate)
@@ -292,87 +296,6 @@ class Invoice implements AggregateRoot
             throw new InvalidSepaDirectDebitMandateReference();
         }
 
-    }
-
-    /**
-     * @param InvoiceEmployedSepaDirectDebit $event
-     */
-    private function whenInvoiceEmployedSepaDirectDebit(InvoiceEmployedSepaDirectDebit $event)
-    {
-        $this->mandate = $event->getMandate();
-
-    }
-
-    /**
-     *
-     */
-    public function refrainFromSepaDirectDebit(): void
-    {
-        // TODO: write logic here
-        $this->recordThat(new InvoiceRefrainedSepaDirectDebit());
-    }
-
-    /**
-     * @param InvoiceRefrainedSepaDirectDebit $event
-     */
-    private function whenInvoiceRefrainedSepaDirectDebit(InvoiceRefrainedSepaDirectDebit $event)
-    {
-        // nothing to do
-    }
-
-    /**
-     * @param BillingPeriod $period
-     */
-    public function coverBillingPeriod(BillingPeriod $period)
-    {
-        // TODO: write logic here
-        $this->guardBillingPeriod($period);
-        $this->recordThat(new InvoiceHasCoveredBillingPeriod($period));
-    }
-
-    /**
-     * @param BillingPeriod $period
-     */
-    private function guardBillingPeriod(BillingPeriod $period)
-    {
-        if ($period->getInterval()->d < 0) {
-            throw new InvalidBillingPeriod();
-        }
-    }
-
-    /**
-     * @param InvoiceHasCoveredBillingPeriod $event
-     */
-    private function whenInvoiceHasCoveredBillingPeriod(InvoiceHasCoveredBillingPeriod $event)
-    {
-        $this->period = $event->getPeriod();
-    }
-
-    /**
-     *
-     */
-    public function dropBillingPeriod(): void
-    {
-        // TODO: write logic here
-        $this->recordThat(new InvoiceHasDroppedBillingPeriod());
-    }
-
-    /**
-     *
-     */
-    private function whenInvoiceHasDroppedBillingPeriod(InvoiceHasDroppedBillingPeriod $event)// nothing to do
-    {
-        // nothing to do
-    }
-
-    /**
-     * @param DateTimeInterface $date
-     * @throws \Exception
-     */
-    public function setInvoiceDate(DateTimeInterface $date)
-    {
-        $this->guardInvoiceDate($date);
-        $this->recordThat(new InvoiceDateHasBeenSet($date));
     }
 
     /**
@@ -394,10 +317,85 @@ class Invoice implements AggregateRoot
     }
 
     /**
+     * @param InvoiceBecameInternational $event
+     */
+    private function whenInvoiceBecameInternational(InvoiceBecameInternational $event)
+    {
+        $this->customerSalesTaxNumber = $event->getCustomerSalesTaxNumber();
+    }
+
+    /**
+     * @param InvoiceBecameNational $event
+     */
+    private function whenInvoiceBecameNational(InvoiceBecameNational $event)
+    {
+        // nothing to do
+    }
+
+    /**
      * @param InvoiceDateHasBeenSet $event
      */
     private function whenInvoiceDateHasBeenSet(InvoiceDateHasBeenSet $event)
     {
         $this->invoiceDate = $event->getInvoiceDate();
+    }
+
+    /**
+     * @param InvoiceEmployedSepaDirectDebit $event
+     */
+    private function whenInvoiceEmployedSepaDirectDebit(InvoiceEmployedSepaDirectDebit $event)
+    {
+        $this->mandate = $event->getMandate();
+
+    }
+
+    /**
+     * @param InvoiceHasCoveredBillingPeriod $event
+     */
+    private function whenInvoiceHasCoveredBillingPeriod(InvoiceHasCoveredBillingPeriod $event)
+    {
+        $this->period = $event->getPeriod();
+    }
+
+    /**
+     *
+     */
+    private function whenInvoiceHasDroppedBillingPeriod(InvoiceHasDroppedBillingPeriod $event)// nothing to do
+    {
+        // nothing to do
+    }
+
+    /**
+     * @param InvoiceRefrainedSepaDirectDebit $event
+     */
+    private function whenInvoiceRefrainedSepaDirectDebit(InvoiceRefrainedSepaDirectDebit $event)
+    {
+        // nothing to do
+    }
+
+    /**
+     * @param InvoiceWasOpened $event
+     */
+    private function whenInvoiceWasOpened(InvoiceWasOpened $event)
+    {
+        $this->customerId = $event->getCustomerId();
+        $this->invoiceNumber = $event->getInvoiceNumber();
+        $this->invoiceDate = $event->getInvoiceDate();
+    }
+
+    /**
+     * @param LineItemWasAppended $event
+     */
+    private function whenLineItemWasAppended(LineItemWasAppended $event)
+    {
+        $this->lineItems[] = $event->getItem();
+    }
+
+    /**
+     * @param LineItemWasAppended $event
+     */
+    private function whenLineItemWasRemoved(LineItemWasRemoved $event)
+    {
+        array_splice($this->lineItems, $event->getPosition(), 1);
     }
 }

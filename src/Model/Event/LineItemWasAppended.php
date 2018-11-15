@@ -9,8 +9,8 @@
 namespace Irvobmagturs\InvoiceCore\Model\Event;
 
 use Exception;
-use Irvobmagturs\InvoiceCore\Infrastructure\Serializable;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\LineItem;
+use Jubjubbird\Respects\Serializable;
 
 class LineItemWasAppended implements Serializable
 {

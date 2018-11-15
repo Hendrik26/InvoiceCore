@@ -10,7 +10,9 @@ namespace Irvobmagturs\InvoiceCore\Infrastructure;
 
 
 use Buttercup\Protects\IdentifiesAggregate;
+use Jubjubbird\Respects\RecordedEvent;
 use PDO;
+use stdClass;
 use Traversable;
 
 class SqLiteEventStore implements EventStore

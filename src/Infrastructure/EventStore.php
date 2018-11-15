@@ -10,18 +10,19 @@ namespace Irvobmagturs\InvoiceCore\Infrastructure;
 
 
 use Buttercup\Protects\IdentifiesAggregate;
+use Jubjubbird\Respects\RecordedEvent;
 use Traversable;
 
 interface EventStore
 {
     /**
+     * @param RecordedEvent[] $recordedEvents
+     */
+    public function append(array $recordedEvents): void;
+
+    /**
      * @param IdentifiesAggregate $id
      * @return RecordedEvent[]
      */
     public function listEventsForId(IdentifiesAggregate $id): Traversable;
-
-    /**
-     * @param RecordedEvent[] $recordedEvents
-     */
-    public function append(array $recordedEvents): void;
 }

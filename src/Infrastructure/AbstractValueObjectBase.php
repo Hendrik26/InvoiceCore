@@ -5,6 +5,8 @@
 
 namespace Irvobmagturs\InvoiceCore\Infrastructure;
 
+use Jubjubbird\Respects\Serializable;
+
 /**
  * A base class for value objects allowing read-only access to its protected member variables, equality testing and
  * [de]serialization.
