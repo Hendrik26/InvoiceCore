@@ -6,16 +6,14 @@
 namespace spec\Irvobmagturs\InvoiceCore\Model\Entity;
 
 use Buttercup\Protects\DomainEvents;
-use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
-use Irvobmagturs\InvoiceCore\Infrastructure\AggregateHistory;
 use Irvobmagturs\InvoiceCore\Infrastructure\AggregateRoot;
 use Irvobmagturs\InvoiceCore\Infrastructure\RecordedEvent;
 use Irvobmagturs\InvoiceCore\Model\Entity\Invoice;
-use Irvobmagturs\InvoiceCore\Model\Event\InvoiceDateHasBeenSet;
-use Irvobmagturs\InvoiceCore\Model\Event\InvoiceBecameNational;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceBecameInternational;
+use Irvobmagturs\InvoiceCore\Model\Event\InvoiceBecameNational;
+use Irvobmagturs\InvoiceCore\Model\Event\InvoiceDateHasBeenSet;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceEmployedSepaDirectDebit;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceHasCoveredBillingPeriod;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceHasDroppedBillingPeriod;
@@ -30,6 +28,7 @@ use Irvobmagturs\InvoiceCore\Model\ValueObject\BillingPeriod;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\LineItem;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\Money;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\SepaDirectDebitMandate;
+use Jubjubbird\Respects\AggregateHistory;
 use PhpSpec\ObjectBehavior;
 
 class InvoiceSpec extends ObjectBehavior

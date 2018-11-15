@@ -9,18 +9,17 @@ use Buttercup\Protects\DomainEvents;
 use DateTimeImmutable;
 use DateTimeZone;
 use Exception;
-use Irvobmagturs\InvoiceCore\Infrastructure\AggregateHistory;
 use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\CqrsCommandHandler;
 use Irvobmagturs\InvoiceCore\Model\Entity\Invoice;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidInvoiceId;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidLineItemTitle;
 use Irvobmagturs\InvoiceCore\Model\Id\CustomerId;
 use Irvobmagturs\InvoiceCore\Model\Id\InvoiceId;
+use Irvobmagturs\InvoiceCore\Model\ValueObject\BillingPeriod;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\LineItem;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\Money;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\SepaDirectDebitMandate;
-use Irvobmagturs\InvoiceCore\Model\ValueObject\BillingPeriod;
-
+use Jubjubbird\Respects\AggregateHistory;
 
 
 class InvoiceHandler extends CqrsCommandHandler

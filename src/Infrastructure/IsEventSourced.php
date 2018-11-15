@@ -6,6 +6,7 @@
 namespace Irvobmagturs\InvoiceCore\Infrastructure;
 
 use Buttercup\Protects\RecordsEvents;
+use Jubjubbird\Respects\AggregateHistory;
 
 /**
  * An AggregateRoot, that can be reconstituted from an AggregateHistory.

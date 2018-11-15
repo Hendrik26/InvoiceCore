@@ -11,7 +11,6 @@ namespace Irvobmagturs\InvoiceCore\Model\Entity;
 
 use Buttercup\Protects\IdentifiesAggregate;
 use Buttercup\Protects\RecordsEvents;
-use Irvobmagturs\InvoiceCore\Infrastructure\AggregateHistory;
 use Irvobmagturs\InvoiceCore\Infrastructure\AggregateRoot;
 use Irvobmagturs\InvoiceCore\Infrastructure\ApplyCallsWhenMethod;
 use Irvobmagturs\InvoiceCore\Infrastructure\RecordsEventsForBusinessMethods;
@@ -23,6 +22,7 @@ use Irvobmagturs\InvoiceCore\Model\Exception\InvalidCustomerName;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidCustomerSalesTaxNumber;
 use Irvobmagturs\InvoiceCore\Model\Id\CustomerId;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\Address;
+use Jubjubbird\Respects\AggregateHistory;
 
 class Customer implements AggregateRoot
 {
@@ -32,18 +32,15 @@ class Customer implements AggregateRoot
     /**
      * @var
      */
-    private $customerName;
-
-    /**
-     * @var
-     */
     private $customerAddress;
-
     /**
      * @var CustomerId
      */
     private $customerId;
-
+    /**
+     * @var
+     */
+    private $customerName;
     /**
      * @var
      */
