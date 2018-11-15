@@ -10,8 +10,6 @@ namespace Irvobmagturs\InvoiceCore\Model\Entity;
 
 use Buttercup\Protects\IdentifiesAggregate;
 use Buttercup\Protects\RecordsEvents;
-use Irvobmagturs\InvoiceCore\Infrastructure\ApplyCallsWhenMethod;
-use Irvobmagturs\InvoiceCore\Infrastructure\RecordsEventsForBusinessMethods;
 use Irvobmagturs\InvoiceCore\Model\Event\CustomerAddressWasChanged;
 use Irvobmagturs\InvoiceCore\Model\Event\CustomerHasEngagedInBusiness;
 use Irvobmagturs\InvoiceCore\Model\Event\CustomerSalesTaxNumberWasChanged;
@@ -22,6 +20,8 @@ use Irvobmagturs\InvoiceCore\Model\Id\CustomerId;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\Address;
 use Jubjubbird\Respects\AggregateHistory;
 use Jubjubbird\Respects\AggregateRoot;
+use Jubjubbird\Respects\ApplyCallsWhenMethod;
+use Jubjubbird\Respects\RecordsEventsForBusinessMethods;
 
 class Customer implements AggregateRoot
 {
