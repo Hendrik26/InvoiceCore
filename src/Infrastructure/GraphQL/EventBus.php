@@ -5,9 +5,9 @@
 
 namespace Irvobmagturs\InvoiceCore\Infrastructure\GraphQL;
 
-use Jubjubbird\Respects\DomainEvent;
+use Jubjubbird\Respects\DomainEvents;
 
 interface EventBus
 {
-    function handle(DomainEvent $event): void;
+    function dispatch(DomainEvents $domainEvents): void;
 }

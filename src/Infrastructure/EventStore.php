@@ -23,6 +23,7 @@ interface EventStore
     /**
      * @param IdentifiesAggregate $id
      * @return RecordedEvent[]
+     * @throws NoEventsStored when there are no events for that ID.
      */
     public function listEventsForId(IdentifiesAggregate $id): Traversable;
 }

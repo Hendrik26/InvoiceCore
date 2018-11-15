@@ -36,12 +36,25 @@ class SqLiteEventStore implements EventStore
 
     /**
      * @param IdentifiesAggregate $id
-     * @return RecordedEvent[]
+     * @return Traversable
+     * @throws NoEventsStored when there are no events for that ID.
      */
     public function listEventsForId(IdentifiesAggregate $id): Traversable
     {
         $dbResults = $this->getEventsFromConnection($this->connection);
+        $this->guardAtLeastOneEvent($dbResults);
         return array_map([$this, 'restoreEventFromRecord'], $dbResults);
+    }
+
+    /**
+     * @param array $dbResults
+     * @throws NoEventsStored
+     */
+    private function guardAtLeastOneEvent(array $dbResults): void
+    {
+        if (empty($dbResults)) {
+            throw new NoEventsStored();
+        }
     }
 
     private function restoreEventFromRecord(stdClass $record): RecordedEvent

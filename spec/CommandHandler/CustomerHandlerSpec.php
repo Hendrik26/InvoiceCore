@@ -6,17 +6,22 @@
 namespace spec\Irvobmagturs\InvoiceCore\CommandHandler;
 
 use Irvobmagturs\InvoiceCore\CommandHandler\CustomerHandler;
-use Irvobmagturs\InvoiceCore\Model\Event\CustomerHasEngagedInBusiness;
-use Jubjubbird\Respects\DomainEvents;
-use Jubjubbird\Respects\RecordedEvent;
+use Irvobmagturs\InvoiceCore\Model\Entity\Customer;
+use Irvobmagturs\InvoiceCore\Model\Id\CustomerId;
+use Irvobmagturs\InvoiceCore\Repository\CustomerNotFound;
+use Irvobmagturs\InvoiceCore\Repository\CustomerRepository;
 use PhpSpec\ObjectBehavior;
+use Prophecy\Argument;
 
 class CustomerHandlerSpec extends ObjectBehavior
 {
-    function it_handles_engageInBusiness()
+    function it_handles_engageInBusiness(CustomerRepository $repository)
     {
-        $domainEvents = $this->engageInBusiness(
-            '813236ed-e509-4b2b-acad-741584f4032f',
+        $uuidString = '813236ed-e509-4b2b-acad-741584f4032f';
+        $repository->load(CustomerId::fromString($uuidString))->willThrow(CustomerNotFound::class);
+        $repository->save(Argument::type(Customer::class))->shouldBeCalledOnce();
+        $this->engageInBusiness(
+            $uuidString,
             [
                 'name' => 'Foobar Ltd.',
                 'billingAddress' => [
@@ -28,14 +33,15 @@ class CustomerHandlerSpec extends ObjectBehavior
                 ]
             ]
         );
-        $domainEvents->shouldBeAnInstanceOf(DomainEvents::class);
-        $domainEvents->shouldHaveCount(1);
-        $domainEvents[0]->shouldBeAnInstanceOf(RecordedEvent::class);
-        $domainEvents[0]->getPayload()->shouldBeAnInstanceOf(CustomerHasEngagedInBusiness::class);
     }
 
     function it_is_initializable()
     {
         $this->shouldHaveType(CustomerHandler::class);
+    }
+
+    function let(CustomerRepository $repository)
+    {
+        $this->beConstructedWith(null, $repository);
     }
 }

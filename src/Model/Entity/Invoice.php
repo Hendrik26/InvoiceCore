@@ -9,7 +9,6 @@
 namespace Irvobmagturs\InvoiceCore\Model\Entity;
 
 use Buttercup\Protects\IdentifiesAggregate;
-use Buttercup\Protects\RecordsEvents;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceBecameInternational;
@@ -41,6 +40,7 @@ use Irvobmagturs\InvoiceCore\Model\ValueObject\SepaDirectDebitMandate;
 use Jubjubbird\Respects\AggregateHistory;
 use Jubjubbird\Respects\AggregateRoot;
 use Jubjubbird\Respects\ApplyCallsWhenMethod;
+use Jubjubbird\Respects\RecordsEvents;
 use Jubjubbird\Respects\RecordsEventsForBusinessMethods;
 
 class Invoice implements AggregateRoot
@@ -117,10 +117,10 @@ class Invoice implements AggregateRoot
 
     /**
      * @param AggregateHistory $aggregateHistory
-     * @return Invoice
+     * @return RecordsEvents
      * @throws InvalidInvoiceId
      */
-    public static function reconstituteFrom(AggregateHistory $aggregateHistory): self
+    public static function reconstituteFrom(AggregateHistory $aggregateHistory): RecordsEvents
     {
         $invoice = new self(InvoiceId::fromString(strval($aggregateHistory->getAggregateId())));
         foreach ($aggregateHistory as $event) {

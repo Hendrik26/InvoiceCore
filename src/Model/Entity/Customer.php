@@ -9,7 +9,6 @@
 namespace Irvobmagturs\InvoiceCore\Model\Entity;
 
 use Buttercup\Protects\IdentifiesAggregate;
-use Buttercup\Protects\RecordsEvents;
 use Irvobmagturs\InvoiceCore\Model\Event\CustomerAddressWasChanged;
 use Irvobmagturs\InvoiceCore\Model\Event\CustomerHasEngagedInBusiness;
 use Irvobmagturs\InvoiceCore\Model\Event\CustomerSalesTaxNumberWasChanged;
@@ -21,6 +20,7 @@ use Irvobmagturs\InvoiceCore\Model\ValueObject\Address;
 use Jubjubbird\Respects\AggregateHistory;
 use Jubjubbird\Respects\AggregateRoot;
 use Jubjubbird\Respects\ApplyCallsWhenMethod;
+use Jubjubbird\Respects\RecordsEvents;
 use Jubjubbird\Respects\RecordsEventsForBusinessMethods;
 
 class Customer implements AggregateRoot
@@ -72,32 +72,13 @@ class Customer implements AggregateRoot
      * @return Customer
      * @throws InvalidCustomerId
      */
-    public static function reconstituteFrom(AggregateHistory $aggregateHistory): self
+    public static function reconstituteFrom(AggregateHistory $aggregateHistory): RecordsEvents
     {
         $customer = new self(CustomerId::fromString(strval($aggregateHistory->getAggregateId())));
         foreach ($aggregateHistory as $event) {
             $customer->apply($event);
         }
         return $customer;
-    }
-
-    /**
-     * @param string $customerName
-     */
-    public function changeCustomerName(string $customerName)
-    {
-        $this->guardEmptyCustomerName($customerName);
-        $this->recordThat(new CustomerNameWasChanged($customerName));
-    }
-
-    /**
-     * @param string $customerName
-     */
-    private function guardEmptyCustomerName(string $customerName)
-    {
-        if (trim($customerName) === "") {
-            throw new InvalidCustomerName();
-        }
     }
 
     /**
@@ -111,15 +92,12 @@ class Customer implements AggregateRoot
     }
 
     /**
-     * @param string $customerAddress
-     * @throws InvalidCustomerAddress
+     * @param string $customerName
      */
-    private function guardInvalidCustomerAddress(Address $customerAddress)
+    public function changeCustomerName(string $customerName)
     {
-        // TODO
-        if (trim($customerAddress->countryCode) === "") {
-            throw new InvalidCustomerAddress();
-        }
+        $this->guardEmptyCustomerName($customerName);
+        $this->recordThat(new CustomerNameWasChanged($customerName));
     }
 
     /**
@@ -130,6 +108,24 @@ class Customer implements AggregateRoot
     {
         $this->guardEmptySalesTaxNumber($salesTaxNumber);
         $this->recordThat(new CustomerSalesTaxNumberWasChanged($salesTaxNumber));
+    }
+
+    /**
+     * @return CustomerId
+     */
+    public function getAggregateId(): IdentifiesAggregate
+    {
+        return $this->customerId;
+    }
+
+    /**
+     * @param string $customerName
+     */
+    private function guardEmptyCustomerName(string $customerName)
+    {
+        if (trim($customerName) === "") {
+            throw new InvalidCustomerName();
+        }
     }
 
     /**
@@ -144,11 +140,15 @@ class Customer implements AggregateRoot
     }
 
     /**
-     * @return IdentifiesAggregate
+     * @param string $customerAddress
+     * @throws InvalidCustomerAddress
      */
-    public function getAggregateId()
+    private function guardInvalidCustomerAddress(Address $customerAddress)
     {
-        return $this->customerId;
+        // TODO
+        if (trim($customerAddress->countryCode) === "") {
+            throw new InvalidCustomerAddress();
+        }
     }
 
     /**
@@ -170,18 +170,18 @@ class Customer implements AggregateRoot
     }
 
     /**
-     * @param CustomerSalesTaxNumberWasChanged $event
-     */
-    private function whenCustomerSalesTaxNumberWasChanged(CustomerSalesTaxNumberWasChanged $event)
-    {
-        $this->customerSalesTaxNumber = $event->getCustomerSalesTaxNumber();
-    }
-
-    /**
      * @param CustomerNameWasChanged $event
      */
     private function whenCustomerNameWasChanged(CustomerNameWasChanged $event)
     {
         $this->customerName = $event->getCustomerName();
+    }
+
+    /**
+     * @param CustomerSalesTaxNumberWasChanged $event
+     */
+    private function whenCustomerSalesTaxNumberWasChanged(CustomerSalesTaxNumberWasChanged $event)
+    {
+        $this->customerSalesTaxNumber = $event->getCustomerSalesTaxNumber();
     }
 }

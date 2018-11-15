@@ -4,6 +4,8 @@ namespace Irvobmagturs\InvoiceCore\Repository;
 
 use Buttercup\Protects\IdentifiesAggregate;
 use Irvobmagturs\InvoiceCore\Infrastructure\EventStore;
+use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\EventBus;
+use Irvobmagturs\InvoiceCore\Infrastructure\NoEventsStored;
 use Irvobmagturs\InvoiceCore\Infrastructure\Repository;
 use Irvobmagturs\InvoiceCore\Model\Entity\Customer;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidCustomerId;
@@ -13,14 +15,17 @@ use Jubjubbird\Respects\CorruptAggregateHistory;
 
 class CustomerRepository implements Repository
 {
+    private $eventBus;
     private $eventStore;
 
     /**
      * @param EventStore $eventStore
+     * @param EventBus $eventBus
      */
-    public function __construct(EventStore $eventStore)
+    public function __construct(EventStore $eventStore, EventBus $eventBus)
     {
         $this->eventStore = $eventStore;
+        $this->eventBus = $eventBus;
     }
 
     /**
@@ -28,10 +33,15 @@ class CustomerRepository implements Repository
      * @return AggregateRoot
      * @throws InvalidCustomerId
      * @throws CorruptAggregateHistory
+     * @throws CustomerNotFound
      */
     public function load(IdentifiesAggregate $id): AggregateRoot
     {
-        return Customer::reconstituteFrom(new AggregateHistory($id, $this->eventStore->listEventsForId($id)));
+        try {
+            return Customer::reconstituteFrom(new AggregateHistory($id, $this->eventStore->listEventsForId($id)));
+        } catch (NoEventsStored $e) {
+            throw new CustomerNotFound();
+        }
     }
 
     /**
@@ -42,5 +52,6 @@ class CustomerRepository implements Repository
         $domainEvents = $aggregateRoot->getRecordedEvents();
         $aggregateRoot->clearRecordedEvents();
         $this->eventStore->append($domainEvents->toArray());
+        $this->eventBus->dispatch($domainEvents);
     }
 }

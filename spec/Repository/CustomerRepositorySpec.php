@@ -6,6 +6,7 @@
 namespace spec\Irvobmagturs\InvoiceCore\Repository;
 
 use Irvobmagturs\InvoiceCore\Infrastructure\EventStore;
+use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\EventBus;
 use Irvobmagturs\InvoiceCore\Repository\CustomerRepository;
 use Jubjubbird\Respects\AggregateRoot;
 use Jubjubbird\Respects\DomainEvents;
@@ -43,12 +44,13 @@ class CustomerRepositorySpec extends ObjectBehavior
 
     function let(
         EventStore $eventStore,
+        EventBus $eventBus,
         AggregateRoot $aggregateRoot,
         DomainEvents $domainEvents,
         RecordedEvent $recordedEvent1,
         RecordedEvent $recordedEvent2
     ) {
-        $this->beConstructedWith($eventStore);
+        $this->beConstructedWith($eventStore, $eventBus);
         $aggregateRoot->getRecordedEvents()->willReturn($domainEvents);
         $domainEvents->toArray()->willReturn([$recordedEvent1, $recordedEvent2]);
     }
