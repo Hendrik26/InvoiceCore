@@ -27,15 +27,63 @@ class InvoiceHandler extends CqrsCommandHandler
     private $invoice = [];
 
     /**
-     * @param $invoiceDate
-     * @return DateTimeImmutable|null
+     * @param string $aggregateId
+     * @param array $args
+     * @return DomainEvents
+     * @throws InvalidInvoiceId
+     * @throws InvalidLineItemTitle
      * @throws Exception
      */
-    private function nullableStringToDate($invoiceDate)
+    public function appendLineItem(string $aggregateId, array $args): DomainEvents
     {
-        return $invoiceDate ? new DateTimeImmutable($invoiceDate) : null;
+        $this->invoice[$aggregateId] = $this->invoice[$aggregateId] ?? Invoice::reconstituteFrom(new AggregateHistory(InvoiceId::fromString($aggregateId),
+                []));
+        $itemSpec = $args['item'];
+        $this->invoice[$aggregateId]->appendLineItem(
+            new LineItem(
+                new Money($itemSpec['price']['amount'], $itemSpec['price']['currency']),
+                $itemSpec['quantity'],
+                $itemSpec['title'],
+                $itemSpec['timeBased'],
+                new DateTimeImmutable($itemSpec['date'], new DateTimeZone('UTC'))
+            )
+        );
+        $domainEvents = $this->invoice[$aggregateId]->getRecordedEvents();
+        $this->invoice[$aggregateId]->clearRecordedEvents();
+        return $domainEvents;
     }
 
+    /**
+     * @param string $aggregateId
+     * @param array $args
+     * @return DomainEvents
+     * @throws \Buttercup\Protects\CorruptAggregateHistory
+     */
+    public function becomeInternational(string $aggregateId, array $args): DomainEvents
+    {
+        $this->invoice[$aggregateId] = $this->invoice[$aggregateId] ?? Invoice::reconstituteFrom(new AggregateHistory(InvoiceId::fromString($aggregateId),
+                []));
+        $this->invoice[$aggregateId]->becomeInternational($args['countryCode'], $args['customerSalesTaxNumber']);
+        $domainEvents = $this->invoice[$aggregateId]->getRecordedEvents();
+        $this->invoice[$aggregateId]->clearRecordedEvents();
+        return $domainEvents;
+    }
+
+    /**
+     * @param string $aggregateId
+     * @param array $args
+     * @return DomainEvents
+     * @throws \Buttercup\Protects\CorruptAggregateHistory
+     */
+    public function becomeNational(string $aggregateId, array $args): DomainEvents
+    {
+        $this->invoice[$aggregateId] = $this->invoice[$aggregateId] ?? Invoice::reconstituteFrom(new AggregateHistory(InvoiceId::fromString($aggregateId),
+                []));
+        $this->invoice[$aggregateId]->becomeNational();
+        $domainEvents = $this->invoice[$aggregateId]->getRecordedEvents();
+        $this->invoice[$aggregateId]->clearRecordedEvents();
+        return $domainEvents;
+    }
 
     /**
      * @param string $aggregateId
@@ -60,119 +108,13 @@ class InvoiceHandler extends CqrsCommandHandler
      * @param string $aggregateId
      * @param array $args
      * @return DomainEvents
-     * @throws InvalidInvoiceId
-     * @throws InvalidLineItemTitle
-     * @throws Exception
-     */
-    public function appendLineItem(string $aggregateId, array $args): DomainEvents
-    {
-        $this->invoice[$aggregateId] = $this->invoice[$aggregateId] ?? Invoice::reconstituteFrom(new AggregateHistory(InvoiceId::fromString($aggregateId), []));
-        $itemSpec = $args['item'];
-        $this->invoice[$aggregateId]->appendLineItem(
-            new LineItem(
-                new Money($itemSpec['price']['amount'], $itemSpec['price']['currency']),
-                $itemSpec['quantity'],
-                $itemSpec['title'],
-                $itemSpec['timeBased'],
-                new DateTimeImmutable($itemSpec['date'], new DateTimeZone('UTC'))
-            )
-        );
-        $domainEvents = $this->invoice[$aggregateId]->getRecordedEvents();
-        $this->invoice[$aggregateId]->clearRecordedEvents();
-        return $domainEvents;
-    }
-
-    /**
-     * @param string $aggregateId
-     * @param array $args
-     * @return DomainEvents
-     * @throws \Buttercup\Protects\CorruptAggregateHistory
-     */
-    public function removeLineItemByPosition(string $aggregateId, array $args): DomainEvents
-    {
-        $this->invoice[$aggregateId] = $this->invoice[$aggregateId] ?? Invoice::reconstituteFrom(
-            new AggregateHistory(InvoiceId::fromString($aggregateId), [])
-            );
-        $this->invoice[$aggregateId]->removeLineItemByPosition($args['position']);
-        $domainEvents = $this->invoice[$aggregateId]->getRecordedEvents();
-        $this->invoice[$aggregateId]->clearRecordedEvents();
-        return $domainEvents;
-    }
-
-    /**
-     * @param string $aggregateId
-     * @param array $args
-     * @return DomainEvents
-     * @throws \Buttercup\Protects\CorruptAggregateHistory
-     */
-    public function becomeInternational(string $aggregateId, array $args): DomainEvents
-    {
-        $this->invoice[$aggregateId] = $this->invoice[$aggregateId] ?? Invoice::reconstituteFrom(new AggregateHistory(InvoiceId::fromString($aggregateId), []));
-        $this->invoice[$aggregateId]->becomeInternational($args['countryCode'], $args['customerSalesTaxNumber']);
-        $domainEvents = $this->invoice[$aggregateId]->getRecordedEvents();
-        $this->invoice[$aggregateId]->clearRecordedEvents();
-        return $domainEvents;
-    }
-
-    /**
-     * @param string $aggregateId
-     * @param array $args
-     * @return DomainEvents
-     * @throws \Buttercup\Protects\CorruptAggregateHistory
-     */
-    public function becomeNational(string $aggregateId, array $args): DomainEvents
-    {
-        $this->invoice[$aggregateId] = $this->invoice[$aggregateId] ?? Invoice::reconstituteFrom(new AggregateHistory(InvoiceId::fromString($aggregateId), []));
-        $this->invoice[$aggregateId]->becomeNational();
-        $domainEvents = $this->invoice[$aggregateId]->getRecordedEvents();
-        $this->invoice[$aggregateId]->clearRecordedEvents();
-        return $domainEvents;
-    }
-
-    /**
-     * @param string $aggregateId
-     * @param array $args
-     * @return DomainEvents
-     * @throws \Buttercup\Protects\CorruptAggregateHistory
-     */
-    public function employSepaDirectDebit(string $aggregateId, array $args): DomainEvents
-    {
-        $this->invoice[$aggregateId] = $this->invoice[$aggregateId] ?? Invoice::reconstituteFrom(new AggregateHistory(InvoiceId::fromString($aggregateId), []));
-        $mandateSpec = $args['mandate'];
-        $this->invoice[$aggregateId]->employSepaDirectDebit(
-            new SepaDirectDebitMandate($mandateSpec['mandateReference'], $mandateSpec['customerIban'])
-        );
-        $domainEvents = $this->invoice[$aggregateId]->getRecordedEvents();
-        $this->invoice[$aggregateId]->clearRecordedEvents();
-        return $domainEvents;
-    }
-
-    /**
-     * @param string $aggregateId
-     * @param array $args
-     * @return DomainEvents
-     * @throws \Buttercup\Protects\CorruptAggregateHistory
-     */
-    public function refrainFromSepaDirectDebit(string $aggregateId, array $args): DomainEvents
-    {
-        $this->invoice[$aggregateId] = $this->invoice[$aggregateId] ?? Invoice::reconstituteFrom(new AggregateHistory(InvoiceId::fromString($aggregateId), []));
-        $this->invoice[$aggregateId]->refrainFromSepaDirectDebit();
-        $domainEvents = $this->invoice[$aggregateId]->getRecordedEvents();
-        $this->invoice[$aggregateId]->clearRecordedEvents();
-        return $domainEvents;
-    }
-
-    /**
-     * @param string $aggregateId
-     * @param array $args
-     * @return DomainEvents
      * @throws \Buttercup\Protects\CorruptAggregateHistory
      * @throws Exception
      */
     public function coverBillingPeriod(string $aggregateId, array $args): DomainEvents
     {
         $this->invoice[$aggregateId] = $this->invoice[$aggregateId] ?? Invoice::reconstituteFrom(
-            new AggregateHistory(InvoiceId::fromString($aggregateId), [])
+                new AggregateHistory(InvoiceId::fromString($aggregateId), [])
             );
         $periodSpec = $args['period'];
         $startDate = new DateTimeImmutable($periodSpec['startDate']['iso8601value']);
@@ -194,9 +136,61 @@ class InvoiceHandler extends CqrsCommandHandler
     public function dropBillingPeriod(string $aggregateId, array $args): DomainEvents
     {
         $this->invoice[$aggregateId] = $this->invoice[$aggregateId] ?? Invoice::reconstituteFrom(
-            new AggregateHistory(InvoiceId::fromString($aggregateId), [])
+                new AggregateHistory(InvoiceId::fromString($aggregateId), [])
             );
         $this->invoice[$aggregateId]->dropBillingPeriod();
+        $domainEvents = $this->invoice[$aggregateId]->getRecordedEvents();
+        $this->invoice[$aggregateId]->clearRecordedEvents();
+        return $domainEvents;
+    }
+
+    /**
+     * @param string $aggregateId
+     * @param array $args
+     * @return DomainEvents
+     * @throws \Buttercup\Protects\CorruptAggregateHistory
+     */
+    public function employSepaDirectDebit(string $aggregateId, array $args): DomainEvents
+    {
+        $this->invoice[$aggregateId] = $this->invoice[$aggregateId] ?? Invoice::reconstituteFrom(new AggregateHistory(InvoiceId::fromString($aggregateId),
+                []));
+        $mandateSpec = $args['mandate'];
+        $this->invoice[$aggregateId]->employSepaDirectDebit(
+            new SepaDirectDebitMandate($mandateSpec['mandateReference'], $mandateSpec['customerIban'])
+        );
+        $domainEvents = $this->invoice[$aggregateId]->getRecordedEvents();
+        $this->invoice[$aggregateId]->clearRecordedEvents();
+        return $domainEvents;
+    }
+
+    /**
+     * @param string $aggregateId
+     * @param array $args
+     * @return DomainEvents
+     * @throws \Buttercup\Protects\CorruptAggregateHistory
+     */
+    public function refrainFromSepaDirectDebit(string $aggregateId, array $args): DomainEvents
+    {
+        $this->invoice[$aggregateId] = $this->invoice[$aggregateId] ?? Invoice::reconstituteFrom(new AggregateHistory(InvoiceId::fromString($aggregateId),
+                []));
+        $this->invoice[$aggregateId]->refrainFromSepaDirectDebit();
+        $domainEvents = $this->invoice[$aggregateId]->getRecordedEvents();
+        $this->invoice[$aggregateId]->clearRecordedEvents();
+        return $domainEvents;
+    }
+
+    /**
+     * @param string $aggregateId
+     * @param array $args
+     * @return DomainEvents
+     * @throws \Buttercup\Protects\CorruptAggregateHistory
+     */
+    public function removeLineItemByPosition(string $aggregateId, array $args): DomainEvents
+    {
+        $this->invoice[$aggregateId] = $this->invoice[$aggregateId] ?? Invoice::reconstituteFrom(
+                new AggregateHistory(InvoiceId::fromString($aggregateId), [])
+            );
+        $this->invoice[$aggregateId]->removeLineItemByPosition($args['position']);
         $domainEvents = $this->invoice[$aggregateId]->getRecordedEvents();
         $this->invoice[$aggregateId]->clearRecordedEvents();
         return $domainEvents;
@@ -221,6 +215,16 @@ class InvoiceHandler extends CqrsCommandHandler
         $domainEvents = $this->invoice[$aggregateId]->getRecordedEvents();
         $this->invoice[$aggregateId]->clearRecordedEvents();
         return $domainEvents;
+    }
+
+    /**
+     * @param $invoiceDate
+     * @return DateTimeImmutable|null
+     * @throws Exception
+     */
+    private function nullableStringToDate($invoiceDate)
+    {
+        return $invoiceDate ? new DateTimeImmutable($invoiceDate) : null;
     }
 
 

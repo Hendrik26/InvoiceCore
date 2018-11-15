@@ -48,6 +48,90 @@ class InvoiceSpec extends ObjectBehavior
         $payload->getPosition()->shouldBe(0);
     }
 
+    function it_becomes_international()
+    {
+        $this->clearRecordedEvents();
+        $this->becomeInternational('testCountry', 'testCustomerSalesTaxNumber');
+        $recordedEvents = $this->getRecordedEvents();
+        $recordedEvents->shouldHaveCount(1);
+        $recordedEvents[0]->shouldBeAnInstanceOf(RecordedEvent::class);
+        $payload = $recordedEvents[0]->getPayload();
+        $payload->shouldBeAnInstanceOf(InvoiceBecameInternational::class);
+        $payload->getCountryCode()->shouldBe('testCountry');
+        $payload->getCustomerSalesTaxNumber()->shouldBe('testCustomerSalesTaxNumber');
+    }
+
+    function it_becomes_national()
+    {
+        $this->clearRecordedEvents();
+        $this->becomeNational();
+        $recordedEvents = $this->getRecordedEvents();
+        $recordedEvents->shouldHaveCount(1);
+        $recordedEvents[0]->shouldBeAnInstanceOf(RecordedEvent::class);
+        $payload = $recordedEvents[0]->getPayload();
+        $payload->shouldBeAnInstanceOf(InvoiceBecameNational::class);
+        // $payload->getPosition()->shouldBe(0); // no equivalent test possible
+    }
+
+    function it_coveres_billing_period()
+    {
+        $this->clearRecordedEvents();
+        $period = new BillingPeriod(new DateTimeImmutable('2018-09-03'), new DateTimeImmutable('2018-11-28'));
+        $this->coverBillingPeriod($period);
+        $recordedEvents = $this->getRecordedEvents();
+        $recordedEvents->shouldHaveCount(1);
+        $recordedEvents[0]->shouldBeAnInstanceOf(RecordedEvent::class);
+        /** @var InvoiceHasCoveredBillingPeriod $payload */
+        $payload = $recordedEvents[0]->getPayload();
+        $payload->shouldBeAnInstanceOf(InvoiceHasCoveredBillingPeriod::class);
+        $payload->getPeriod()->shouldBeLike($period);
+    }
+
+    function it_deletes_item_by_valid_position(LineItem $item, LineItem $secondItem)
+    {
+        $this->clearRecordedEvents();
+        $item->beConstructedWith($this->itemConstructorArgsFromTitle('some proper title'));
+        $secondItem->beConstructedWith($this->itemConstructorArgsFromTitle('something else'));
+        $this->appendLineItem($item);
+        $this->appendLineItem($secondItem);
+        $this->appendLineItem($item);
+        $this->appendLineItem($secondItem);
+        $this->clearRecordedEvents();
+        $this->removeLineItemByPosition(0);
+        $this->removeLineItemByPosition(1);
+        $this->shouldThrow(InvalidLineItemPosition::class)->duringRemoveLineItemByPosition(2);
+        $this->getRecordedEvents()->shouldHaveCount(2);
+    }
+
+    /**
+     *
+     */
+    function it_drops_billing_period()
+    {
+        $this->clearRecordedEvents();
+        $this->dropBillingPeriod();
+        $recordedEvents = $this->getRecordedEvents();
+        $recordedEvents->shouldHaveCount(1);
+        $recordedEvents[0]->shouldBeAnInstanceOf(RecordedEvent::class);
+        $payload = $recordedEvents[0]->getPayload();
+        $payload->shouldBeAnInstanceOf(InvoiceHasDroppedBillingPeriod::class);
+        // $payload->getPosition()->shouldBe(0); // no equivalent test
+    }
+
+    function it_employs_direct_debit()
+    {
+        $this->clearRecordedEvents();
+        $mandate = new SepaDirectDebitMandate('testMandateReference', 'testCustomerIban');
+        $this->employSepaDirectDebit($mandate);
+        $recordedEvents = $this->getRecordedEvents();
+        $recordedEvents->shouldHaveCount(1);
+        $recordedEvents[0]->shouldBeAnInstanceOf(RecordedEvent::class);
+        /** @var InvoiceEmployedSepaDirectDebit $payload */
+        $payload = $recordedEvents[0]->getPayload();
+        $payload->shouldBeAnInstanceOf(InvoiceEmployedSepaDirectDebit::class);
+        $payload->getMandate()->shouldBeLike($mandate);
+    }
+
     function it_increments_the_position_when_appending_items(LineItem $item, LineItem $secondItem)
     {
         $this->clearRecordedEvents();
@@ -82,30 +166,30 @@ class InvoiceSpec extends ObjectBehavior
         $domainEvents[0]->getPayload()->shouldBeAnInstanceOf(InvoiceWasOpened::class);
     }
 
-    function it_rejects_an_item_with_an_empty_title(LineItem $item, Money $money)
+    function it_reconstitutes_from_aggregate_history(AggregateHistory $aggregateHistory)
     {
-        $this->clearRecordedEvents();
-        $item->beConstructedWith($this->itemConstructorArgsFromTitle(''));
-        $this->shouldThrow(InvalidLineItemTitle::class)->duringAppendLineItem($item);
-        $this->getRecordedEvents()->shouldHaveCount(0);
+        $invoiceId = InvoiceId::fromString('4cd97851-15ed-4e7e-87f8-0fa84ac76c5d');
+        $aggregateHistory->getAggregateId()->willReturn($invoiceId);
+        $this->beConstructedThroughReconstituteFrom($aggregateHistory);
+        $this->shouldBeAnInstanceOf(Invoice::class);
+        $this->getAggregateId()->shouldBeLike($invoiceId);
     }
 
-    function it_rejects_an_item_with_a_blank_title(LineItem $item, Money $money)
+    /**
+     *
+     */
+    function it_refrains_from_direct_debit()
     {
         $this->clearRecordedEvents();
-        $item->beConstructedWith($this->itemConstructorArgsFromTitle(' '));
-        $this->shouldThrow(InvalidLineItemTitle::class)->duringAppendLineItem($item);
-        $this->getRecordedEvents()->shouldHaveCount(0);
+        $this->refrainFromSepaDirectDebit();
+        $recordedEvents = $this->getRecordedEvents();
+        $recordedEvents->shouldHaveCount(1);
+        $recordedEvents[0]->shouldBeAnInstanceOf(RecordedEvent::class);
+        $payload = $recordedEvents[0]->getPayload();
+        $payload->shouldBeAnInstanceOf(InvoiceRefrainedSepaDirectDebit::class);
     }
 
-    function it_rejects_a_deleting_position_smaller_than_zero ()
-    {
-        $this->clearRecordedEvents();
-        $this->shouldThrow(InvalidLineItemPosition::class)->duringRemoveLineItemByPosition(-1);
-        $this->getRecordedEvents()->shouldHaveCount(0);
-    }
-
-    function it_rejects_a_deleting_position_greater_than_max (LineItem $item, LineItem $secondItem)
+    function it_rejects_a_deleting_position_greater_than_max(LineItem $item, LineItem $secondItem)
     {
         $this->clearRecordedEvents();
         $item->beConstructedWith($this->itemConstructorArgsFromTitle('some proper title'));
@@ -119,29 +203,44 @@ class InvoiceSpec extends ObjectBehavior
         $this->getRecordedEvents()->shouldHaveCount(0);
     }
 
-    function it_deletes_item_by_valid_position (LineItem $item, LineItem $secondItem)
+    function it_rejects_a_deleting_position_smaller_than_zero()
     {
         $this->clearRecordedEvents();
-        $item->beConstructedWith($this->itemConstructorArgsFromTitle('some proper title'));
-        $secondItem->beConstructedWith($this->itemConstructorArgsFromTitle('something else'));
-        $this->appendLineItem($item);
-        $this->appendLineItem($secondItem);
-        $this->appendLineItem($item);
-        $this->appendLineItem($secondItem);
-        $this->clearRecordedEvents();
-        $this->removeLineItemByPosition(0);
-        $this->removeLineItemByPosition(1);
-        $this->shouldThrow(InvalidLineItemPosition::class)->duringRemoveLineItemByPosition(2);
-        $this->getRecordedEvents()->shouldHaveCount(2);
+        $this->shouldThrow(InvalidLineItemPosition::class)->duringRemoveLineItemByPosition(-1);
+        $this->getRecordedEvents()->shouldHaveCount(0);
     }
 
-    function it_reconstitutes_from_aggregate_history(AggregateHistory $aggregateHistory)
+    function it_rejects_an_item_with_a_blank_title(LineItem $item)
     {
-        $invoiceId = InvoiceId::fromString('4cd97851-15ed-4e7e-87f8-0fa84ac76c5d');
-        $aggregateHistory->getAggregateId()->willReturn($invoiceId);
-        $this->beConstructedThroughReconstituteFrom($aggregateHistory);
-        $this->shouldBeAnInstanceOf(Invoice::class);
-        $this->getAggregateId()->shouldBeLike($invoiceId);
+        $this->clearRecordedEvents();
+        $item->beConstructedWith($this->itemConstructorArgsFromTitle(' '));
+        $this->shouldThrow(InvalidLineItemTitle::class)->duringAppendLineItem($item);
+        $this->getRecordedEvents()->shouldHaveCount(0);
+    }
+
+    function it_rejects_an_item_with_an_empty_title(LineItem $item)
+    {
+        $this->clearRecordedEvents();
+        $item->beConstructedWith($this->itemConstructorArgsFromTitle(''));
+        $this->shouldThrow(InvalidLineItemTitle::class)->duringAppendLineItem($item);
+        $this->getRecordedEvents()->shouldHaveCount(0);
+    }
+
+    /**
+     * @param DateTimeInterface|\PhpSpec\Wrapper\Collaborator $date
+     * @throws \Exception
+     */
+    function it_sets_invoice_date()
+    {
+        $this->clearRecordedEvents();
+        $date = new DateTimeImmutable('2018-09-03');
+        $this->setInvoiceDate($date);
+        $recordedEvents = $this->getRecordedEvents();
+        $recordedEvents->shouldHaveCount(1);
+        $recordedEvents[0]->shouldBeAnInstanceOf(RecordedEvent::class);
+        $payload = $recordedEvents[0]->getPayload();
+        $payload->shouldBeAnInstanceOf(InvoiceDateHasBeenSet::class);
+        $payload->getInvoiceDate()->shouldBeLike($date); // no equivalent test
     }
 
     /**
@@ -161,120 +260,5 @@ class InvoiceSpec extends ObjectBehavior
     private function itemConstructorArgsFromTitle($title): array
     {
         return [new Money(0, ''), .0, $title, false];
-    }
-
-    /**
-     * @param \PhpSpec\Wrapper\Collaborator $country
-     * @param \PhpSpec\Wrapper\Collaborator $customerSalesTaxNumber
-     */
-    function it_becomes_international()
-    {
-        $this->clearRecordedEvents();
-        $this->becomeInternational('testCountry', 'testCustomerSalesTaxNumber');
-        $recordedEvents = $this->getRecordedEvents();
-        $recordedEvents->shouldHaveCount(1);
-        $recordedEvents[0]->shouldBeAnInstanceOf(RecordedEvent::class);
-        $payload = $recordedEvents[0]->getPayload();
-        $payload->shouldBeAnInstanceOf(InvoiceBecameInternational::class);
-        $payload->getCountryCode()->shouldBe('testCountry');
-        $payload->getCustomerSalesTaxNumber()->shouldBe('testCustomerSalesTaxNumber');
-    }
-
-    /**
-     *
-     */
-    function it_becomes_national()
-    {
-        $this->clearRecordedEvents();
-        $this->becomeNational();
-        $recordedEvents = $this->getRecordedEvents();
-        $recordedEvents->shouldHaveCount(1);
-        $recordedEvents[0]->shouldBeAnInstanceOf(RecordedEvent::class);
-        $payload = $recordedEvents[0]->getPayload();
-        $payload->shouldBeAnInstanceOf(InvoiceBecameNational::class);
-        // $payload->getPosition()->shouldBe(0); // no equivalent test possible
-    }
-
-    /**
-     * @param SepaDirectDebitMandate|\PhpSpec\Wrapper\Collaborator $mandate
-     */
-    function it_employs_direct_debit(SepaDirectDebitMandate $mandate)
-    {
-        $this->clearRecordedEvents();
-        $mandate = new SepaDirectDebitMandate( 'testMandateReference',
-            'testCustomerIban');
-        $this->employSepaDirectDebit($mandate);
-        $recordedEvents = $this->getRecordedEvents();
-        $recordedEvents->shouldHaveCount(1);
-        $recordedEvents[0]->shouldBeAnInstanceOf(RecordedEvent::class);
-        /** @var InvoiceEmployedSepaDirectDebit $payload */
-        $payload = $recordedEvents[0]->getPayload();
-        $payload->shouldBeAnInstanceOf(InvoiceEmployedSepaDirectDebit::class);
-        $payload->getMandate()->shouldBeLike($mandate);
-    }
-
-
-    /**
-     *
-     */
-    function it_refrains_from_direct_debit()
-    {
-        $this->clearRecordedEvents();
-        $this->refrainFromSepaDirectDebit();
-        $recordedEvents = $this->getRecordedEvents();
-        $recordedEvents->shouldHaveCount(1);
-        $recordedEvents[0]->shouldBeAnInstanceOf(RecordedEvent::class);
-        $payload = $recordedEvents[0]->getPayload();
-        $payload->shouldBeAnInstanceOf(InvoiceRefrainedSepaDirectDebit::class);
-    }
-
-    /**
-     * @param \PhpSpec\Wrapper\Collaborator|BillingPeriod $period
-     * @throws \Exception
-     */
-    function it_coveres_billing_period(BillingPeriod $period)
-    {
-        $this->clearRecordedEvents();
-        $period = new BillingPeriod(new DateTimeImmutable('2018-09-03'), new DateTimeImmutable('2018-11-28'));
-        $this->coverBillingPeriod($period);
-        $recordedEvents = $this->getRecordedEvents();
-        $recordedEvents->shouldHaveCount(1);
-        $recordedEvents[0]->shouldBeAnInstanceOf(RecordedEvent::class);
-        /** @var InvoiceHasCoveredBillingPeriod $payload */
-        $payload = $recordedEvents[0]->getPayload();
-        $payload->shouldBeAnInstanceOf(InvoiceHasCoveredBillingPeriod::class);
-        $payload->getPeriod()->shouldBeLike($period);
-    }
-
-    /**
-     *
-     */
-    function it_drops_billing_period()
-    {
-        $this->clearRecordedEvents();
-        $this->dropBillingPeriod();
-        $recordedEvents = $this->getRecordedEvents();
-        $recordedEvents->shouldHaveCount(1);
-        $recordedEvents[0]->shouldBeAnInstanceOf(RecordedEvent::class);
-        $payload = $recordedEvents[0]->getPayload();
-        $payload->shouldBeAnInstanceOf(InvoiceHasDroppedBillingPeriod::class);
-        // $payload->getPosition()->shouldBe(0); // no equivalent test
-    }
-
-    /**
-     * @param DateTimeInterface|\PhpSpec\Wrapper\Collaborator $date
-     * @throws \Exception
-     */
-    function it_sets_invoice_date()
-    {
-        $this->clearRecordedEvents();
-        $date = new DateTimeImmutable('2018-09-03');
-        $this->setInvoiceDate($date);
-        $recordedEvents = $this->getRecordedEvents();
-        $recordedEvents->shouldHaveCount(1);
-        $recordedEvents[0]->shouldBeAnInstanceOf(RecordedEvent::class);
-        $payload = $recordedEvents[0]->getPayload();
-        $payload->shouldBeAnInstanceOf(InvoiceDateHasBeenSet::class);
-        $payload->getInvoiceDate()->shouldBeLike($date); // no equivalent test
     }
 }
