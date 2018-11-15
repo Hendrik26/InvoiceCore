@@ -5,11 +5,11 @@
 
 namespace Irvobmagturs\InvoiceCore\Infrastructure;
 
-use Buttercup\Protects\DomainEvent;
-use Buttercup\Protects\DomainEvents;
 use DateTimeImmutable;
 use DateTimeZone;
 use Exception;
+use Jubjubbird\Respects\DomainEvent;
+use Jubjubbird\Respects\DomainEvents;
 use Jubjubbird\Respects\Serializable;
 
 trait RecordsEventsForBusinessMethods

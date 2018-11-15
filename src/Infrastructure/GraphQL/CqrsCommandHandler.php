@@ -5,8 +5,8 @@
 
 namespace Irvobmagturs\InvoiceCore\Infrastructure\GraphQL;
 
-use Buttercup\Protects\DomainEvent;
 use GraphQL\Type\Definition\ResolveInfo;
+use Jubjubbird\Respects\DomainEvent;
 use Verraes\ClassFunctions\ClassFunctions;
 
 /**

@@ -5,9 +5,9 @@
 
 namespace Irvobmagturs\InvoiceCore\Infrastructure;
 
-use Buttercup\Protects\DomainEvent;
 use Buttercup\Protects\IdentifiesAggregate;
 use DateTimeInterface;
+use Jubjubbird\Respects\DomainEvent;
 use Jubjubbird\Respects\Serializable;
 
 class RecordedEvent implements DomainEvent

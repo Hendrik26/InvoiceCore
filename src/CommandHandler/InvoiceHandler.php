@@ -5,7 +5,6 @@
 
 namespace Irvobmagturs\InvoiceCore\CommandHandler;
 
-use Buttercup\Protects\DomainEvents;
 use DateTimeImmutable;
 use DateTimeZone;
 use Exception;
@@ -20,7 +19,7 @@ use Irvobmagturs\InvoiceCore\Model\ValueObject\LineItem;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\Money;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\SepaDirectDebitMandate;
 use Jubjubbird\Respects\AggregateHistory;
-
+use Jubjubbird\Respects\DomainEvents;
 
 class InvoiceHandler extends CqrsCommandHandler
 {

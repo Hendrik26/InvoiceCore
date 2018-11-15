@@ -5,11 +5,11 @@
 
 namespace Irvobmagturs\InvoiceCore\CommandHandler;
 
-use Buttercup\Protects\DomainEvents;
 use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\CqrsCommandHandler;
 use Irvobmagturs\InvoiceCore\Model\Entity\Customer;
 use Irvobmagturs\InvoiceCore\Model\Id\CustomerId;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\Address;
+use Jubjubbird\Respects\DomainEvents;
 
 class CustomerHandler extends CqrsCommandHandler
 {

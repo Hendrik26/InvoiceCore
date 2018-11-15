@@ -5,7 +5,6 @@
 
 namespace spec\Irvobmagturs\InvoiceCore\Model\Entity;
 
-use Buttercup\Protects\DomainEvents;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Irvobmagturs\InvoiceCore\Infrastructure\RecordedEvent;
@@ -29,6 +28,7 @@ use Irvobmagturs\InvoiceCore\Model\ValueObject\Money;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\SepaDirectDebitMandate;
 use Jubjubbird\Respects\AggregateHistory;
 use Jubjubbird\Respects\AggregateRoot;
+use Jubjubbird\Respects\DomainEvents;
 use PhpSpec\ObjectBehavior;
 
 class InvoiceSpec extends ObjectBehavior

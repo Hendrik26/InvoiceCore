@@ -4,7 +4,6 @@
  * @author I. R. Vobmagturs <i+r+vobmagturs@commodea.com>
  */
 
-use Buttercup\Protects\DomainEvent;
 use GraphQL\Server\StandardServer;
 use Irvobmagturs\InvoiceCore\CommandHandler\CustomerHandler;
 use Irvobmagturs\InvoiceCore\CommandHandler\InvoiceHandler;
@@ -15,6 +14,7 @@ use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\HoldsEventBus;
 use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\SchemaFileCache;
 use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\TypeResolver;
 use Irvobmagturs\InvoiceCore\Infrastructure\RecordedEvent;
+use Jubjubbird\Respects\DomainEvent;
 
 require_once __DIR__ . '/vendor/autoload.php';
 $schemaCache = __DIR__ . '/data/cache/schema';
