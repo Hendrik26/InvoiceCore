@@ -55,12 +55,14 @@ class CustomizedGraphqlServerConfig extends ServerConfig
     public function formatError(Throwable $error): array
     {
         return [
-            'message' => $error->getMessage(),
-            'code' => $error->getCode(),
-            'file' => $error->getFile(),
-            'line' => $error->getLine(),
-            'trace' => $error->getTraceAsString(),
-            'previous' => $error->getPrevious() ? $this->formatError($error->getPrevious()) : null
+            get_class($error) => [
+                'message' => $error->getMessage(),
+                'code' => $error->getCode(),
+                'file' => $error->getFile(),
+                'line' => $error->getLine(),
+                'trace' => preg_split('<\n|\r\n?>', $error->getTraceAsString()),
+                'previous' => $error->getPrevious() ? $this->formatError($error->getPrevious()) : null
+            ]
         ];
     }
 
