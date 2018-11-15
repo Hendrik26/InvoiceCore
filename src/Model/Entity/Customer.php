@@ -69,10 +69,10 @@ class Customer implements AggregateRoot
 
     /**
      * @param AggregateHistory $aggregateHistory
-     * @return RecordsEvents
+     * @return Customer
      * @throws InvalidCustomerId
      */
-    public static function reconstituteFrom(AggregateHistory $aggregateHistory)
+    public static function reconstituteFrom(AggregateHistory $aggregateHistory): self
     {
         $customer = new self(CustomerId::fromString(strval($aggregateHistory->getAggregateId())));
         foreach ($aggregateHistory as $event) {
