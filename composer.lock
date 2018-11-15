@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/jubjubbird/respects.git",
-                "reference": "2a8238267f0cc4ce3fa820ac87cbaaca41541ce7"
+                "reference": "eb1028866486517e5adb1d9eb7fa2e5b66368282"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jubjubbird/respects/zipball/2a8238267f0cc4ce3fa820ac87cbaaca41541ce7",
-                "reference": "2a8238267f0cc4ce3fa820ac87cbaaca41541ce7",
+                "url": "https://api.github.com/repos/jubjubbird/respects/zipball/eb1028866486517e5adb1d9eb7fa2e5b66368282",
+                "reference": "eb1028866486517e5adb1d9eb7fa2e5b66368282",
                 "shasum": ""
             },
             "require": {
@@ -60,7 +60,7 @@
                 "source": "https://github.com/buttercup-php/protects",
                 "issues": "https://github.com/buttercup-php/protects/issues"
             },
-            "time": "2018-11-15T18:41:06+00:00"
+            "time": "2018-11-15T20:44:16+00:00"
         },
         {
             "name": "mathiasverraes/classfunctions",
