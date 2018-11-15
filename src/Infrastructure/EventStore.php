@@ -10,6 +10,7 @@ namespace Irvobmagturs\InvoiceCore\Infrastructure;
 
 
 use Buttercup\Protects\IdentifiesAggregate;
+use Traversable;
 
 interface EventStore
 {
@@ -20,7 +21,7 @@ interface EventStore
     public function listEventsForId(IdentifiesAggregate $id): array;
 
     /**
-     * @param RecordedEvent $event
+     * @param RecordedEvent[] $recordedEvents
      */
-    public function append(RecordedEvent $event): void;
+    public function append(Traversable $recordedEvents): void;
 }
