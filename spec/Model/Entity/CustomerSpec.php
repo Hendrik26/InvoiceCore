@@ -5,11 +5,11 @@
 
 namespace spec\Irvobmagturs\InvoiceCore\Model\Entity;
 
-use Irvobmagturs\InvoiceCore\Infrastructure\AggregateRoot;
 use Irvobmagturs\InvoiceCore\Model\Entity\Customer;
 use Irvobmagturs\InvoiceCore\Model\Id\CustomerId;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\Address;
 use Jubjubbird\Respects\AggregateHistory;
+use Jubjubbird\Respects\AggregateRoot;
 use PhpSpec\ObjectBehavior;
 
 class CustomerSpec extends ObjectBehavior

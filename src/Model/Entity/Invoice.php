@@ -12,7 +12,6 @@ use Buttercup\Protects\IdentifiesAggregate;
 use Buttercup\Protects\RecordsEvents;
 use DateTimeImmutable;
 use DateTimeInterface;
-use Irvobmagturs\InvoiceCore\Infrastructure\AggregateRoot;
 use Irvobmagturs\InvoiceCore\Infrastructure\ApplyCallsWhenMethod;
 use Irvobmagturs\InvoiceCore\Infrastructure\RecordsEventsForBusinessMethods;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceBecameInternational;
@@ -42,7 +41,7 @@ use Irvobmagturs\InvoiceCore\Model\ValueObject\BillingPeriod;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\LineItem;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\SepaDirectDebitMandate;
 use Jubjubbird\Respects\AggregateHistory;
-
+use Jubjubbird\Respects\AggregateRoot;
 
 class Invoice implements AggregateRoot
 {

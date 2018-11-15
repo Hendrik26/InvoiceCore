@@ -8,7 +8,6 @@ namespace spec\Irvobmagturs\InvoiceCore\Model\Entity;
 use Buttercup\Protects\DomainEvents;
 use DateTimeImmutable;
 use DateTimeInterface;
-use Irvobmagturs\InvoiceCore\Infrastructure\AggregateRoot;
 use Irvobmagturs\InvoiceCore\Infrastructure\RecordedEvent;
 use Irvobmagturs\InvoiceCore\Model\Entity\Invoice;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceBecameInternational;
@@ -29,6 +28,7 @@ use Irvobmagturs\InvoiceCore\Model\ValueObject\LineItem;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\Money;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\SepaDirectDebitMandate;
 use Jubjubbird\Respects\AggregateHistory;
+use Jubjubbird\Respects\AggregateRoot;
 use PhpSpec\ObjectBehavior;
 
 class InvoiceSpec extends ObjectBehavior
