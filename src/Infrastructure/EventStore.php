@@ -18,10 +18,10 @@ interface EventStore
      * @param IdentifiesAggregate $id
      * @return RecordedEvent[]
      */
-    public function listEventsForId(IdentifiesAggregate $id): array;
+    public function listEventsForId(IdentifiesAggregate $id): Traversable;
 
     /**
      * @param RecordedEvent[] $recordedEvents
      */
-    public function append(Traversable $recordedEvents): void;
+    public function append(array $recordedEvents): void;
 }
