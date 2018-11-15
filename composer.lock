@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c4d78b3ee6b3da777d516f012b85a2f7",
+    "content-hash": "43c8faf25fbefb48ec0aeb197a28077f",
     "packages": [
         {
             "name": "jubjubbird/respects",
@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/jubjubbird/respects.git",
-                "reference": "09cc843123cf6d42ffaa113e400c18a5c54baee9"
+                "reference": "2a8238267f0cc4ce3fa820ac87cbaaca41541ce7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jubjubbird/respects/zipball/09cc843123cf6d42ffaa113e400c18a5c54baee9",
-                "reference": "09cc843123cf6d42ffaa113e400c18a5c54baee9",
+                "url": "https://api.github.com/repos/jubjubbird/respects/zipball/2a8238267f0cc4ce3fa820ac87cbaaca41541ce7",
+                "reference": "2a8238267f0cc4ce3fa820ac87cbaaca41541ce7",
                 "shasum": ""
             },
             "require": {
@@ -60,7 +60,7 @@
                 "source": "https://github.com/buttercup-php/protects",
                 "issues": "https://github.com/buttercup-php/protects/issues"
             },
-            "time": "2018-11-13T19:36:54+00:00"
+            "time": "2018-11-15T18:41:06+00:00"
         },
         {
             "name": "mathiasverraes/classfunctions",
@@ -984,12 +984,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "7b2dc3ee659453b97bf2f6e887fc036475389a49"
+                "reference": "f75de4cb9e4376c09e600a30174fefad9daa2272"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/7b2dc3ee659453b97bf2f6e887fc036475389a49",
-                "reference": "7b2dc3ee659453b97bf2f6e887fc036475389a49",
+                "url": "https://api.github.com/repos/symfony/console/zipball/f75de4cb9e4376c09e600a30174fefad9daa2272",
+                "reference": "f75de4cb9e4376c09e600a30174fefad9daa2272",
                 "shasum": ""
             },
             "require": {
@@ -1045,7 +1045,7 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "https://symfony.com",
-            "time": "2018-11-11T19:52:12+00:00"
+            "time": "2018-11-15T12:17:10+00:00"
         },
         {
             "name": "symfony/contracts",
@@ -1452,7 +1452,8 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "ext-json": "*"
+        "ext-json": "*",
+        "ext-pdo": "*"
     },
     "platform-dev": []
 }
