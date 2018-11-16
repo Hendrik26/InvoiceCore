@@ -10,6 +10,7 @@ namespace Irvobmagturs\InvoiceCore\Infrastructure;
 
 
 use Buttercup\Protects\IdentifiesAggregate;
+use DateTimeImmutable;
 use Jubjubbird\Respects\RecordedEvent;
 use PDO;
 use stdClass;
@@ -41,7 +42,7 @@ class SqLiteEventStore implements EventStore
      */
     public function listEventsForId(IdentifiesAggregate $id): Traversable
     {
-        $dbResults = $this->getEventsFromConnection($this->connection);
+        $dbResults = $this->getEventsFromConnection($this->connection, $id);
         $this->guardAtLeastOneEvent($dbResults);
         return array_map([$this, 'restoreEventFromRecord'], $dbResults);
     }
@@ -57,9 +58,23 @@ class SqLiteEventStore implements EventStore
         }
     }
 
+    /**
+     * @param stdClass $record
+     * @return RecordedEvent
+     * @throws \Exception
+     */
     private function restoreEventFromRecord(stdClass $record): RecordedEvent
     {
-      // TODO new RecordedEvent();
+        $eventType = $record->event_type; // SELECT event_type, id, foo FROM event_store....
+        $idType = $record->id_type;
+        $idString = $record->id_string;
+        $dateString = $record->date_string;
+        $serializedEventData = $record->serialized_event_data;
+        new RecordedEvent(
+            $eventType::deserialize($serializedEventData),
+            $idType::fromString($idString),
+            new DateTimeImmutable($dateString)
+        );
     }
 
     /**
@@ -75,17 +90,20 @@ class SqLiteEventStore implements EventStore
         return new PDO($this->createConnectionString());
     }
 
+    /**
+     * @param PDO $connection
+     * @param IdentifiesAggregate $aggregateId
+     * @return array
+     */
+    private function getEventsFromConnection(PDO $connection, IdentifiesAggregate $aggregateId): array
+    {
+        $sql = 'select event_type, id_type, id_string, date_string, serialized_event_data from event_table
+             where event where is_string = :id_string';
+        $statement = $connection->prepare($sql);
+        $statement->execute([':id_string' => $aggregateId]);
+        return $statement->fetchAll();
+        // return $connection->query($this->createQueryString());
 
-    private function createQueryString(): string
-    {
-        return 'select ' . self::RESULT_COLUMN . ' from ' . self::TABLENAME . ' where ' .  self::QUERY_COLUMN  . ' = '
-            . self::EXPRESSION;
-    }
-    
-    private function getEventsFromConnection(PDO $connection): array 
-    {
-        return $connection->query($this->createQueryString());
-            
     }
 
     private function createConnectionString()
