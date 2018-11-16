@@ -11,8 +11,11 @@ namespace Irvobmagturs\InvoiceCore\Infrastructure;
 
 use Buttercup\Protects\IdentifiesAggregate;
 use DateTimeImmutable;
+use Exception;
 use Jubjubbird\Respects\RecordedEvent;
 use PDO;
+use PDOException;
+use PDOStatement;
 use stdClass;
 use Traversable;
 
@@ -24,6 +27,7 @@ class SqLiteEventStore implements EventStore
     const QUERY_COLUMN = '';
     const EXPRESSION = '';
     private $databasePath;
+    private $dbStatement;
 
     /**
      * SqLiteEventStore constructor.
@@ -33,7 +37,22 @@ class SqLiteEventStore implements EventStore
     {
         $this->databasePath = $databasePath;
         $this->connection = $this->openDataBaseConnection();
+        $this->dbStatement = $this->createDbStatement($this->connection);
     }
+
+    /**
+     * @param PDO $connection
+     * @return bool|PDOStatement
+     * @throws PDOException
+     */
+    private function createDbStatement(PDO $connection)
+    {
+        $sql = 'select event_type, aggregate_id_type, aggregate_id_string, date_string, serialized_event_data from event_table
+              where aggregate_id_string = :aggregate_id_string';
+        $statement = $connection->prepare($sql);
+        return $statement;
+    }
+
 
     /**
      * @param IdentifiesAggregate $id
@@ -42,7 +61,7 @@ class SqLiteEventStore implements EventStore
      */
     public function listEventsForId(IdentifiesAggregate $id): Traversable
     {
-        $dbResults = $this->getEventsFromConnection($this->connection, $id);
+        $dbResults = $this->getEventsFromStatement($this->dbStatement, $id);
         $this->guardAtLeastOneEvent($dbResults);
         return array_map([$this, 'restoreEventFromRecord'], $dbResults);
     }
@@ -61,13 +80,13 @@ class SqLiteEventStore implements EventStore
     /**
      * @param stdClass $record
      * @return RecordedEvent
-     * @throws \Exception
+     * @throws Exception
      */
     private function restoreEventFromRecord(stdClass $record): RecordedEvent
     {
         $eventType = $record->event_type; // SELECT event_type, id, foo FROM event_store....
-        $idType = $record->id_type;
-        $idString = $record->id_string;
+        $idType = $record->aggregate_id_type;
+        $idString = $record->aggregate_id_string;
         $dateString = $record->date_string;
         $serializedEventData = $record->serialized_event_data;
         new RecordedEvent(
@@ -85,21 +104,24 @@ class SqLiteEventStore implements EventStore
         // TODO: Implement append() method.
     }
 
+    /**
+     * @return PDO
+     * @throws PDOException
+     */
     private function openDataBaseConnection(): PDO
     {
-        return new PDO($this->createConnectionString());
+        $PDO = new PDO($this->createConnectionString());
+        $PDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        return $PDO;
     }
 
     /**
-     * @param PDO $connection
+     * @param PDOStatement $statement
      * @param IdentifiesAggregate $aggregateId
      * @return array
      */
-    private function getEventsFromConnection(PDO $connection, IdentifiesAggregate $aggregateId): array
+    private function getEventsFromStatement(PDOStatement $statement, IdentifiesAggregate $aggregateId): array
     {
-        $sql = 'select event_type, id_type, id_string, date_string, serialized_event_data from event_table
-             where event where is_string = :id_string';
-        $statement = $connection->prepare($sql);
         $statement->execute([':id_string' => $aggregateId]);
         return $statement->fetchAll();
         // return $connection->query($this->createQueryString());
@@ -110,4 +132,5 @@ class SqLiteEventStore implements EventStore
     {
         return 'sqlite:' . $this->databasePath;
     }
+
 }
