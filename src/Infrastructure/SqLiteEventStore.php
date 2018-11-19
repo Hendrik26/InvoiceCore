@@ -53,6 +53,22 @@ class SqLiteEventStore implements EventStore
         return $statement;
     }
 
+    /**
+     * @param PDO $connection
+     * @return bool|PDOStatement
+     * @throws PDOException
+     */
+    private function createDbWriteStatement(PDO $connection, $event)
+    {
+        $eventType =
+        $sql = 'insert into event_table (event_type, aggregate_id_type, aggregate_id_string, date_string,
+              serialized_event_data) values
+              where aggregate_id_string = :aggregate_id_string';
+        $statement = $connection->prepare($sql);
+        return $statement;
+    }
+
+
 
     /**
      * @param IdentifiesAggregate $id
