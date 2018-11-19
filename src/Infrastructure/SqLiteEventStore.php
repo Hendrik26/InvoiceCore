@@ -167,7 +167,7 @@ SQL;
 
     }
 
-    private function writeEventsWithStatement(PDOStatement $statement, RecordedEvent $recordedEvent): array
+    private function writeEventWithStatement(PDOStatement $statement, RecordedEvent $recordedEvent): array
     {
         $eventType = get_class($recordedEvent->getPayload());
         $aggregateIdType = get_class($recordedEvent->getAggregateId());
