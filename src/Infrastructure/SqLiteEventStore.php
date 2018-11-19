@@ -167,20 +167,20 @@ SQL;
 
     }
 
-    private function writeEventWithStatement(PDOStatement $statement, RecordedEvent $recordedEvent): array
+    private function writeEvent(RecordedEvent $recordedEvent): void
     {
         $eventType = get_class($recordedEvent->getPayload());
         $aggregateIdType = get_class($recordedEvent->getAggregateId());
-        $aggregateIdString = $recordedEvent->getAggregateId();
+        $aggregateIdString = strval($recordedEvent->getAggregateId());
         $dateString = $recordedEvent->getRecordedOn()->format(DATE_ATOM);
         $serializedEventData = $recordedEvent->getPayload()->serialize();
-        $statement->execute([
+        $this->dbWriteStatement->execute([
             ':eventType' => $eventType,
             ':aggregateIdType' => $aggregateIdType,
             ':aggregateIdString' => $aggregateIdString,
             ':dateString' => $dateString,
             ':serializedEventData' => $serializedEventData
-            ]);
+        ]);
     }
 
     private function createConnectionString()
