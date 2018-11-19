@@ -5,34 +5,27 @@
 namespace spec\Irvobmagturs\InvoiceCore\Infrastructure;
 
 use Irvobmagturs\InvoiceCore\Infrastructure\SqLiteEventStore;
+use Irvobmagturs\InvoiceCore\Model\Event\InvoiceBecameInternational;
+use Jubjubbird\Respects\RecordedEvent;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 class SqLiteEventStoreSpec extends ObjectBehavior
 {
+    private function createEventArray()
+    {
+        $payload = new InvoiceBecameInternational('testCountyCode',
+            'testCustomerSalesTaxNumber');
+    }
+
     function it_is_initializable()
     {
         $this->shouldHaveType(SqLiteEventStore::class);
     }
 
-    function it_deserializes_from_an_array()
+    function it_appends_recorded_events(RecordedEvent $recordedEvent)
     {
-        $this->beConstructedThroughDeserialize([
-            'member'
-        ]);
-        $this->member->shouldBe('member');
-    }
-
-    function it_exposes_the_member()
-    {
-        $this->member->shouldBe('member');
-    }
-
-    function it_serializes_to_an_array()
-    {
-        $this->serialize()->shouldBe([
-            'member'
-        ]);
+        $this->append([$recordedEvent]);
     }
 
     function let()
