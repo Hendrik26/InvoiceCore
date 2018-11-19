@@ -12,6 +12,7 @@ use Irvobmagturs\InvoiceCore\Infrastructure\SqLitePdo;
 use Jubjubbird\Respects\RecordedEvent;
 use Jubjubbird\Respects\Serializable;
 use PDOStatement;
+use PhpSpec\Exception\Example\SkippingException;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -38,6 +39,11 @@ class SqLiteEventStoreSpec extends ObjectBehavior
         $this->shouldHaveType(SqLiteEventStore::class);
         $sqliteDatabase->prepare(Argument::containingString('SELECT'))->shouldHaveBeenCalledOnce();
         $sqliteDatabase->prepare(Argument::containingString('INSERT'))->shouldHaveBeenCalledOnce();
+    }
+
+    function it_loads_the_history_of_an_aggregate()
+    {
+        throw new SkippingException(__METHOD__);
     }
 
     function let(
