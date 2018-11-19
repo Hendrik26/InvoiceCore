@@ -140,7 +140,7 @@ SQL;
      */
     public function append(array $recordedEvents): void
     {
-        // TODO: Implement append() method.
+        array_walk($recordedEvents, [$this, 'writeEvent']);
     }
 
     /**
