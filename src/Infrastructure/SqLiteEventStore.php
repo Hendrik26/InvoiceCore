@@ -26,21 +26,23 @@ class SqLiteEventStore implements EventStore
     const RESULT_COLUMN = '';
     const QUERY_COLUMN = '';
     const EXPRESSION = '';
-    private $databasePath;
+    /** @var SqLitePdo */
+    private $database;
     private $dbStatement;
     private $dbWriteStatement;
 
 
     /**
      * SqLiteEventStore constructor.
-     * @param $databasePath
+     * @param SqLitePdo $database
+     * @throws PDOException
      */
-    public function __construct(string $databasePath)
+    public function __construct(SqLitePdo $database)
     {
-        $this->databasePath = $databasePath;
-        $this->connection = $this->openDataBaseConnection();
+        $this->connection = $database;
         $this->dbStatement = $this->createDbStatement($this->connection);
         $this->dbWriteStatement = $this->createDbWriteStatement($this->connection);
+        $this->database = $database;
     }
 
     /**
@@ -51,14 +53,14 @@ class SqLiteEventStore implements EventStore
     private function createDbStatement(PDO $connection)
     {
         $sql = <<<'SQL'
-select
+SELECT
   event_type,
   aggregate_id_type,
   aggregate_id_string,
   date_string,
   serialized_event_data
-from event_table
-where aggregate_id_string = :aggregate_id_string
+FROM event_table
+WHERE aggregate_id_string = :aggregate_id_string
 SQL;
         $statement = $connection->prepare($sql);
         return $statement;
@@ -72,14 +74,14 @@ SQL;
     private function createDbWriteStatement(PDO $connection)
     {
         $sql = <<<SQL
-insert into event_table (
+INSERT INTO event_table (
   event_type,
   aggregate_id_type,
   aggregate_id_string,
   date_string,
   serialized_event_data
 )
-values (
+VALUES (
   :eventType,
   :aggregateIdType,
   :aggregateIdString,
@@ -182,10 +184,4 @@ SQL;
             ':serializedEventData' => $serializedEventData
         ]);
     }
-
-    private function createConnectionString()
-    {
-        return 'sqlite:' . $this->databasePath;
-    }
-
 }

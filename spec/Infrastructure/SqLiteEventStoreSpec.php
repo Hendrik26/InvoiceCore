@@ -2,36 +2,51 @@
 /**
  * @author I. R. Vobmagturs <i+r+vobmagturs@commodea.com>
  */
+
 namespace spec\Irvobmagturs\InvoiceCore\Infrastructure;
 
+use Buttercup\Protects\IdentifiesAggregate;
+use DateTimeImmutable;
 use Irvobmagturs\InvoiceCore\Infrastructure\SqLiteEventStore;
-use Irvobmagturs\InvoiceCore\Model\Event\InvoiceBecameInternational;
+use Irvobmagturs\InvoiceCore\Infrastructure\SqLitePdo;
 use Jubjubbird\Respects\RecordedEvent;
+use Jubjubbird\Respects\Serializable;
+use PDOStatement;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 class SqLiteEventStoreSpec extends ObjectBehavior
 {
-    private function createEventArray()
-    {
-        $payload = new InvoiceBecameInternational('testCountyCode',
-            'testCustomerSalesTaxNumber');
+    function it_appends_recorded_events(
+        RecordedEvent $recordedEvent,
+        PDOStatement $insertStatement,
+        IdentifiesAggregate $identifier,
+        Serializable $payload,
+        DateTimeImmutable $timestamp
+    ) {
+        $recordedEvent->getAggregateId()->willReturn($identifier);
+        $recordedEvent->getPayload()->willReturn($payload);
+        $recordedEvent->getRecordedOn()->willReturn($timestamp);
+        $identifier->__toString()->willReturn('71f95921-e4fb-4aed-89cd-4b34ab24e482');
+        $payload->serialize()->willReturn([]);
+        $this->append([$recordedEvent]);
+        $insertStatement->execute(Argument::type('array'))->shouldHaveBeenCalledOnce();
     }
 
-    function it_is_initializable()
+    function it_is_initializable(SqLitePdo $sqliteDatabase)
     {
         $this->shouldHaveType(SqLiteEventStore::class);
+        $sqliteDatabase->prepare(Argument::containingString('SELECT'))->shouldHaveBeenCalledOnce();
+        $sqliteDatabase->prepare(Argument::containingString('INSERT'))->shouldHaveBeenCalledOnce();
     }
 
-    function it_appends_recorded_events(RecordedEvent $recordedEvent)
-    {
-        $this->append([$recordedEvent]);
-    }
-
-    function let()
-    {
-        $this->beConstructedWith(
-            'member'
-        );
+    function let(
+        SqLitePdo $sqliteDatabase,
+        PDOStatement $selectStatement,
+        PDOStatement $insertStatement
+    ) {
+        $this->beConstructedWith($sqliteDatabase);
+        $sqliteDatabase->prepare(Argument::containingString('SELECT'))->willReturn($selectStatement);
+        $sqliteDatabase->prepare(Argument::containingString('INSERT'))->willReturn($insertStatement);
     }
 }
