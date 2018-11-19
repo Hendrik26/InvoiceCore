@@ -28,6 +28,8 @@ class SqLiteEventStore implements EventStore
     const EXPRESSION = '';
     private $databasePath;
     private $dbStatement;
+    private $dbWriteStatement;
+
 
     /**
      * SqLiteEventStore constructor.
@@ -38,6 +40,7 @@ class SqLiteEventStore implements EventStore
         $this->databasePath = $databasePath;
         $this->connection = $this->openDataBaseConnection();
         $this->dbStatement = $this->createDbStatement($this->connection);
+        $this->dbWriteStatement = $this->createDbWriteStatement($this->connection);
     }
 
     /**
@@ -47,8 +50,16 @@ class SqLiteEventStore implements EventStore
      */
     private function createDbStatement(PDO $connection)
     {
-        $sql = 'select event_type, aggregate_id_type, aggregate_id_string, date_string, serialized_event_data
-            from event_table where aggregate_id_string = :aggregate_id_string';
+        $sql = <<<'SQL'
+select
+  event_type,
+  aggregate_id_type,
+  aggregate_id_string,
+  date_string,
+  serialized_event_data
+from event_table
+where aggregate_id_string = :aggregate_id_string
+SQL;
         $statement = $connection->prepare($sql);
         return $statement;
     }
@@ -58,12 +69,24 @@ class SqLiteEventStore implements EventStore
      * @return bool|PDOStatement
      * @throws PDOException
      */
-    private function createDbWriteStatement(PDO $connection, $event)
+    private function createDbWriteStatement(PDO $connection)
     {
-        $eventType =
-        $sql = 'insert into event_table (event_type, aggregate_id_type, aggregate_id_string, date_string,
-              serialized_event_data) values
-              where aggregate_id_string = :aggregate_id_string';
+        $sql = <<<SQL
+insert into event_table (
+  event_type,
+  aggregate_id_type,
+  aggregate_id_string,
+  date_string,
+  serialized_event_data
+)
+values (
+  :eventType,
+  :aggregateIdType,
+  :aggregateIdString,
+  :dateString,
+  :serializedEventData
+);
+SQL;
         $statement = $connection->prepare($sql);
         return $statement;
     }
@@ -105,7 +128,7 @@ class SqLiteEventStore implements EventStore
         $idString = $record->aggregate_id_string;
         $dateString = $record->date_string;
         $serializedEventData = $record->serialized_event_data;
-        new RecordedEvent(
+        return new RecordedEvent(
             $eventType::deserialize($serializedEventData),
             $idType::fromString($idString),
             new DateTimeImmutable($dateString)
@@ -138,10 +161,26 @@ class SqLiteEventStore implements EventStore
      */
     private function getEventsFromStatement(PDOStatement $statement, IdentifiesAggregate $aggregateId): array
     {
-        $statement->execute([':id_string' => $aggregateId]);
+        $statement->execute([':aggregate_id_string' => $aggregateId]);
         return $statement->fetchAll();
         // return $connection->query($this->createQueryString());
 
+    }
+
+    private function writeEventsWithStatement(PDOStatement $statement, RecordedEvent $recordedEvent): array
+    {
+        $eventType = get_class($recordedEvent->getPayload());
+        $aggregateIdType = get_class($recordedEvent->getAggregateId());
+        $aggregateIdString = $recordedEvent->getAggregateId();
+        $dateString = $recordedEvent->getRecordedOn()->format(DATE_ATOM);
+        $serializedEventData = $recordedEvent->getPayload()->serialize();
+        $statement->execute([
+            ':eventType' => $eventType,
+            ':aggregateIdType' => $aggregateIdType,
+            ':aggregateIdString' => $aggregateIdString,
+            ':dateString' => $dateString,
+            ':serializedEventData' => $serializedEventData
+            ]);
     }
 
     private function createConnectionString()
