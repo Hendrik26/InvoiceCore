@@ -1,40 +1,56 @@
 @startuml
 participant ":CommandHandler" as CoHa
 participant ":Repository" as Repo
-participant ":Aggregate" as Aggr
+participant "agg:AggregateRoot" as AgRt
 participant ":EventStore" as EvSt
--> CoHa: aCommand
+participant "stream:DomainEvents" as DoEv
+-> CoHa
 activate CoHa
-CoHa -> Repo: load(id)
+CoHa -> Repo: load(:IdentifiesAggregate)
 activate Repo
-Repo -> EvSt: listEventsForId(id)
+Repo -> EvSt: listEventsForId(:IdentifiesAggregate)
 activate EvSt
-Repo <-- EvSt: events
+Repo <-- EvSt: :DomainEvent[]
 deactivate EvSt
-Repo -> Aggr: reconstituteFrom(aHistory)
-activate Aggr
+Repo -> AgRt: reconstituteFrom(:AggregateHistory)
+activate AgRt
 loop
-Aggr -> Aggr: apply(anEvent)
-activate Aggr
-deactivate Aggr
+AgRt -> AgRt: apply(:DomainEvent)
+activate AgRt
+deactivate AgRt
 end
-Repo <-- Aggr: Aggr
-CoHa <-- Repo: Aggr
+Repo <-- AgRt: agg
+deactivate AgRt
+CoHa <-- Repo: agg
 deactivate Repo
 loop
-CoHa -> Aggr: someMethod(...)
-Aggr -> Aggr: recordThat(anEvent)
-activate Aggr
-deactivate Aggr
+CoHa -> AgRt
+activate AgRt
+AgRt -> AgRt: recordThat(:Serializable)
+activate AgRt
+AgRt -> AgRt: apply(:DomainEvent)
+activate AgRt
+deactivate AgRt
+deactivate AgRt
+deactivate AgRt
 end
-CoHa -> Repo: save(Aggr)
-activate Repo
-Repo -> Aggr: getRecordedEvents()
-Repo <-- Aggr: events
-deactivate Aggr
-Repo -> EvSt: append(events)
-activate EvSt
-deactivate Repo
-deactivate EvSt
+CoHa -> Repo: save(agg)
 deactivate CoHa
+activate Repo
+Repo -> AgRt: getRecordedEvents()
+activate AgRt
+AgRt -> DoEv: <<create>>(:DomainEvent[])
+activate DoEv
+AgRt <-- DoEv: stream
+deactivate DoEv
+Repo <-- AgRt: stream
+deactivate AgRt
+Repo -> DoEv: toArray()
+activate DoEv
+Repo <-- DoEv: :DomainEvent[]
+deactivate DoEv
+Repo -> EvSt: append(:DomainEvent[])
+deactivate Repo
+activate EvSt
+deactivate EvSt
 @enduml
