@@ -31,7 +31,8 @@ class SqLiteEventStoreSpec extends ObjectBehavior
         $identifier->__toString()->willReturn('71f95921-e4fb-4aed-89cd-4b34ab24e482');
         $payload->serialize()->willReturn([]);
         $this->append([$recordedEvent]);
-        $insertStatement->execute(Argument::type('array'))->shouldHaveBeenCalledOnce();
+        $shortClassName = Argument::not(Argument::containingString('\\'));
+        $insertStatement->execute(Argument::withEntry(':eventType', $shortClassName))->shouldHaveBeenCalledOnce();
         $selectStatement->execute(Argument::cetera())->shouldNotHaveBeenCalled();
     }
 
@@ -46,15 +47,14 @@ class SqLiteEventStoreSpec extends ObjectBehavior
         IdentifiesAggregate $aggregateId,
         PDOStatement $insertStatement,
         PDOStatement $selectStatement
-    )
-    {
+    ) {
         $testEvent01 = (object)[
             'event_type' => 'InvoiceBecameInternational',
             'aggregate_id_type' => 'InvoiceId',
             'aggregate_id_string' => '82a85921-e4fb-4aed-89cd-4b34ab24e482',
             'date_string' => '2018-11-20',
             'serialized_event_data' => ['testCountryCode', 'testCustomerSalesTaxNumber']
-            ];
+        ];
         $testEvent02 = (object)[
             'event_type' => 'InvoiceBecameNational',
             'aggregate_id_type' => 'InvoiceId',
