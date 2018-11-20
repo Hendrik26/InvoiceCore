@@ -9,18 +9,18 @@
 namespace Irvobmagturs\InvoiceCore\Infrastructure;
 
 use Buttercup\Protects\IdentifiesAggregate;
-use Jubjubbird\Respects\RecordedEvent;
+use Jubjubbird\Respects\DomainEvent;
 
 interface EventStore
 {
     /**
-     * @param RecordedEvent[] $recordedEvents
+     * @param DomainEvent[] $recordedEvents
      */
     public function append(array $recordedEvents): void;
 
     /**
      * @param IdentifiesAggregate $id
-     * @return RecordedEvent[]
+     * @return DomainEvent[]|iterable
      * @throws NoEventsStored when there are no events for that ID.
      */
     public function listEventsForId(IdentifiesAggregate $id): iterable;

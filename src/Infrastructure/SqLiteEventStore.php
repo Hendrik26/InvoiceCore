@@ -12,20 +12,20 @@ namespace Irvobmagturs\InvoiceCore\Infrastructure;
 use Buttercup\Protects\IdentifiesAggregate;
 use DateTimeImmutable;
 use Exception;
+use Jubjubbird\Respects\DomainEvent;
 use Jubjubbird\Respects\RecordedEvent;
 use PDO;
 use PDOException;
 use PDOStatement;
 use stdClass;
-use Traversable;
 
 class SqLiteEventStore implements EventStore
 {
-    private $connection;
-    const TABLENAME = '';
-    const RESULT_COLUMN = '';
-    const QUERY_COLUMN = '';
     const EXPRESSION = '';
+    const QUERY_COLUMN = '';
+    const RESULT_COLUMN = '';
+    const TABLENAME = '';
+    private $connection;
     /** @var SqLitePdo */
     private $database;
     private $dbStatement;
@@ -43,6 +43,26 @@ class SqLiteEventStore implements EventStore
         $this->dbStatement = $this->createDbStatement($this->connection);
         $this->dbWriteStatement = $this->createDbWriteStatement($this->connection);
         $this->database = $database;
+    }
+
+    /**
+     * @param DomainEvent[] $recordedEvents
+     */
+    public function append(array $recordedEvents): void
+    {
+        array_walk($recordedEvents, [$this, 'writeEvent']);
+    }
+
+    /**
+     * @param IdentifiesAggregate $id
+     * @return DomainEvent[]
+     * @throws NoEventsStored when there are no events for that ID.
+     */
+    public function listEventsForId(IdentifiesAggregate $id): array
+    {
+        $dbResults = $this->getEventsFromStatement($this->dbStatement, $id);
+        $this->guardAtLeastOneEvent($dbResults);
+        return array_map([$this, 'restoreEventFromRecord'], $dbResults);
     }
 
     /**
@@ -93,18 +113,17 @@ SQL;
         return $statement;
     }
 
-
-
     /**
-     * @param IdentifiesAggregate $id
-     * @return Traversable
-     * @throws NoEventsStored when there are no events for that ID.
+     * @param PDOStatement $statement
+     * @param IdentifiesAggregate $aggregateId
+     * @return array
      */
-    public function listEventsForId(IdentifiesAggregate $id): Traversable
+    private function getEventsFromStatement(PDOStatement $statement, IdentifiesAggregate $aggregateId): array
     {
-        $dbResults = $this->getEventsFromStatement($this->dbStatement, $id);
-        $this->guardAtLeastOneEvent($dbResults);
-        return array_map([$this, 'restoreEventFromRecord'], $dbResults);
+        $statement->execute([':aggregate_id_string' => $aggregateId]);
+        return $statement->fetchAll();
+        // return $connection->query($this->createQueryString());
+
     }
 
     /**
@@ -116,6 +135,17 @@ SQL;
         if (empty($dbResults)) {
             throw new NoEventsStored();
         }
+    }
+
+    /**
+     * @return PDO
+     * @throws PDOException
+     */
+    private function openDataBaseConnection(): PDO
+    {
+        $PDO = new PDO($this->createConnectionString());
+        $PDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        return $PDO;
     }
 
     /**
@@ -137,39 +167,7 @@ SQL;
         );
     }
 
-    /**
-     * @param RecordedEvent[] $recordedEvents
-     */
-    public function append(array $recordedEvents): void
-    {
-        array_walk($recordedEvents, [$this, 'writeEvent']);
-    }
-
-    /**
-     * @return PDO
-     * @throws PDOException
-     */
-    private function openDataBaseConnection(): PDO
-    {
-        $PDO = new PDO($this->createConnectionString());
-        $PDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        return $PDO;
-    }
-
-    /**
-     * @param PDOStatement $statement
-     * @param IdentifiesAggregate $aggregateId
-     * @return array
-     */
-    private function getEventsFromStatement(PDOStatement $statement, IdentifiesAggregate $aggregateId): array
-    {
-        $statement->execute([':aggregate_id_string' => $aggregateId]);
-        return $statement->fetchAll();
-        // return $connection->query($this->createQueryString());
-
-    }
-
-    private function writeEvent(RecordedEvent $recordedEvent): void
+    private function writeEvent(DomainEvent $recordedEvent): void
     {
         $eventType = get_class($recordedEvent->getPayload());
         $aggregateIdType = get_class($recordedEvent->getAggregateId());
