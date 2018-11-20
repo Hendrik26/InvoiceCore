@@ -167,6 +167,36 @@ SQL;
         );
     }
 
+    /**
+     * @param RecordedEvent[] $recordedEvents
+     */
+    public function append(array $recordedEvents): void
+    {
+        array_walk($recordedEvents, [$this, 'writeEvent']);
+    }
+
+    /**
+     * @return PDO
+     * @throws PDOException
+     */
+    private function openDataBaseConnection(): PDO
+    {
+        $PDO = new PDO($this->createConnectionString());
+        $PDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        return $PDO;
+    }
+
+    /**
+     * @param PDOStatement $statement
+     * @param IdentifiesAggregate $aggregateId
+     * @return array
+     */
+    private function getEventsFromStatement(PDOStatement $statement, IdentifiesAggregate $aggregateId): array
+    {
+        $statement->execute([':aggregate_id_string' => $aggregateId]);
+        return $statement->fetchAll();
+    }
+
     private function writeEvent(DomainEvent $recordedEvent): void
     {
         $eventType = get_class($recordedEvent->getPayload());
