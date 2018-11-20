@@ -21,6 +21,7 @@ class SqLiteEventStoreSpec extends ObjectBehavior
     function it_appends_recorded_events(
         RecordedEvent $recordedEvent,
         PDOStatement $insertStatement,
+        PDOStatement $selectStatement,
         IdentifiesAggregate $identifier,
         Serializable $payload,
         DateTimeImmutable $timestamp
@@ -32,6 +33,7 @@ class SqLiteEventStoreSpec extends ObjectBehavior
         $payload->serialize()->willReturn([]);
         $this->append([$recordedEvent]);
         $insertStatement->execute(Argument::type('array'))->shouldHaveBeenCalledOnce();
+        $selectStatement->execute(Argument::cetera())->shouldNotHaveBeenCalled();
     }
 
     function it_is_initializable(SqLitePdo $sqliteDatabase)
@@ -41,7 +43,9 @@ class SqLiteEventStoreSpec extends ObjectBehavior
         $sqliteDatabase->prepare(Argument::containingString('INSERT'))->shouldHaveBeenCalledOnce();
     }
 
-    function it_loads_the_history_of_an_aggregate()
+    function it_loads_the_history_of_an_aggregate(
+
+    )
     {
         throw new SkippingException(__METHOD__);
     }
