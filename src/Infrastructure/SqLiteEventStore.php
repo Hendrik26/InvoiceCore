@@ -18,13 +18,16 @@ use PDO;
 use PDOException;
 use PDOStatement;
 use stdClass;
+use function Verraes\ClassFunctions\short;
 
 class SqLiteEventStore implements EventStore
 {
-    const EXPRESSION = '';
-    const QUERY_COLUMN = '';
-    const RESULT_COLUMN = '';
+    const EVENT_NAMESPACE = 'Irvobmagturs\\InvoiceCore\\Model\\Event\\';
+    const AGGREGATE_ID_NAMESPACE = 'Irvobmagturs\\InvoiceCore\\Model\\Id\\';
     const TABLENAME = '';
+    const RESULT_COLUMN = '';
+    const QUERY_COLUMN = '';
+    const EXPRESSION = '';
     private $connection;
     /** @var SqLitePdo */
     private $database;
@@ -43,26 +46,6 @@ class SqLiteEventStore implements EventStore
         $this->dbStatement = $this->createDbStatement($this->connection);
         $this->dbWriteStatement = $this->createDbWriteStatement($this->connection);
         $this->database = $database;
-    }
-
-    /**
-     * @param DomainEvent[] $recordedEvents
-     */
-    public function append(array $recordedEvents): void
-    {
-        array_walk($recordedEvents, [$this, 'writeEvent']);
-    }
-
-    /**
-     * @param IdentifiesAggregate $id
-     * @return DomainEvent[]
-     * @throws NoEventsStored when there are no events for that ID.
-     */
-    public function listEventsForId(IdentifiesAggregate $id): array
-    {
-        $dbResults = $this->getEventsFromStatement($this->dbStatement, $id);
-        $this->guardAtLeastOneEvent($dbResults);
-        return array_map([$this, 'restoreEventFromRecord'], $dbResults);
     }
 
     /**
@@ -114,6 +97,26 @@ SQL;
     }
 
     /**
+     * @param DomainEvent[] $recordedEvents
+     */
+    public function append(array $recordedEvents): void
+    {
+        array_walk($recordedEvents, [$this, 'writeEvent']);
+    }
+
+    /**
+     * @param IdentifiesAggregate $id
+     * @return DomainEvent[]
+     * @throws NoEventsStored when there are no events for that ID.
+     */
+    public function listEventsForId(IdentifiesAggregate $id): array
+    {
+        $dbResults = $this->getEventsFromStatement($this->dbStatement, $id);
+        $this->guardAtLeastOneEvent($dbResults);
+        return array_map([$this, 'restoreEventFromRecord'], $dbResults);
+    }
+
+    /**
      * @param PDOStatement $statement
      * @param IdentifiesAggregate $aggregateId
      * @return array
@@ -122,8 +125,6 @@ SQL;
     {
         $statement->execute([':aggregate_id_string' => $aggregateId]);
         return $statement->fetchAll();
-        // return $connection->query($this->createQueryString());
-
     }
 
     /**
@@ -138,25 +139,15 @@ SQL;
     }
 
     /**
-     * @return PDO
-     * @throws PDOException
-     */
-    private function openDataBaseConnection(): PDO
-    {
-        $PDO = new PDO($this->createConnectionString());
-        $PDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        return $PDO;
-    }
-
-    /**
      * @param stdClass $record
      * @return RecordedEvent
      * @throws Exception
      */
     private function restoreEventFromRecord(stdClass $record): RecordedEvent
     {
-        $eventType = $record->event_type; // SELECT event_type, id, foo FROM event_store....
-        $idType = $record->aggregate_id_type;
+        // TODO
+        $eventType = self::EVENT_NAMESPACE . $record->event_type; // SELECT event_type, id, foo FROM event_store....
+        $idType = self::AGGREGATE_ID_NAMESPACE . $record->aggregate_id_type;
         $idString = $record->aggregate_id_string;
         $dateString = $record->date_string;
         $serializedEventData = $record->serialized_event_data;
@@ -168,14 +159,6 @@ SQL;
     }
 
     /**
-     * @param RecordedEvent[] $recordedEvents
-     */
-    public function append(array $recordedEvents): void
-    {
-        array_walk($recordedEvents, [$this, 'writeEvent']);
-    }
-
-    /**
      * @return PDO
      * @throws PDOException
      */
@@ -186,21 +169,11 @@ SQL;
         return $PDO;
     }
 
-    /**
-     * @param PDOStatement $statement
-     * @param IdentifiesAggregate $aggregateId
-     * @return array
-     */
-    private function getEventsFromStatement(PDOStatement $statement, IdentifiesAggregate $aggregateId): array
-    {
-        $statement->execute([':aggregate_id_string' => $aggregateId]);
-        return $statement->fetchAll();
-    }
-
     private function writeEvent(DomainEvent $recordedEvent): void
     {
-        $eventType = get_class($recordedEvent->getPayload());
-        $aggregateIdType = get_class($recordedEvent->getAggregateId());
+        // TODO
+        $eventType = short($recordedEvent->getPayload());
+        $aggregateIdType = short($recordedEvent->getAggregateId());
         $aggregateIdString = strval($recordedEvent->getAggregateId());
         $dateString = $recordedEvent->getRecordedOn()->format(DATE_ATOM);
         $serializedEventData = $recordedEvent->getPayload()->serialize();
