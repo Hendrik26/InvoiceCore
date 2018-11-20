@@ -145,8 +145,7 @@ SQL;
      */
     private function restoreEventFromRecord(stdClass $record): RecordedEvent
     {
-        // TODO
-        $eventType = self::EVENT_NAMESPACE . $record->event_type; // SELECT event_type, id, foo FROM event_store....
+        $eventType = self::EVENT_NAMESPACE . $record->event_type;
         $idType = self::AGGREGATE_ID_NAMESPACE . $record->aggregate_id_type;
         $idString = $record->aggregate_id_string;
         $dateString = $record->date_string;
@@ -171,7 +170,6 @@ SQL;
 
     private function writeEvent(DomainEvent $recordedEvent): void
     {
-        // TODO
         $eventType = short($recordedEvent->getPayload());
         $aggregateIdType = short($recordedEvent->getAggregateId());
         $aggregateIdString = strval($recordedEvent->getAggregateId());
