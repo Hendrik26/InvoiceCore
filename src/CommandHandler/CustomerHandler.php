@@ -81,7 +81,17 @@ class CustomerHandler extends CqrsCommandHandler
     {
         //      * @throws Exception
         $this->customer[$aggregateId] = $this->customer[$aggregateId] ?? Customer::reconstituteFrom(new AggregateHistory(CustomerId::fromString($aggregateId), []));
-        $this->customer[$aggregateId]->changeCustomerAddress($args['customerAddress']);
+        // $this->customer[$aggregateId]->changeCustomerAddress($args['customerAddress']);
+        $billingAddress = $args['billingAddress'];
+        $this->customer[$aggregateId]->changeCustomerAddress(
+            new Address(
+                $billingAddress['countryCode'],
+                $billingAddress['postalCode'],
+                $billingAddress['city'],
+                $billingAddress['addressLine1'] ?? null,
+                $billingAddress['addressLine2'] ?? null,
+                $billingAddress['addressLine3'] ?? null
+            )        );
         $domainEvents = $this->customer[$aggregateId]->getRecordedEvents();
         $this->customer[$aggregateId]->clearRecordedEvents();
         return $domainEvents;

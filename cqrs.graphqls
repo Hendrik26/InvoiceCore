@@ -13,7 +13,7 @@ type CqrsCommandHandlers {
 # handlers, alphabetically
 type CustomerHandler {
 	engageInBusiness(name: String! billingAddress: Address!): Boolean!
-	changeCustomerAddress(customerAddress: Address!): Boolean!
+	changeCustomerAddress(billingAddress: Address!): Boolean!
 	changeCustomerName(customerName: String!): Boolean!
     changeCustomerSalesTaxNumber(customerSalesTaxNumber: String!): Boolean
 }
