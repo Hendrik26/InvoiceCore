@@ -83,7 +83,6 @@ class Customer implements AggregateRoot
 
     /**
      * @param Address $customerAddress
-     * @throws InvalidCustomerAddress
      */
     public function changeCustomerAddress(Address $customerAddress)
     {

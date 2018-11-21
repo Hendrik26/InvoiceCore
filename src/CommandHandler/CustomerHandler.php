@@ -14,9 +14,13 @@ use Irvobmagturs\InvoiceCore\Model\ValueObject\Address;
 use Irvobmagturs\InvoiceCore\Repository\CustomerNotFound;
 use Irvobmagturs\InvoiceCore\Repository\CustomerRepository;
 use Jubjubbird\Respects\CorruptAggregateHistory;
+use Jubjubbird\Respects\AggregateHistory;
+use Jubjubbird\Respects\DomainEvents;
+
 
 class CustomerHandler extends CqrsCommandHandler
 {
+    private $customer = [];
     private $repository;
 
     public function __construct(?TypeResolver $base, CustomerRepository $repository)
@@ -66,4 +70,53 @@ class CustomerHandler extends CqrsCommandHandler
         }
         throw new CustomerExists();
     }
+
+    /**
+     * @param $aggregateId
+     * @param array $args
+     * @return mixed
+     * @throws \Jubjubbird\Respects\CorruptAggregateHistory
+     */
+    public function changeCustomerAddress($aggregateId, array $args)
+    {
+        //      * @throws Exception
+        $this->customer[$aggregateId] = $this->customer[$aggregateId] ?? Customer::reconstituteFrom(new AggregateHistory(CustomerId::fromString($aggregateId), []));
+        $this->customer[$aggregateId]->changeCustomerAddress($args['customerAddress']);
+        $domainEvents = $this->customer[$aggregateId]->getRecordedEvents();
+        $this->customer[$aggregateId]->clearRecordedEvents();
+        return $domainEvents;
+    }
+
+    /**
+     * @param $aggregateId
+     * @param array $args
+     * @return mixed
+     * @throws \Jubjubbird\Respects\CorruptAggregateHistory
+     */
+    public function changeCustomerName($aggregateId, array $args)
+    {
+        $this->customer[$aggregateId] = $this->customer[$aggregateId] ?? Customer::reconstituteFrom(new
+            AggregateHistory(CustomerId::fromString($aggregateId), []));
+        $this->customer[$aggregateId]->changeCustomerName($args['customerName']);
+        $domainEvents = $this->customer[$aggregateId]->getRecordedEvents();
+        $this->customer[$aggregateId]->clearRecordedEvents();
+        return $domainEvents;
+    }
+
+    /**
+     * @param $aggregateId
+     * @param array $args
+     * @return mixed
+     * @throws \Jubjubbird\Respects\CorruptAggregateHistory
+     */
+    public function changeCustomerSalesTaxNumber($aggregateId, array $args) // changeCustomerSalesTaxNumber(string $salesTaxNumber)
+    {
+        $this->customer[$aggregateId] = $this->customer[$aggregateId] ?? Customer::reconstituteFrom(new
+            AggregateHistory(CustomerId::fromString($aggregateId), []));
+        $this->customer[$aggregateId]->changeCustomerSalesTaxNumber($args['customerSalesTaxNumber']);
+        $domainEvents = $this->customer[$aggregateId]->getRecordedEvents();
+        $this->customer[$aggregateId]->clearRecordedEvents();
+        return $domainEvents;
+    }
+
 }

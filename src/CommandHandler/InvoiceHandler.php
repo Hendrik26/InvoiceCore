@@ -20,6 +20,8 @@ use Irvobmagturs\InvoiceCore\Model\ValueObject\Money;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\SepaDirectDebitMandate;
 use Jubjubbird\Respects\AggregateHistory;
 use Jubjubbird\Respects\DomainEvents;
+use Jubjubbird\Respects\CorruptAggregateHistory;
+
 
 class InvoiceHandler extends CqrsCommandHandler
 {
@@ -57,7 +59,8 @@ class InvoiceHandler extends CqrsCommandHandler
      * @param string $aggregateId
      * @param array $args
      * @return DomainEvents
-     * @throws \Buttercup\Protects\CorruptAggregateHistory
+     * @throws \Jubjubbird\Respects\CorruptAggregateHistory
+     * * @throws Exception
      */
     public function becomeInternational(string $aggregateId, array $args): DomainEvents
     {
@@ -74,6 +77,9 @@ class InvoiceHandler extends CqrsCommandHandler
      * @param array $args
      * @return DomainEvents
      * @throws \Buttercup\Protects\CorruptAggregateHistory
+     * @throws \Jubjubbird\Respects\CorruptAggregateHistory
+     * @throws Exception
+
      */
     public function becomeNational(string $aggregateId, array $args): DomainEvents
     {
@@ -132,6 +138,9 @@ class InvoiceHandler extends CqrsCommandHandler
      * @param array $args
      * @return DomainEvents
      * @throws \Buttercup\Protects\CorruptAggregateHistory
+     * @throws \Jubjubbird\Respects\CorruptAggregateHistory
+     * @throws Exception
+
      */
     public function dropBillingPeriod(string $aggregateId, array $args): DomainEvents
     {
@@ -149,6 +158,9 @@ class InvoiceHandler extends CqrsCommandHandler
      * @param array $args
      * @return DomainEvents
      * @throws \Buttercup\Protects\CorruptAggregateHistory
+     * @throws \Jubjubbird\Respects\CorruptAggregateHistory
+     * @throws Exception
+
      */
     public function employSepaDirectDebit(string $aggregateId, array $args): DomainEvents
     {
@@ -168,6 +180,8 @@ class InvoiceHandler extends CqrsCommandHandler
      * @param array $args
      * @return DomainEvents
      * @throws \Buttercup\Protects\CorruptAggregateHistory
+     * @throws \Jubjubbird\Respects\CorruptAggregateHistory
+     * @throws Exception
      */
     public function refrainFromSepaDirectDebit(string $aggregateId, array $args): DomainEvents
     {
@@ -184,6 +198,8 @@ class InvoiceHandler extends CqrsCommandHandler
      * @param array $args
      * @return DomainEvents
      * @throws \Buttercup\Protects\CorruptAggregateHistory
+     * @throws \Jubjubbird\Respects\CorruptAggregateHistory
+     * @throws Exception
      */
     public function removeLineItemByPosition(string $aggregateId, array $args): DomainEvents
     {
@@ -201,6 +217,7 @@ class InvoiceHandler extends CqrsCommandHandler
      * @param array $args
      * @return DomainEvents
      * @throws \Buttercup\Protects\CorruptAggregateHistory
+     * @throws \Jubjubbird\Respects\CorruptAggregateHistory
      * @throws Exception
      */
     public function setInvoiceDate(string $aggregateId, array $args): DomainEvents
