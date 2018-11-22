@@ -18,15 +18,13 @@ use Irvobmagturs\InvoiceCore\Model\ValueObject\BillingPeriod;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\LineItem;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\Money;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\SepaDirectDebitMandate;
-use Jubjubbird\Respects\AggregateHistory;
+use Irvobmagturs\InvoiceCore\Repository\InvoiceRepository;
 use Jubjubbird\Respects\DomainEvents;
-use Jubjubbird\Respects\CorruptAggregateHistory;
 
 
 class InvoiceHandler extends CqrsCommandHandler
 {
-    /** @var Invoice[] */
-    private $invoice = [];
+    private $repository;
 
     /**
      * @param string $aggregateId
@@ -38,10 +36,10 @@ class InvoiceHandler extends CqrsCommandHandler
      */
     public function appendLineItem(string $aggregateId, array $args): DomainEvents
     {
-        $this->invoice[$aggregateId] = $this->invoice[$aggregateId] ?? Invoice::reconstituteFrom(new AggregateHistory(InvoiceId::fromString($aggregateId),
-                []));
+        /** @var Invoice $invoice */
+        $invoice = $this->repository->load(InvoiceId::fromString($aggregateId));
         $itemSpec = $args['item'];
-        $this->invoice[$aggregateId]->appendLineItem(
+        $invoice->appendLineItem(
             new LineItem(
                 new Money($itemSpec['price']['amount'], $itemSpec['price']['currency']),
                 $itemSpec['quantity'],
@@ -50,8 +48,8 @@ class InvoiceHandler extends CqrsCommandHandler
                 new DateTimeImmutable($itemSpec['date'], new DateTimeZone('UTC'))
             )
         );
-        $domainEvents = $this->invoice[$aggregateId]->getRecordedEvents();
-        $this->invoice[$aggregateId]->clearRecordedEvents();
+        $domainEvents = $invoice->getRecordedEvents();
+        $invoice->clearRecordedEvents();
         return $domainEvents;
     }
 
@@ -64,11 +62,11 @@ class InvoiceHandler extends CqrsCommandHandler
      */
     public function becomeInternational(string $aggregateId, array $args): DomainEvents
     {
-        $this->invoice[$aggregateId] = $this->invoice[$aggregateId] ?? Invoice::reconstituteFrom(new AggregateHistory(InvoiceId::fromString($aggregateId),
-                []));
-        $this->invoice[$aggregateId]->becomeInternational($args['countryCode'], $args['customerSalesTaxNumber']);
-        $domainEvents = $this->invoice[$aggregateId]->getRecordedEvents();
-        $this->invoice[$aggregateId]->clearRecordedEvents();
+        /** @var Invoice $invoice */
+        $invoice = $this->repository->load(InvoiceId::fromString($aggregateId));
+        $invoice->becomeInternational($args['countryCode'], $args['customerSalesTaxNumber']);
+        $domainEvents = $invoice->getRecordedEvents();
+        $invoice->clearRecordedEvents();
         return $domainEvents;
     }
 
@@ -83,11 +81,11 @@ class InvoiceHandler extends CqrsCommandHandler
      */
     public function becomeNational(string $aggregateId, array $args): DomainEvents
     {
-        $this->invoice[$aggregateId] = $this->invoice[$aggregateId] ?? Invoice::reconstituteFrom(new AggregateHistory(InvoiceId::fromString($aggregateId),
-                []));
-        $this->invoice[$aggregateId]->becomeNational();
-        $domainEvents = $this->invoice[$aggregateId]->getRecordedEvents();
-        $this->invoice[$aggregateId]->clearRecordedEvents();
+        /** @var Invoice $invoice */
+        $invoice = $this->repository->load(InvoiceId::fromString($aggregateId));
+        $invoice->becomeNational();
+        $domainEvents = $invoice->getRecordedEvents();
+        $invoice->clearRecordedEvents();
         return $domainEvents;
     }
 
@@ -119,17 +117,16 @@ class InvoiceHandler extends CqrsCommandHandler
      */
     public function coverBillingPeriod(string $aggregateId, array $args): DomainEvents
     {
-        $this->invoice[$aggregateId] = $this->invoice[$aggregateId] ?? Invoice::reconstituteFrom(
-                new AggregateHistory(InvoiceId::fromString($aggregateId), [])
-            );
+        /** @var Invoice $invoice */
+        $invoice = $this->repository->load(InvoiceId::fromString($aggregateId));
         $periodSpec = $args['period'];
         $startDate = new DateTimeImmutable($periodSpec['startDate']['iso8601value']);
         $endDate = new DateTimeImmutable($periodSpec['endDate']['iso8601value']);
-        $this->invoice[$aggregateId]->coverBillingPeriod(
+        $invoice->coverBillingPeriod(
             new BillingPeriod($startDate, $endDate)
         );
-        $domainEvents = $this->invoice[$aggregateId]->getRecordedEvents();
-        $this->invoice[$aggregateId]->clearRecordedEvents();
+        $domainEvents = $invoice->getRecordedEvents();
+        $invoice->clearRecordedEvents();
         return $domainEvents;
     }
 
@@ -144,12 +141,11 @@ class InvoiceHandler extends CqrsCommandHandler
      */
     public function dropBillingPeriod(string $aggregateId, array $args): DomainEvents
     {
-        $this->invoice[$aggregateId] = $this->invoice[$aggregateId] ?? Invoice::reconstituteFrom(
-                new AggregateHistory(InvoiceId::fromString($aggregateId), [])
-            );
-        $this->invoice[$aggregateId]->dropBillingPeriod();
-        $domainEvents = $this->invoice[$aggregateId]->getRecordedEvents();
-        $this->invoice[$aggregateId]->clearRecordedEvents();
+        /** @var Invoice $invoice */
+        $invoice = $this->repository->load(InvoiceId::fromString($aggregateId));
+        $invoice->dropBillingPeriod();
+        $domainEvents = $invoice->getRecordedEvents();
+        $invoice->clearRecordedEvents();
         return $domainEvents;
     }
 
@@ -164,14 +160,14 @@ class InvoiceHandler extends CqrsCommandHandler
      */
     public function employSepaDirectDebit(string $aggregateId, array $args): DomainEvents
     {
-        $this->invoice[$aggregateId] = $this->invoice[$aggregateId] ?? Invoice::reconstituteFrom(new AggregateHistory(InvoiceId::fromString($aggregateId),
-                []));
+        /** @var Invoice $invoice */
+        $invoice = $this->repository->load(InvoiceId::fromString($aggregateId));
         $mandateSpec = $args['mandate'];
-        $this->invoice[$aggregateId]->employSepaDirectDebit(
+        $invoice->employSepaDirectDebit(
             new SepaDirectDebitMandate($mandateSpec['mandateReference'], $mandateSpec['customerIban'])
         );
-        $domainEvents = $this->invoice[$aggregateId]->getRecordedEvents();
-        $this->invoice[$aggregateId]->clearRecordedEvents();
+        $domainEvents = $invoice->getRecordedEvents();
+        $invoice->clearRecordedEvents();
         return $domainEvents;
     }
 
@@ -185,11 +181,11 @@ class InvoiceHandler extends CqrsCommandHandler
      */
     public function refrainFromSepaDirectDebit(string $aggregateId, array $args): DomainEvents
     {
-        $this->invoice[$aggregateId] = $this->invoice[$aggregateId] ?? Invoice::reconstituteFrom(new AggregateHistory(InvoiceId::fromString($aggregateId),
-                []));
-        $this->invoice[$aggregateId]->refrainFromSepaDirectDebit();
-        $domainEvents = $this->invoice[$aggregateId]->getRecordedEvents();
-        $this->invoice[$aggregateId]->clearRecordedEvents();
+        /** @var Invoice $invoice */
+        $invoice = $this->repository->load(InvoiceId::fromString($aggregateId));
+        $invoice->refrainFromSepaDirectDebit();
+        $domainEvents = $invoice->getRecordedEvents();
+        $invoice->clearRecordedEvents();
         return $domainEvents;
     }
 
@@ -203,12 +199,11 @@ class InvoiceHandler extends CqrsCommandHandler
      */
     public function removeLineItemByPosition(string $aggregateId, array $args): DomainEvents
     {
-        $this->invoice[$aggregateId] = $this->invoice[$aggregateId] ?? Invoice::reconstituteFrom(
-                new AggregateHistory(InvoiceId::fromString($aggregateId), [])
-            );
-        $this->invoice[$aggregateId]->removeLineItemByPosition($args['position']);
-        $domainEvents = $this->invoice[$aggregateId]->getRecordedEvents();
-        $this->invoice[$aggregateId]->clearRecordedEvents();
+        /** @var Invoice $invoice */
+        $invoice = $this->repository->load(InvoiceId::fromString($aggregateId));
+        $invoice->removeLineItemByPosition($args['position']);
+        $domainEvents = $invoice->getRecordedEvents();
+        $invoice->clearRecordedEvents();
         return $domainEvents;
     }
 
@@ -222,15 +217,14 @@ class InvoiceHandler extends CqrsCommandHandler
      */
     public function setInvoiceDate(string $aggregateId, array $args): DomainEvents
     {
-        $this->invoice[$aggregateId] = $this->invoice[$aggregateId] ?? Invoice::reconstituteFrom(
-                new AggregateHistory(InvoiceId::fromString($aggregateId), [])
-            );
+        /** @var Invoice $invoice */
+        $invoice = $this->repository->load(InvoiceId::fromString($aggregateId));
         $invoiceDateSpec = $args['invoiceDate']['iso8601value'];
-        $this->invoice[$aggregateId]->setInvoiceDate(
+        $invoice->setInvoiceDate(
             new DateTimeImmutable($invoiceDateSpec)
         );
-        $domainEvents = $this->invoice[$aggregateId]->getRecordedEvents();
-        $this->invoice[$aggregateId]->clearRecordedEvents();
+        $domainEvents = $invoice->getRecordedEvents();
+        $invoice->clearRecordedEvents();
         return $domainEvents;
     }
 
@@ -245,4 +239,9 @@ class InvoiceHandler extends CqrsCommandHandler
     }
 
 
+    public function __construct(InvoiceRepository $repository, ?parent $base = null)
+    {
+        parent::__construct($base);
+        $this->repository = $repository;
+    }
 }
