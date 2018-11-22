@@ -22,8 +22,10 @@ use Irvobmagturs\InvoiceCore\Model\Event\InvoiceRefrainedSepaDirectDebit;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceWasOpened;
 use Irvobmagturs\InvoiceCore\Model\Event\LineItemWasAppended;
 use Irvobmagturs\InvoiceCore\Model\Event\LineItemWasRemoved;
+use Irvobmagturs\InvoiceCore\Model\Event\PaymentReferenceHasBeenRequested;
 use Irvobmagturs\InvoiceCore\Model\Exception\EmptyCountryCode;
 use Irvobmagturs\InvoiceCore\Model\Exception\EmptyInvoiceNumber;
+use Irvobmagturs\InvoiceCore\Model\Exception\EmptyPaymentReference;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidBillingPeriod;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidCustomerIban;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidCustomerSalesTaxNumber;
@@ -69,6 +71,8 @@ class Invoice implements AggregateRoot
      * @var
      */
     private $invoiceNumber; // done
+    private $paymentReference; // === $intendedUse;
+
 
     /**
      * @var
@@ -439,5 +443,32 @@ class Invoice implements AggregateRoot
         if ($interval2->d < 0) {
             throw new toLateInvoiceDueDate;
         }
+    }
+
+    /**
+     * @param String $paymentReference
+     */
+    public function requestPaymentReference(String $paymentReference)
+    {
+        $this->guardPaymentReference($paymentReference);
+        $this->recordThat(new PaymentReferenceHasBeenRequested($paymentReference));
+    }
+
+    /**
+     * @param String $paymentReference
+     */
+    private function guardPaymentReference(String $paymentReference)
+    {
+        if (trim($paymentReference) === "") {
+            throw new EmptyPaymentReference;
+        }
+    }
+
+    /**
+     * @param PaymentReferenceHasBeenRequested $event
+     */
+    private function whenPaymentReferenceHasBeenRequested(PaymentReferenceHasBeenRequested $event)
+    {
+        $this->paymentReference = $event->getPaymentReference();
     }
 }
