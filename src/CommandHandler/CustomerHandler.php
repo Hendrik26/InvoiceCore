@@ -20,6 +20,7 @@ use Jubjubbird\Respects\DomainEvents;
 
 class CustomerHandler extends CqrsCommandHandler
 {
+    /** @var Customer[] */
     private $customer = [];
     private $repository;
 
@@ -83,7 +84,7 @@ class CustomerHandler extends CqrsCommandHandler
         $this->customer[$aggregateId] = $this->customer[$aggregateId] ?? Customer::reconstituteFrom(new AggregateHistory(CustomerId::fromString($aggregateId), []));
         // $this->customer[$aggregateId]->changeCustomerAddress($args['customerAddress']);
         $billingAddress = $args['billingAddress'];
-        $this->customer[$aggregateId]->changeCustomerAddress(
+        $this->customer[$aggregateId]->relocate(
             new Address(
                 $billingAddress['countryCode'],
                 $billingAddress['postalCode'],
@@ -107,7 +108,7 @@ class CustomerHandler extends CqrsCommandHandler
     {
         $this->customer[$aggregateId] = $this->customer[$aggregateId] ?? Customer::reconstituteFrom(new
             AggregateHistory(CustomerId::fromString($aggregateId), []));
-        $this->customer[$aggregateId]->changeCustomerName($args['customerName']);
+        $this->customer[$aggregateId]->rename($args['customerName']);
         $domainEvents = $this->customer[$aggregateId]->getRecordedEvents();
         $this->customer[$aggregateId]->clearRecordedEvents();
         return $domainEvents;
@@ -123,7 +124,7 @@ class CustomerHandler extends CqrsCommandHandler
     {
         $this->customer[$aggregateId] = $this->customer[$aggregateId] ?? Customer::reconstituteFrom(new
             AggregateHistory(CustomerId::fromString($aggregateId), []));
-        $this->customer[$aggregateId]->changeCustomerSalesTaxNumber($args['customerSalesTaxNumber']);
+        $this->customer[$aggregateId]->assignTaxIdentification($args['customerSalesTaxNumber']);
         $domainEvents = $this->customer[$aggregateId]->getRecordedEvents();
         $this->customer[$aggregateId]->clearRecordedEvents();
         return $domainEvents;

@@ -84,7 +84,7 @@ class Customer implements AggregateRoot
     /**
      * @param Address $customerAddress
      */
-    public function changeCustomerAddress(Address $customerAddress)
+    public function relocate(Address $customerAddress)
     {
         $this->guardInvalidCustomerAddress($customerAddress);
         $this->recordThat(new CustomerAddressWasChanged($customerAddress));
@@ -93,7 +93,7 @@ class Customer implements AggregateRoot
     /**
      * @param string $customerName
      */
-    public function changeCustomerName(string $customerName)
+    public function rename(string $customerName)
     {
         $this->guardEmptyCustomerName($customerName);
         $this->recordThat(new CustomerNameWasChanged($customerName));
@@ -103,7 +103,7 @@ class Customer implements AggregateRoot
      * @param string $salesTaxNumber
      * @throws InvalidCustomerSalesTaxNumber
      */
-    public function changeCustomerSalesTaxNumber(string $salesTaxNumber)
+    public function assignTaxIdentification(string $salesTaxNumber)
     {
         $this->guardEmptySalesTaxNumber($salesTaxNumber);
         $this->recordThat(new CustomerSalesTaxNumberWasChanged($salesTaxNumber));
