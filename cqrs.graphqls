@@ -14,8 +14,8 @@ type CqrsCommandHandlers {
 type CustomerHandler {
 	engageInBusiness(name: String! billingAddress: Address!): Boolean!
 	relocate(billingAddress: Address!): Boolean!
-	rename(customerName: String!): Boolean!
-	assignTaxIdentification(customerSalesTaxNumber: String!): Boolean
+	rename(name: String!): Boolean!
+	assignTaxIdentification(idNumber: String!): Boolean
 }
 type InvoiceHandler {
 	chargeCustomer(customerId: String!, invoiceNumber: String!, invoiceDate: String!): Boolean!

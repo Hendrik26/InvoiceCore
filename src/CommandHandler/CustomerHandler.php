@@ -108,7 +108,7 @@ class CustomerHandler extends CqrsCommandHandler
     {
         $this->customer[$aggregateId] = $this->customer[$aggregateId] ?? Customer::reconstituteFrom(new
             AggregateHistory(CustomerId::fromString($aggregateId), []));
-        $this->customer[$aggregateId]->rename($args['customerName']);
+        $this->customer[$aggregateId]->rename($args['idNumber']);
         $domainEvents = $this->customer[$aggregateId]->getRecordedEvents();
         $this->customer[$aggregateId]->clearRecordedEvents();
         return $domainEvents;
@@ -124,7 +124,7 @@ class CustomerHandler extends CqrsCommandHandler
     {
         $this->customer[$aggregateId] = $this->customer[$aggregateId] ?? Customer::reconstituteFrom(new
             AggregateHistory(CustomerId::fromString($aggregateId), []));
-        $this->customer[$aggregateId]->assignTaxIdentification($args['customerSalesTaxNumber']);
+        $this->customer[$aggregateId]->assignTaxIdentification($args['idNumber']);
         $domainEvents = $this->customer[$aggregateId]->getRecordedEvents();
         $this->customer[$aggregateId]->clearRecordedEvents();
         return $domainEvents;
