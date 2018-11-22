@@ -32,17 +32,25 @@ $typeResolver->addResolverForField('CqrsQuery', 'loadFoo', function () {
 $typeResolver = new CqrsCommandHandlersResolver($typeResolver);
 $typeResolver = new InvoiceHandler(null, $typeResolver);
 $typeResolver = new CustomerHandler(
-    $typeResolver,
     new CustomerRepository(
-        new class implements EventStore {
-            public function append(array $recordedEvents): void {}
-            public function listEventsForId(IdentifiesAggregate $id): iterable {throw new NoEventsStored();}
+        new class implements EventStore
+        {
+            public function append(array $recordedEvents): void
+            {
+            }
+
+            public function listEventsForId(IdentifiesAggregate $id): iterable
+            {
+                throw new NoEventsStored();
+            }
         },
         new class implements EventBus
         {
-            function dispatch(DomainEvents $domainEvents): void {}
+            function dispatch(DomainEvents $domainEvents): void
+            {
+            }
         }
-    )
+    ), $typeResolver
 );
 try {
     $schemaFileCache = new SchemaFileCache($schemaCache);

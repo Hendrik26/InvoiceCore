@@ -5,6 +5,7 @@
 
 namespace Irvobmagturs\InvoiceCore\CommandHandler;
 
+use Exception;
 use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\CqrsCommandHandler;
 use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\TypeResolver;
 use Irvobmagturs\InvoiceCore\Model\Entity\Customer;
@@ -14,17 +15,13 @@ use Irvobmagturs\InvoiceCore\Model\ValueObject\Address;
 use Irvobmagturs\InvoiceCore\Repository\CustomerNotFound;
 use Irvobmagturs\InvoiceCore\Repository\CustomerRepository;
 use Jubjubbird\Respects\CorruptAggregateHistory;
-use Jubjubbird\Respects\AggregateHistory;
-use Jubjubbird\Respects\DomainEvents;
 
 
 class CustomerHandler extends CqrsCommandHandler
 {
-    /** @var Customer[] */
-    private $customer = [];
     private $repository;
 
-    public function __construct(?TypeResolver $base, CustomerRepository $repository)
+    public function __construct(CustomerRepository $repository, ?TypeResolver $base = null)
     {
         parent::__construct($base);
         $this->repository = $repository;
@@ -76,15 +73,15 @@ class CustomerHandler extends CqrsCommandHandler
      * @param $aggregateId
      * @param array $args
      * @return mixed
-     * @throws \Jubjubbird\Respects\CorruptAggregateHistory
+     * @throws CorruptAggregateHistory
+     * @throws Exception
      */
     public function relocate($aggregateId, array $args)
     {
-        //      * @throws Exception
-        $this->customer[$aggregateId] = $this->customer[$aggregateId] ?? Customer::reconstituteFrom(new AggregateHistory(CustomerId::fromString($aggregateId), []));
-        // $this->customer[$aggregateId]->changeCustomerAddress($args['customerAddress']);
+        /** @var Customer $customer */
+        $customer = $this->repository->load(CustomerId::fromString($aggregateId));
         $billingAddress = $args['billingAddress'];
-        $this->customer[$aggregateId]->relocate(
+        $customer->relocate(
             new Address(
                 $billingAddress['countryCode'],
                 $billingAddress['postalCode'],
@@ -93,8 +90,8 @@ class CustomerHandler extends CqrsCommandHandler
                 $billingAddress['addressLine2'] ?? null,
                 $billingAddress['addressLine3'] ?? null
             )        );
-        $domainEvents = $this->customer[$aggregateId]->getRecordedEvents();
-        $this->customer[$aggregateId]->clearRecordedEvents();
+        $domainEvents = $customer->getRecordedEvents();
+        $customer->clearRecordedEvents();
         return $domainEvents;
     }
 
@@ -102,15 +99,16 @@ class CustomerHandler extends CqrsCommandHandler
      * @param $aggregateId
      * @param array $args
      * @return mixed
-     * @throws \Jubjubbird\Respects\CorruptAggregateHistory
+     * @throws CorruptAggregateHistory
+     * @throws Exception when one of the events is not a DomainEvent.
      */
     public function rename($aggregateId, array $args)
     {
-        $this->customer[$aggregateId] = $this->customer[$aggregateId] ?? Customer::reconstituteFrom(new
-            AggregateHistory(CustomerId::fromString($aggregateId), []));
-        $this->customer[$aggregateId]->rename($args['idNumber']);
-        $domainEvents = $this->customer[$aggregateId]->getRecordedEvents();
-        $this->customer[$aggregateId]->clearRecordedEvents();
+        /** @var Customer $customer */
+        $customer = $this->repository->load(CustomerId::fromString($aggregateId));
+        $customer->rename($args['idNumber']);
+        $domainEvents = $customer->getRecordedEvents();
+        $customer->clearRecordedEvents();
         return $domainEvents;
     }
 
@@ -118,16 +116,16 @@ class CustomerHandler extends CqrsCommandHandler
      * @param $aggregateId
      * @param array $args
      * @return mixed
-     * @throws \Jubjubbird\Respects\CorruptAggregateHistory
+     * @throws CorruptAggregateHistory
+     * @throws Exception when one of the events is not a DomainEvent.
      */
     public function assignTaxIdentification($aggregateId, array $args) // changeCustomerSalesTaxNumber(string $salesTaxNumber)
     {
-        $this->customer[$aggregateId] = $this->customer[$aggregateId] ?? Customer::reconstituteFrom(new
-            AggregateHistory(CustomerId::fromString($aggregateId), []));
-        $this->customer[$aggregateId]->assignTaxIdentification($args['idNumber']);
-        $domainEvents = $this->customer[$aggregateId]->getRecordedEvents();
-        $this->customer[$aggregateId]->clearRecordedEvents();
+        /** @var Customer $customer */
+        $customer = $this->repository->load(CustomerId::fromString($aggregateId));
+        $customer->assignTaxIdentification($args['idNumber']);
+        $domainEvents = $customer->getRecordedEvents();
+        $customer->clearRecordedEvents();
         return $domainEvents;
     }
-
 }

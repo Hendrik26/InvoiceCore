@@ -42,6 +42,6 @@ class CustomerHandlerSpec extends ObjectBehavior
 
     function let(CustomerRepository $repository)
     {
-        $this->beConstructedWith(null, $repository);
+        $this->beConstructedWith($repository, null);
     }
 }
