@@ -14,6 +14,7 @@ use DateTimeInterface;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceBecameInternational;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceBecameNational;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceDateHasBeenSet;
+use Irvobmagturs\InvoiceCore\Model\Event\InvoiceDueDateHasBeenSet;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceEmployedSepaDirectDebit;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceHasCoveredBillingPeriod;
 use Irvobmagturs\InvoiceCore\Model\Event\InvoiceHasDroppedBillingPeriod;
@@ -31,7 +32,9 @@ use Irvobmagturs\InvoiceCore\Model\Exception\InvalidLineItemPosition;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidLineItemTitle;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidSepaDirectDebitMandateReference;
 use Irvobmagturs\InvoiceCore\Model\Exception\toEarlyInvoiceDate;
+use Irvobmagturs\InvoiceCore\Model\Exception\toEarlyInvoiceDueDate;
 use Irvobmagturs\InvoiceCore\Model\Exception\toLateInvoiceDate;
+use Irvobmagturs\InvoiceCore\Model\Exception\toLateInvoiceDueDate;
 use Irvobmagturs\InvoiceCore\Model\Id\CustomerId;
 use Irvobmagturs\InvoiceCore\Model\Id\InvoiceId;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\BillingPeriod;
@@ -42,6 +45,7 @@ use Jubjubbird\Respects\AggregateRoot;
 use Jubjubbird\Respects\ApplyCallsWhenMethod;
 use Jubjubbird\Respects\RecordsEvents;
 use Jubjubbird\Respects\RecordsEventsForBusinessMethods;
+
 
 class Invoice implements AggregateRoot
 {
@@ -70,6 +74,8 @@ class Invoice implements AggregateRoot
      * @var
      */
     private $invoiceDate; // done
+    private $invoiceDueDate; // done
+
 
     /**
      * @var
@@ -341,6 +347,14 @@ class Invoice implements AggregateRoot
     }
 
     /**
+     * @param InvoiceDueDateHasBeenSet $event
+     */
+    private function whenInvoiceDueDateHasBeenSet(InvoiceDueDateHasBeenSet $event)
+    {
+        $this->invoiceDueDate = $event->getInvoiceDueDate();
+    }
+
+    /**
      * @param InvoiceEmployedSepaDirectDebit $event
      */
     private function whenInvoiceEmployedSepaDirectDebit(InvoiceEmployedSepaDirectDebit $event)
@@ -392,10 +406,38 @@ class Invoice implements AggregateRoot
     }
 
     /**
-     * @param LineItemWasAppended $event
+     * @param LineItemWasRemoved $event
      */
     private function whenLineItemWasRemoved(LineItemWasRemoved $event)
     {
         array_splice($this->lineItems, $event->getPosition(), 1);
+    }
+
+    /**
+     * @param DateTimeInterface $date
+     * @throws \Exception
+     */
+    public function setInvoiceDueDate(DateTimeInterface $date)
+    {
+        $this->guardInvoiceDueDate($date);
+        $this->recordThat(new InvoiceDueDateHasBeenSet($date));
+    }
+
+    /**
+     * @param DateTimeInterface $date
+     * @throws \Exception
+     */
+    private function guardInvoiceDueDate(DateTimeInterface $date)
+    {
+        $minDate = new DateTimeImmutable('1949-05-23');
+        $maxDate = new DateTimeImmutable('2100-01-01');
+        $interval = $minDate->diff($date); // DateInterval
+        $interval2 = $date->diff($maxDate); // DateInterval
+        if ($interval->d < 0) {
+            throw new toEarlyInvoiceDueDate;
+        }
+        if ($interval2->d < 0) {
+            throw new toLateInvoiceDueDate;
+        }
     }
 }
