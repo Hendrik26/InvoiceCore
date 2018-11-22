@@ -78,7 +78,7 @@ class CustomerHandler extends CqrsCommandHandler
      * @return mixed
      * @throws \Jubjubbird\Respects\CorruptAggregateHistory
      */
-    public function changeCustomerAddress($aggregateId, array $args)
+    public function relocate($aggregateId, array $args)
     {
         //      * @throws Exception
         $this->customer[$aggregateId] = $this->customer[$aggregateId] ?? Customer::reconstituteFrom(new AggregateHistory(CustomerId::fromString($aggregateId), []));
@@ -104,7 +104,7 @@ class CustomerHandler extends CqrsCommandHandler
      * @return mixed
      * @throws \Jubjubbird\Respects\CorruptAggregateHistory
      */
-    public function changeCustomerName($aggregateId, array $args)
+    public function rename($aggregateId, array $args)
     {
         $this->customer[$aggregateId] = $this->customer[$aggregateId] ?? Customer::reconstituteFrom(new
             AggregateHistory(CustomerId::fromString($aggregateId), []));
@@ -120,7 +120,7 @@ class CustomerHandler extends CqrsCommandHandler
      * @return mixed
      * @throws \Jubjubbird\Respects\CorruptAggregateHistory
      */
-    public function changeCustomerSalesTaxNumber($aggregateId, array $args) // changeCustomerSalesTaxNumber(string $salesTaxNumber)
+    public function assignTaxIdentification($aggregateId, array $args) // changeCustomerSalesTaxNumber(string $salesTaxNumber)
     {
         $this->customer[$aggregateId] = $this->customer[$aggregateId] ?? Customer::reconstituteFrom(new
             AggregateHistory(CustomerId::fromString($aggregateId), []));
