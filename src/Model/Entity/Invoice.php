@@ -127,7 +127,7 @@ class Invoice implements AggregateRoot
 
     /**
      * @param AggregateHistory $aggregateHistory
-     * @return RecordsEvents
+     * @return self
      * @throws InvalidInvoiceId
      */
     public static function reconstituteFrom(AggregateHistory $aggregateHistory): RecordsEvents
