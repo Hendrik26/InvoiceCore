@@ -3,7 +3,7 @@
  * @author I. R. Vobmagturs <i+r+vobmagturs@commodea.com>
  */
 
-namespace Irvobmagturs\InvoiceCore\Infrastructure\GraphQL;
+namespace Irvobmagturs\InvoiceCore\Infrastructure;
 
 use Jubjubbird\Respects\DomainEvents;
 

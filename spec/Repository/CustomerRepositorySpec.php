@@ -5,8 +5,8 @@
 
 namespace spec\Irvobmagturs\InvoiceCore\Repository;
 
+use Irvobmagturs\InvoiceCore\Infrastructure\EventBus;
 use Irvobmagturs\InvoiceCore\Infrastructure\EventStore;
-use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\EventBus;
 use Irvobmagturs\InvoiceCore\Repository\CustomerRepository;
 use Jubjubbird\Respects\AggregateRoot;
 use Jubjubbird\Respects\DomainEvents;

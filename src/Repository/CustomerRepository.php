@@ -3,8 +3,8 @@
 namespace Irvobmagturs\InvoiceCore\Repository;
 
 use Buttercup\Protects\IdentifiesAggregate;
+use Irvobmagturs\InvoiceCore\Infrastructure\EventBus;
 use Irvobmagturs\InvoiceCore\Infrastructure\EventStore;
-use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\EventBus;
 use Irvobmagturs\InvoiceCore\Infrastructure\NoEventsStored;
 use Irvobmagturs\InvoiceCore\Infrastructure\Repository;
 use Irvobmagturs\InvoiceCore\Model\Entity\Customer;
