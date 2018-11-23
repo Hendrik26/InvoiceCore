@@ -53,14 +53,14 @@ class SqLiteEventStoreSpec extends ObjectBehavior
             'aggregate_id_type' => 'InvoiceId',
             'aggregate_id_string' => '82a85921-e4fb-4aed-89cd-4b34ab24e482',
             'date_string' => '2018-11-20',
-            'serialized_event_data' => ['testCountryCode', 'testCustomerSalesTaxNumber']
+            'serialized_event_data' => '["testCountryCode", "testCustomerSalesTaxNumber"]'
         ];
         $testEvent02 = (object)[
             'event_type' => 'InvoiceBecameNational',
             'aggregate_id_type' => 'InvoiceId',
             'aggregate_id_string' => '93a85921-e4fb-4aed-89cd-4b34ab24e482',
             'date_string' => '2018-11-20',
-            'serialized_event_data' => [-1]
+            'serialized_event_data' => '[-1]'
         ];
         $aggregateId->__toString()->willReturn('71f95921-e4fb-4aed-89cd-4b34ab24e482');
         $selectStatement->execute(Argument::type('array'))->willReturn(true);
