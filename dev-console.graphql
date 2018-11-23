@@ -12,6 +12,15 @@ mutation m {
                 postalCode: "32568"
             }
         )
+        assignTaxIdentification(idNumber: "AB0123456789")
+        relocate(
+            billingAddress: {
+                city: "London"
+                countryCode: "UK"
+                postalCode: "SE2 9AQ"
+            }
+        )
+        rename(name: "Stiftfabrik Kuhl e. K.")
     }
 }
 
@@ -22,7 +31,7 @@ mutation m {
             invoiceDate: "yesterday"
             invoiceNumber: "B01-43bc-b3a2"
         )
-        first: appendLineItem(
+        appendLineItem(
             item: {
                 date: "now"
                 quantity: 1
@@ -34,19 +43,28 @@ mutation m {
                 }
             }
         )
-        second: appendLineItem(
-            item: {
-                date: "now"
-                quantity: 1
-                timeBased: false
-                title: "some item"
-                price: {
-                    amount: 0
-                    currency: ""
-                }
+        becomeInternational(
+            countryCode: "UK"
+            customerSalesTaxNumber: "AB0123456789"
+        )
+        becomeNational
+        coverBillingPeriod(
+            period: {
+                startDate: { iso8601value: "2018-01-01" }
+                endDate: { iso8601value: "2018-12-31" }
             }
         )
-        delLast: removeLineItemByPosition(position: 1)
-        delFirst: removeLineItemByPosition(position: 0)
+        dropBillingPeriod
+        employSepaDirectDebit(
+            mandate: {
+                customerIban: "UK01 2345 6789 0123 4567 89"
+                mandateReference: "c012/345"
+            }
+        )
+        refrainFromSepaDirectDebit
+        removeLineItemByPosition(position: 0)
+        setInvoiceDate(
+            invoiceDate: { iso8601value: "2018-12-31" }
+        )
     }
 }
