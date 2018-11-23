@@ -6,7 +6,7 @@
  * Time: 09:27
  */
 
-namespace Irvobmagturs\InvoiceCore\Model\Entity;
+namespace Irvobmagturs\InvoiceCore\Model\Event;
 
 use Jubjubbird\Respects\Serializable;
 
