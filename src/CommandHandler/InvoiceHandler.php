@@ -9,6 +9,7 @@ use DateTimeImmutable;
 use DateTimeZone;
 use Exception;
 use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\CqrsCommandHandler;
+use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\TypeResolver;
 use Irvobmagturs\InvoiceCore\Model\Entity\Invoice;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidInvoiceId;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidLineItemTitle;
@@ -25,6 +26,12 @@ use Jubjubbird\Respects\DomainEvents;
 class InvoiceHandler extends CqrsCommandHandler
 {
     private $repository;
+
+    public function __construct(InvoiceRepository $repository, ?TypeResolver $base = null)
+    {
+        parent::__construct($base);
+        $this->repository = $repository;
+    }
 
     /**
      * @param string $aggregateId
@@ -77,7 +84,6 @@ class InvoiceHandler extends CqrsCommandHandler
      * @throws \Buttercup\Protects\CorruptAggregateHistory
      * @throws \Jubjubbird\Respects\CorruptAggregateHistory
      * @throws Exception
-
      */
     public function becomeNational(string $aggregateId, array $args): DomainEvents
     {
@@ -137,7 +143,6 @@ class InvoiceHandler extends CqrsCommandHandler
      * @throws \Buttercup\Protects\CorruptAggregateHistory
      * @throws \Jubjubbird\Respects\CorruptAggregateHistory
      * @throws Exception
-
      */
     public function dropBillingPeriod(string $aggregateId, array $args): DomainEvents
     {
@@ -156,7 +161,6 @@ class InvoiceHandler extends CqrsCommandHandler
      * @throws \Buttercup\Protects\CorruptAggregateHistory
      * @throws \Jubjubbird\Respects\CorruptAggregateHistory
      * @throws Exception
-
      */
     public function employSepaDirectDebit(string $aggregateId, array $args): DomainEvents
     {
@@ -236,12 +240,5 @@ class InvoiceHandler extends CqrsCommandHandler
     private function nullableStringToDate($invoiceDate)
     {
         return $invoiceDate ? new DateTimeImmutable($invoiceDate) : null;
-    }
-
-
-    public function __construct(InvoiceRepository $repository, ?parent $base = null)
-    {
-        parent::__construct($base);
-        $this->repository = $repository;
     }
 }
