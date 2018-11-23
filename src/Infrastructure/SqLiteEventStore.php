@@ -8,12 +8,12 @@
 
 namespace Irvobmagturs\InvoiceCore\Infrastructure;
 
-
 use Buttercup\Protects\IdentifiesAggregate;
 use DateTimeImmutable;
 use Exception;
 use Jubjubbird\Respects\DomainEvent;
 use Jubjubbird\Respects\RecordedEvent;
+use Jubjubbird\Respects\Serializable;
 use PDO;
 use PDOException;
 use PDOStatement;
@@ -28,12 +28,12 @@ class SqLiteEventStore implements EventStore
     const RESULT_COLUMN = '';
     const QUERY_COLUMN = '';
     const EXPRESSION = '';
+    const JSON_FLAGS = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE;
     private $connection;
     /** @var SqLitePdo */
     private $database;
     private $dbStatement;
     private $dbWriteStatement;
-
 
     /**
      * SqLiteEventStore constructor.
@@ -145,11 +145,13 @@ SQL;
      */
     private function restoreEventFromRecord(stdClass $record): RecordedEvent
     {
+        /** @var Serializable $eventType */
         $eventType = self::EVENT_NAMESPACE . $record->event_type;
+        /** @var IdentifiesAggregate $idType */
         $idType = self::AGGREGATE_ID_NAMESPACE . $record->aggregate_id_type;
         $idString = $record->aggregate_id_string;
         $dateString = $record->date_string;
-        $serializedEventData = $record->serialized_event_data;
+        $serializedEventData = json_decode($record->serialized_event_data);
         return new RecordedEvent(
             $eventType::deserialize($serializedEventData),
             $idType::fromString($idString),
@@ -180,7 +182,7 @@ SQL;
             ':aggregateIdType' => $aggregateIdType,
             ':aggregateIdString' => $aggregateIdString,
             ':dateString' => $dateString,
-            ':serializedEventData' => $serializedEventData
+            ':serializedEventData' => json_encode($serializedEventData, self::JSON_FLAGS)
         ]);
     }
 }
