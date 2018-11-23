@@ -159,17 +159,6 @@ SQL;
         );
     }
 
-    /**
-     * @return PDO
-     * @throws PDOException
-     */
-    private function openDataBaseConnection(): PDO
-    {
-        $PDO = new PDO($this->createConnectionString());
-        $PDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        return $PDO;
-    }
-
     private function writeEvent(DomainEvent $recordedEvent): void
     {
         $eventType = short($recordedEvent->getPayload());
