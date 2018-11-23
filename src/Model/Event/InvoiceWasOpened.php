@@ -56,8 +56,8 @@ class InvoiceWasOpened implements Serializable
      */
     public static function deserialize(array $data): self
     {
-        return new self(CustomerId::fromString($data[1]), $data[2],
-            $data[3] ? new DateTimeImmutable($data[3]) : null);
+        return new self(CustomerId::fromString($data[0]), $data[1],
+            $data[2] ? new DateTimeImmutable($data[2]) : null);
     }
 
     /**
