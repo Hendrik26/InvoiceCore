@@ -12,6 +12,8 @@ class SqLitePdo extends PDO
     public function __construct(string $filePath)
     {
         parent::__construct($this->createDataSourceName($filePath));
+        $this->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $this->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
     }
 
     /**
