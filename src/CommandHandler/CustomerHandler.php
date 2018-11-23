@@ -72,11 +72,10 @@ class CustomerHandler extends CqrsCommandHandler
     /**
      * @param $aggregateId
      * @param array $args
-     * @return mixed
      * @throws CorruptAggregateHistory
      * @throws Exception
      */
-    public function relocate($aggregateId, array $args)
+    public function relocate($aggregateId, array $args): void
     {
         /** @var Customer $customer */
         $customer = $this->repository->load(CustomerId::fromString($aggregateId));
@@ -89,43 +88,36 @@ class CustomerHandler extends CqrsCommandHandler
                 $billingAddress['addressLine1'] ?? null,
                 $billingAddress['addressLine2'] ?? null,
                 $billingAddress['addressLine3'] ?? null
-            )        );
-        $domainEvents = $customer->getRecordedEvents();
-        $customer->clearRecordedEvents();
-        return $domainEvents;
+            )
+        );
+        $this->repository->save($customer);
     }
 
     /**
      * @param $aggregateId
      * @param array $args
-     * @return mixed
      * @throws CorruptAggregateHistory
      * @throws Exception when one of the events is not a DomainEvent.
      */
-    public function rename($aggregateId, array $args)
+    public function rename($aggregateId, array $args): void
     {
         /** @var Customer $customer */
         $customer = $this->repository->load(CustomerId::fromString($aggregateId));
-        $customer->rename($args['idNumber']);
-        $domainEvents = $customer->getRecordedEvents();
-        $customer->clearRecordedEvents();
-        return $domainEvents;
+        $customer->rename($args['name']);
+        $this->repository->save($customer);
     }
 
     /**
      * @param $aggregateId
      * @param array $args
-     * @return mixed
      * @throws CorruptAggregateHistory
      * @throws Exception when one of the events is not a DomainEvent.
      */
-    public function assignTaxIdentification($aggregateId, array $args) // changeCustomerSalesTaxNumber(string $salesTaxNumber)
+    public function assignTaxIdentification($aggregateId, array $args): void
     {
         /** @var Customer $customer */
         $customer = $this->repository->load(CustomerId::fromString($aggregateId));
         $customer->assignTaxIdentification($args['idNumber']);
-        $domainEvents = $customer->getRecordedEvents();
-        $customer->clearRecordedEvents();
-        return $domainEvents;
+        $this->repository->save($customer);
     }
 }

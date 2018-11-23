@@ -19,7 +19,9 @@ use Irvobmagturs\InvoiceCore\Model\ValueObject\BillingPeriod;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\LineItem;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\Money;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\SepaDirectDebitMandate;
+use Irvobmagturs\InvoiceCore\Repository\InvoiceNotFound;
 use Irvobmagturs\InvoiceCore\Repository\InvoiceRepository;
+use Jubjubbird\Respects\CorruptAggregateHistory;
 use Jubjubbird\Respects\DomainEvents;
 
 
@@ -36,12 +38,11 @@ class InvoiceHandler extends CqrsCommandHandler
     /**
      * @param string $aggregateId
      * @param array $args
-     * @return DomainEvents
      * @throws InvalidInvoiceId
      * @throws InvalidLineItemTitle
      * @throws Exception
      */
-    public function appendLineItem(string $aggregateId, array $args): DomainEvents
+    public function appendLineItem(string $aggregateId, array $args): void
     {
         /** @var Invoice $invoice */
         $invoice = $this->repository->load(InvoiceId::fromString($aggregateId));
@@ -55,73 +56,78 @@ class InvoiceHandler extends CqrsCommandHandler
                 new DateTimeImmutable($itemSpec['date'], new DateTimeZone('UTC'))
             )
         );
-        $domainEvents = $invoice->getRecordedEvents();
-        $invoice->clearRecordedEvents();
-        return $domainEvents;
+        $this->repository->save($invoice);
     }
 
     /**
      * @param string $aggregateId
      * @param array $args
-     * @return DomainEvents
      * @throws \Jubjubbird\Respects\CorruptAggregateHistory
      * * @throws Exception
      */
-    public function becomeInternational(string $aggregateId, array $args): DomainEvents
+    public function becomeInternational(string $aggregateId, array $args): void
     {
         /** @var Invoice $invoice */
         $invoice = $this->repository->load(InvoiceId::fromString($aggregateId));
         $invoice->becomeInternational($args['countryCode'], $args['customerSalesTaxNumber']);
-        $domainEvents = $invoice->getRecordedEvents();
-        $invoice->clearRecordedEvents();
-        return $domainEvents;
+        $this->repository->save($invoice);
     }
 
     /**
      * @param string $aggregateId
      * @param array $args
-     * @return DomainEvents
      * @throws \Buttercup\Protects\CorruptAggregateHistory
      * @throws \Jubjubbird\Respects\CorruptAggregateHistory
      * @throws Exception
      */
-    public function becomeNational(string $aggregateId, array $args): DomainEvents
+    public function becomeNational(string $aggregateId, array $args): void
     {
         /** @var Invoice $invoice */
         $invoice = $this->repository->load(InvoiceId::fromString($aggregateId));
         $invoice->becomeNational();
-        $domainEvents = $invoice->getRecordedEvents();
-        $invoice->clearRecordedEvents();
-        return $domainEvents;
+        $this->repository->save($invoice);
     }
 
     /**
      * @param string $aggregateId
      * @param array $args
-     * @return DomainEvents
      * @throws Exception
      */
-    public function chargeCustomer(string $aggregateId, array $args): DomainEvents
+    public function chargeCustomer(string $aggregateId, array $args): void
     {
+        $this->guardUniqueInvoice($aggregateId);
         $invoice = Invoice::chargeCustomer(
             InvoiceId::fromString($aggregateId),
             CustomerId::fromString($args['customerId']),
             $args['invoiceNumber'],
             $this->nullableStringToDate($args['invoiceDate'] ?? null)
         );
-        $domainEvents = $invoice->getRecordedEvents();
-        $invoice->clearRecordedEvents();
-        return $domainEvents;
+        $this->repository->save($invoice);
+    }
+
+    /**
+     * @param string $aggregateId
+     * @throws CorruptAggregateHistory
+     * @throws InvoiceExists
+     * @throws InvalidInvoiceId
+     */
+    private function guardUniqueInvoice(string $aggregateId): void
+    {
+        try {
+            $this->repository->load(InvoiceId::fromString($aggregateId));
+        } catch (InvoiceNotFound $e) {
+            return;
+        }
+        throw new InvoiceExists();
     }
 
     /**
      * @param string $aggregateId
      * @param array $args
-     * @return DomainEvents
      * @throws \Buttercup\Protects\CorruptAggregateHistory
      * @throws Exception
      */
-    public function coverBillingPeriod(string $aggregateId, array $args): DomainEvents
+    public function coverBillingPeriod(string $aggregateId, array $args): void
     {
         /** @var Invoice $invoice */
         $invoice = $this->repository->load(InvoiceId::fromString($aggregateId));
@@ -131,38 +137,32 @@ class InvoiceHandler extends CqrsCommandHandler
         $invoice->coverBillingPeriod(
             new BillingPeriod($startDate, $endDate)
         );
-        $domainEvents = $invoice->getRecordedEvents();
-        $invoice->clearRecordedEvents();
-        return $domainEvents;
+        $this->repository->save($invoice);
     }
 
     /**
      * @param string $aggregateId
      * @param array $args
-     * @return DomainEvents
      * @throws \Buttercup\Protects\CorruptAggregateHistory
      * @throws \Jubjubbird\Respects\CorruptAggregateHistory
      * @throws Exception
      */
-    public function dropBillingPeriod(string $aggregateId, array $args): DomainEvents
+    public function dropBillingPeriod(string $aggregateId, array $args): void
     {
         /** @var Invoice $invoice */
         $invoice = $this->repository->load(InvoiceId::fromString($aggregateId));
         $invoice->dropBillingPeriod();
-        $domainEvents = $invoice->getRecordedEvents();
-        $invoice->clearRecordedEvents();
-        return $domainEvents;
+        $this->repository->save($invoice);
     }
 
     /**
      * @param string $aggregateId
      * @param array $args
-     * @return DomainEvents
      * @throws \Buttercup\Protects\CorruptAggregateHistory
      * @throws \Jubjubbird\Respects\CorruptAggregateHistory
      * @throws Exception
      */
-    public function employSepaDirectDebit(string $aggregateId, array $args): DomainEvents
+    public function employSepaDirectDebit(string $aggregateId, array $args): void
     {
         /** @var Invoice $invoice */
         $invoice = $this->repository->load(InvoiceId::fromString($aggregateId));
@@ -170,56 +170,47 @@ class InvoiceHandler extends CqrsCommandHandler
         $invoice->employSepaDirectDebit(
             new SepaDirectDebitMandate($mandateSpec['mandateReference'], $mandateSpec['customerIban'])
         );
-        $domainEvents = $invoice->getRecordedEvents();
-        $invoice->clearRecordedEvents();
-        return $domainEvents;
+        $this->repository->save($invoice);
     }
 
     /**
      * @param string $aggregateId
      * @param array $args
-     * @return DomainEvents
      * @throws \Buttercup\Protects\CorruptAggregateHistory
      * @throws \Jubjubbird\Respects\CorruptAggregateHistory
      * @throws Exception
      */
-    public function refrainFromSepaDirectDebit(string $aggregateId, array $args): DomainEvents
+    public function refrainFromSepaDirectDebit(string $aggregateId, array $args): void
     {
         /** @var Invoice $invoice */
         $invoice = $this->repository->load(InvoiceId::fromString($aggregateId));
         $invoice->refrainFromSepaDirectDebit();
-        $domainEvents = $invoice->getRecordedEvents();
-        $invoice->clearRecordedEvents();
-        return $domainEvents;
+        $this->repository->save($invoice);
     }
 
     /**
      * @param string $aggregateId
      * @param array $args
-     * @return DomainEvents
      * @throws \Buttercup\Protects\CorruptAggregateHistory
      * @throws \Jubjubbird\Respects\CorruptAggregateHistory
      * @throws Exception
      */
-    public function removeLineItemByPosition(string $aggregateId, array $args): DomainEvents
+    public function removeLineItemByPosition(string $aggregateId, array $args): void
     {
         /** @var Invoice $invoice */
         $invoice = $this->repository->load(InvoiceId::fromString($aggregateId));
         $invoice->removeLineItemByPosition($args['position']);
-        $domainEvents = $invoice->getRecordedEvents();
-        $invoice->clearRecordedEvents();
-        return $domainEvents;
+        $this->repository->save($invoice);
     }
 
     /**
      * @param string $aggregateId
      * @param array $args
-     * @return DomainEvents
      * @throws \Buttercup\Protects\CorruptAggregateHistory
      * @throws \Jubjubbird\Respects\CorruptAggregateHistory
      * @throws Exception
      */
-    public function setInvoiceDate(string $aggregateId, array $args): DomainEvents
+    public function setInvoiceDate(string $aggregateId, array $args): void
     {
         /** @var Invoice $invoice */
         $invoice = $this->repository->load(InvoiceId::fromString($aggregateId));
@@ -227,9 +218,7 @@ class InvoiceHandler extends CqrsCommandHandler
         $invoice->setInvoiceDate(
             new DateTimeImmutable($invoiceDateSpec)
         );
-        $domainEvents = $invoice->getRecordedEvents();
-        $invoice->clearRecordedEvents();
-        return $domainEvents;
+        $this->repository->save($invoice);
     }
 
     /**
