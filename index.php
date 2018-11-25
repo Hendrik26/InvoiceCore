@@ -40,8 +40,8 @@ $typeResolver->addResolverForField('CqrsQuery', 'loadFoo', function () {
 $typeResolver = new CqrsCommandHandlersResolver($typeResolver);
 $commandBus = new CqrsCommandBus($typeResolver);
 $typeResolver = $commandBus;
-$commandBus->append(new InvoiceHandler(new InvoiceRepository($eventStore, $eventBus), $typeResolver));
-$commandBus->append(new CustomerHandler(new CustomerRepository($eventStore, $eventBus), $typeResolver));
+$commandBus->append(new InvoiceHandler(new InvoiceRepository($eventStore, $eventBus)));
+$commandBus->append(new CustomerHandler(new CustomerRepository($eventStore, $eventBus)));
 try {
     $schemaFileCache = new SchemaFileCache($schemaCache);
     $schema = $schemaFileCache->loadCacheForFile($schemaFile, $typeResolver->generateTypeConfigDecorator());
