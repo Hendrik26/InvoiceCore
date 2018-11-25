@@ -7,31 +7,27 @@
 use GraphQL\Server\StandardServer;
 use Irvobmagturs\InvoiceCore\CommandHandler\CustomerHandler;
 use Irvobmagturs\InvoiceCore\CommandHandler\InvoiceHandler;
-use Irvobmagturs\InvoiceCore\Infrastructure\EventBus;
 use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\CqrsCommandBus;
 use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\CustomizedGraphqlServerConfig;
 use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\SchemaFileCache;
 use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\TypeResolver;
 use Irvobmagturs\InvoiceCore\Infrastructure\SqLiteEventStore;
 use Irvobmagturs\InvoiceCore\Infrastructure\SqLitePdo;
+use Irvobmagturs\InvoiceCore\Projector\SimpleProjector;
 use Irvobmagturs\InvoiceCore\Repository\CustomerRepository;
 use Irvobmagturs\InvoiceCore\Repository\InvoiceRepository;
-use Jubjubbird\Respects\DomainEvents;
 
 require_once __DIR__ . '/vendor/autoload.php';
 $schemaCache = __DIR__ . '/data/cache/schema';
 $eventStoreFile = __DIR__ . '/data/eventstore.sqlite';
 $schemaFile = __DIR__ . '/cqrs.graphqls';
+$customerDir = __DIR__ . '/data/projections/customer';
+$invoiceDir = __DIR__ . '/data/projections/invoice';
 $context = null;
 $rootValue = null;
 $serverConfig = null;
 $eventStore = new SqLiteEventStore(new SqLitePdo($eventStoreFile));
-$eventBus = new class implements EventBus
-{
-    function dispatch(DomainEvents $domainEvents): void
-    {
-    }
-};
+$eventBus = new SimpleProjector($invoiceDir, $customerDir);
 $typeResolver = new TypeResolver();
 $typeResolver->addResolverForField('CqrsQuery', 'loadFoo', function () {
     return 'bar';
