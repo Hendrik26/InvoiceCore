@@ -3,13 +3,13 @@
  * Created by PhpStorm.
  * User: hendrik
  * Date: 12.11.18
- * Time: 12:51
+ * Time: 12:48
  */
 
 namespace Irvobmagturs\InvoiceCore\Model\Exception;
 
 use InvalidArgumentException;
 
-class toLateInvoiceDate extends InvalidArgumentException
+class InvoiceDateTooEarly extends InvalidArgumentException
 {
 }

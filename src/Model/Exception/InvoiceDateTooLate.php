@@ -2,14 +2,14 @@
 /**
  * Created by PhpStorm.
  * User: hendrik
- * Date: 22.11.18
- * Time: 10:07
+ * Date: 12.11.18
+ * Time: 12:51
  */
 
 namespace Irvobmagturs\InvoiceCore\Model\Exception;
 
 use InvalidArgumentException;
 
-class toLateInvoiceDueDate extends InvalidArgumentException
+class InvoiceDateTooLate extends InvalidArgumentException
 {
 }

@@ -33,10 +33,10 @@ use Irvobmagturs\InvoiceCore\Model\Exception\InvalidInvoiceId;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidLineItemPosition;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidLineItemTitle;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidSepaDirectDebitMandateReference;
-use Irvobmagturs\InvoiceCore\Model\Exception\toEarlyInvoiceDate;
-use Irvobmagturs\InvoiceCore\Model\Exception\toEarlyInvoiceDueDate;
-use Irvobmagturs\InvoiceCore\Model\Exception\toLateInvoiceDate;
-use Irvobmagturs\InvoiceCore\Model\Exception\toLateInvoiceDueDate;
+use Irvobmagturs\InvoiceCore\Model\Exception\InvoiceDateTooEarly;
+use Irvobmagturs\InvoiceCore\Model\Exception\InvoiceDateTooLate;
+use Irvobmagturs\InvoiceCore\Model\Exception\InvoiceDueDateTooEarly;
+use Irvobmagturs\InvoiceCore\Model\Exception\InvoiceDueDateTooLate;
 use Irvobmagturs\InvoiceCore\Model\Id\CustomerId;
 use Irvobmagturs\InvoiceCore\Model\Id\InvoiceId;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\BillingPeriod;
@@ -326,10 +326,10 @@ class Invoice implements AggregateRoot
         $interval = $minDate->diff($date); // DateInterval
         $interval2 = $date->diff($maxDate); // DateInterval
         if ($interval->d < 0) {
-            throw new toEarlyInvoiceDate;
+            throw new InvoiceDateTooEarly;
         }
         if ($interval2->d < 0) {
-            throw new toLateInvoiceDate;
+            throw new InvoiceDateTooLate;
         }
     }
 
@@ -344,10 +344,10 @@ class Invoice implements AggregateRoot
         $interval = $minDate->diff($date); // DateInterval
         $interval2 = $date->diff($maxDate); // DateInterval
         if ($interval->d < 0) {
-            throw new toEarlyInvoiceDueDate;
+            throw new InvoiceDueDateTooEarly;
         }
         if ($interval2->d < 0) {
-            throw new toLateInvoiceDueDate;
+            throw new InvoiceDueDateTooLate;
         }
     }
 
