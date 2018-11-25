@@ -11,7 +11,7 @@ namespace Irvobmagturs\InvoiceCore\Model\Entity;
 use InvalidArgumentException;
 
 /**
- * Class InvalidCustomerAdress
+ * Class InvalidCustomerAddress
  * @package Irvobmagturs\InvoiceCore\Model\Exception
  */
 class InvalidCustomerAddress extends InvalidArgumentException
