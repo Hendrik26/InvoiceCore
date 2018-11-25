@@ -321,10 +321,10 @@ class Invoice implements AggregateRoot
      */
     private function guardInvalidSepaDirectDebitMandate(SepaDirectDebitMandate $mandate)
     {
-        if (trim($mandate->getCustomerIban()) === "") {
+        if (trim($mandate->customerIban) === "") {
             throw new InvalidCustomerIban();
         }
-        if (trim($mandate->getMandateReference()) === "") {
+        if (trim($mandate->mandateReference) === "") {
             throw new InvalidSepaDirectDebitMandateReference();
         }
     }
@@ -425,7 +425,7 @@ class Invoice implements AggregateRoot
     }
 
     /**
-     *
+     * @param InvoiceHasDroppedBillingPeriod $event
      */
     private function whenInvoiceHasDroppedBillingPeriod(InvoiceHasDroppedBillingPeriod $event)// nothing to do
     {

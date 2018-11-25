@@ -13,7 +13,6 @@ use DateTimeInterface;
 use Exception;
 use InvalidArgumentException;
 use Irvobmagturs\InvoiceCore\Infrastructure\AbstractValueObjectBase;
-use Jubjubbird\Respects\Serializable;
 
 /**
  * @property-read Money $price
@@ -57,7 +56,7 @@ class LineItem extends AbstractValueObjectBase
      * @return static The object instance
      * @throws Exception when the date string cannot be parsed
      */
-    static function deserialize(array $data): Serializable
+    static function deserialize(array $data): self
     {
         // $data[0] skipped for back-compat
         return new self(

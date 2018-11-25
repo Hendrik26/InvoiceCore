@@ -14,15 +14,13 @@ use Jubjubbird\Respects\Serializable;
 
 class InvoiceDateHasBeenSet implements Serializable
 {
-    /**
-     * @var DateTimeImmutable $invoiceDate
-     */
     private $invoiceDate;
 
     /**
      * InvoiceDateHasBeenSet constructor.
+     * @param DateTimeInterface $date
      */
-    public function __construct($date)
+    public function __construct(DateTimeInterface $date)
     {
         $this->invoiceDate = $date;
     }
@@ -38,7 +36,7 @@ class InvoiceDateHasBeenSet implements Serializable
     }
 
     /**
-     * @return DateTimeImmutable
+     * @return DateTimeInterface
      */
     public function getInvoiceDate(): DateTimeInterface
     {

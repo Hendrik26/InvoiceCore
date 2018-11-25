@@ -12,7 +12,6 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use Exception;
 use Irvobmagturs\InvoiceCore\Model\Id\CustomerId;
-use Irvobmagturs\InvoiceCore\Model\Id\InvoiceId;
 use Jubjubbird\Respects\Serializable;
 
 class InvoiceWasOpened implements Serializable

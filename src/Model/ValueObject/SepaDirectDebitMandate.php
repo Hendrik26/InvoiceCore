@@ -33,7 +33,7 @@ class SepaDirectDebitMandate extends AbstractValueObjectBase
      * @return static The object instance
      * @throws InvalidArgumentException
      */
-    static function deserialize(array $data)
+    static function deserialize(array $data): self
     {
         return new self($data[0], $data[1]);
     }

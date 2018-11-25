@@ -18,7 +18,7 @@ class InvoiceDueDateHasBeenSet implements Serializable
 
     /**
      * InvoiceDueDateHasBeenSet constructor.
-     * @param DateTimeInterface $date
+     * @param DateTimeInterface $dueDate
      */
     public function __construct(DateTimeInterface $dueDate)
     {

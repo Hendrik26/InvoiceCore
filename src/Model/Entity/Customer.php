@@ -47,6 +47,7 @@ class Customer implements AggregateRoot
 
     /**
      * Customer constructor.
+     * @param CustomerId $customerId
      */
     private function __construct(CustomerId $customerId)
     {
@@ -143,7 +144,7 @@ class Customer implements AggregateRoot
     }
 
     /**
-     * @param string $customerAddress
+     * @param Address $customerAddress
      * @throws InvalidCustomerAddress
      */
     private function guardInvalidCustomerAddress(Address $customerAddress)

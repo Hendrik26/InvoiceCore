@@ -19,7 +19,7 @@ class CustomerSalesTaxNumberWasChanged implements Serializable
 
     /**
      * CustomerSalesTaxNumberWasChanged constructor.
-     * @param $customerAdress
+     * @param string $salesTaxNumber
      */
     public function __construct(string $salesTaxNumber)
     {
