@@ -32,10 +32,9 @@ class InvoiceWasOpened implements Serializable
 
     /**
      * InvoiceWasOpened constructor.
-     * @param InvoiceId $invoiceId
      * @param CustomerId $customerId
      * @param string $invoiceNumber
-     * @param DateTimeInterface $invoiceDate
+     * @param DateTimeInterface|null $invoiceDate
      */
     public function __construct(
         CustomerId $customerId,
