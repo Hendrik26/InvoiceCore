@@ -9,6 +9,7 @@
 namespace Irvobmagturs\InvoiceCore\Infrastructure;
 
 use Buttercup\Protects\IdentifiesAggregate;
+use Irvobmagturs\InvoiceCore\Infrastructure\Exception\NoEventsStored;
 use Jubjubbird\Respects\DomainEvent;
 
 interface EventStore

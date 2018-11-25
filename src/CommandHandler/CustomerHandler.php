@@ -6,6 +6,7 @@
 namespace Irvobmagturs\InvoiceCore\CommandHandler;
 
 use Exception;
+use Irvobmagturs\InvoiceCore\CommandHandler\Exception\CustomerExists;
 use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\CqrsCommandHandler;
 use Irvobmagturs\InvoiceCore\Model\Entity\Customer;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidCustomerId;

@@ -11,6 +11,7 @@ namespace Irvobmagturs\InvoiceCore\Infrastructure;
 use Buttercup\Protects\IdentifiesAggregate;
 use DateTimeImmutable;
 use Exception;
+use Irvobmagturs\InvoiceCore\Infrastructure\Exception\NoEventsStored;
 use Jubjubbird\Respects\DomainEvent;
 use Jubjubbird\Respects\RecordedEvent;
 use Jubjubbird\Respects\Serializable;

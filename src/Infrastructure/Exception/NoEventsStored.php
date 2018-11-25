@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Irvobmagturs\InvoiceCore\Infrastructure;
+namespace Irvobmagturs\InvoiceCore\Infrastructure\Exception;
 
 use RuntimeException;
 
