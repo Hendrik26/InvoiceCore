@@ -9,7 +9,6 @@ use Irvobmagturs\InvoiceCore\CommandHandler\CustomerHandler;
 use Irvobmagturs\InvoiceCore\CommandHandler\InvoiceHandler;
 use Irvobmagturs\InvoiceCore\Infrastructure\EventBus;
 use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\CqrsCommandBus;
-use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\CqrsCommandHandlersResolver;
 use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\CustomizedGraphqlServerConfig;
 use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\SchemaFileCache;
 use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\TypeResolver;
@@ -37,7 +36,6 @@ $typeResolver = new TypeResolver();
 $typeResolver->addResolverForField('CqrsQuery', 'loadFoo', function () {
     return 'bar';
 });
-$typeResolver = new CqrsCommandHandlersResolver($typeResolver);
 $commandBus = new CqrsCommandBus($typeResolver);
 $typeResolver = $commandBus;
 $commandBus->append(new InvoiceHandler(new InvoiceRepository($eventStore, $eventBus)));
