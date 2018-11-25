@@ -41,7 +41,7 @@ class CustomerAddressWasChanged implements Serializable
     }
 
     /**
-     * @return string
+     * @return Address
      */
     public function getCustomerAddress(): Address
     {

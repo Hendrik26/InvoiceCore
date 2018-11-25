@@ -37,7 +37,7 @@ class CustomerSalesTaxNumberWasChanged implements Serializable
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getCustomerSalesTaxNumber()
     {

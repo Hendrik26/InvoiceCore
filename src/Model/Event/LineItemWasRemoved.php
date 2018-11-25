@@ -25,8 +25,7 @@ class LineItemWasRemoved implements Serializable
 
     /**
      * @param array $data
-     * @return static
-     * @throws Exception
+     * @return Serializable
      */
     static function deserialize(array $data): Serializable
     {

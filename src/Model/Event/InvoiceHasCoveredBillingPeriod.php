@@ -38,7 +38,7 @@ class InvoiceHasCoveredBillingPeriod implements Serializable
     }
 
     /**
-     * @return mixed
+     * @return BillingPeriod
      */
     public function getPeriod()
     {

@@ -14,10 +14,7 @@ class PaymentReferenceHasBeenRequested implements Serializable
 {
     private $paymentReference;
 
-    /**
-     * PaymentReferenceHasBeenRequested constructor.
-     */
-    public function __construct(String $paymentReference)
+    public function __construct(string $paymentReference)
     {
         $this->paymentReference = $paymentReference;
     }
@@ -33,9 +30,9 @@ class PaymentReferenceHasBeenRequested implements Serializable
     }
 
     /**
-     * @return String
+     * @return string
      */
-    public function getPaymentReference(): String
+    public function getPaymentReference(): string
     {
         return $this->paymentReference;
     }
