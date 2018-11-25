@@ -16,7 +16,6 @@ use Jubjubbird\Respects\Serializable;
  */
 class InvoiceHasDroppedBillingPeriod implements Serializable
 {
-
     /**
      * InvoiceHasDroppedBillingPeriod constructor.
      */

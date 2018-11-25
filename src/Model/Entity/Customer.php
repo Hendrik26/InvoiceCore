@@ -28,7 +28,6 @@ class Customer implements AggregateRoot
 {
     use ApplyCallsWhenMethod;
     use RecordsEventsForBusinessMethods;
-
     /**
      * @var
      */
@@ -83,24 +82,6 @@ class Customer implements AggregateRoot
     }
 
     /**
-     * @param Address $customerAddress
-     */
-    public function relocate(Address $customerAddress)
-    {
-        $this->guardInvalidCustomerAddress($customerAddress);
-        $this->recordThat(new CustomerAddressWasChanged($customerAddress));
-    }
-
-    /**
-     * @param string $customerName
-     */
-    public function rename(string $customerName)
-    {
-        $this->guardEmptyCustomerName($customerName);
-        $this->recordThat(new CustomerNameWasChanged($customerName));
-    }
-
-    /**
      * @param string $salesTaxNumber
      * @throws InvalidCustomerSalesTaxNumber
      */
@@ -116,6 +97,24 @@ class Customer implements AggregateRoot
     public function getAggregateId(): IdentifiesAggregate
     {
         return $this->customerId;
+    }
+
+    /**
+     * @param Address $customerAddress
+     */
+    public function relocate(Address $customerAddress)
+    {
+        $this->guardInvalidCustomerAddress($customerAddress);
+        $this->recordThat(new CustomerAddressWasChanged($customerAddress));
+    }
+
+    /**
+     * @param string $customerName
+     */
+    public function rename(string $customerName)
+    {
+        $this->guardEmptyCustomerName($customerName);
+        $this->recordThat(new CustomerNameWasChanged($customerName));
     }
 
     /**

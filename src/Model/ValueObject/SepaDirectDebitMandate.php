@@ -29,6 +29,16 @@ class SepaDirectDebitMandate extends AbstractValueObjectBase
     }
 
     /**
+     * @param array $data
+     * @return static The object instance
+     * @throws InvalidArgumentException
+     */
+    static function deserialize(array $data)
+    {
+        return new self($data[0], $data[1]);
+    }
+
+    /**
      * @return string
      */
     public function getCustomerIban(): string
@@ -42,16 +52,6 @@ class SepaDirectDebitMandate extends AbstractValueObjectBase
     public function getMandateReference(): string
     {
         return $this->mandateReference;
-    }
-
-    /**
-     * @param array $data
-     * @return static The object instance
-     * @throws InvalidArgumentException
-     */
-    static function deserialize(array $data)
-    {
-        return new self($data[0], $data[1]);
     }
 
     /**

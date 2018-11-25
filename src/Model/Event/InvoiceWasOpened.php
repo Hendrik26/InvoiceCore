@@ -17,8 +17,6 @@ use Jubjubbird\Respects\Serializable;
 
 class InvoiceWasOpened implements Serializable
 {
-
-
     /**
      * @var CustomerId
      */
@@ -95,5 +93,4 @@ class InvoiceWasOpened implements Serializable
             $this->invoiceDate->format(DATE_ATOM)
         ];
     }
-
 }

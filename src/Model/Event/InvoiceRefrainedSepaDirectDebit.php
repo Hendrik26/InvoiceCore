@@ -12,20 +12,11 @@ use Jubjubbird\Respects\Serializable;
 
 class InvoiceRefrainedSepaDirectDebit implements Serializable
 {
-
     /**
      * InvoiceRefrainedSepaDirectDebit constructor.
      */
     public function __construct()
     {
-    }
-
-    /**
-     * @return array
-     */
-    public function serialize(): array
-    {
-        return [-1];
     }
 
     /**
@@ -37,4 +28,11 @@ class InvoiceRefrainedSepaDirectDebit implements Serializable
         return new self();
     }
 
+    /**
+     * @return array
+     */
+    public function serialize(): array
+    {
+        return [-1];
+    }
 }

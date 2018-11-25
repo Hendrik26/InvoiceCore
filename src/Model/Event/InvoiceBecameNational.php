@@ -12,21 +12,12 @@ use Jubjubbird\Respects\Serializable;
 
 class InvoiceBecameNational implements Serializable
 {
-
     /**
      * BecomeNational constructor.
      */
     public function __construct()
     {
         // nothing to do
-    }
-
-    /**
-     * @return array
-     */
-    public function serialize(): array
-    {
-        return [-1];
     }
 
     /**
@@ -38,5 +29,11 @@ class InvoiceBecameNational implements Serializable
         return new self();
     }
 
-
+    /**
+     * @return array
+     */
+    public function serialize(): array
+    {
+        return [-1];
+    }
 }

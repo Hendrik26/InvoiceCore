@@ -16,27 +16,10 @@ class InvoiceBecameInternational implements Serializable
      * @var
      */
     private $countryCode;
-
-    /**
-     * @return mixed
-     */
-    public function getCountryCode()
-    {
-        return $this->countryCode;
-    }
-
     /**
      * @var
      */
     private $customerSalesTaxNumber;
-
-    /**
-     * @return mixed
-     */
-    public function getCustomerSalesTaxNumber()
-    {
-        return $this->customerSalesTaxNumber;
-    }
 
     /**
      * BecomeInternational constructor.
@@ -50,14 +33,6 @@ class InvoiceBecameInternational implements Serializable
     }
 
     /**
-     * @return array
-     */
-    function serialize(): array
-    {
-        return [$this->countryCode, $this->customerSalesTaxNumber];
-    }
-
-    /**
      * @param array $data
      * @return InvoiceBecameInternational
      */
@@ -66,5 +41,27 @@ class InvoiceBecameInternational implements Serializable
         return new self($data[0], $data[1]);
     }
 
+    /**
+     * @return mixed
+     */
+    public function getCountryCode()
+    {
+        return $this->countryCode;
+    }
 
+    /**
+     * @return mixed
+     */
+    public function getCustomerSalesTaxNumber()
+    {
+        return $this->customerSalesTaxNumber;
+    }
+
+    /**
+     * @return array
+     */
+    function serialize(): array
+    {
+        return [$this->countryCode, $this->customerSalesTaxNumber];
+    }
 }

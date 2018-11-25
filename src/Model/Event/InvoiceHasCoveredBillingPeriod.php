@@ -13,20 +13,10 @@ use Jubjubbird\Respects\Serializable;
 
 class InvoiceHasCoveredBillingPeriod implements Serializable
 {
-
     /**
      * @var
      */
     private $period;
-
-    /**
-     * @return mixed
-     */
-    public function getPeriod()
-    {
-        return $this->period;
-    }
-
 
     /**
      * InvoiceBillingPeriodCovered constructor.
@@ -37,11 +27,6 @@ class InvoiceHasCoveredBillingPeriod implements Serializable
         $this->period = $period;;
     }
 
-    function serialize(): array
-    {
-        return [$this->period->serialize()];
-    }
-
     /**
      * @param array $data
      * @return InvoiceHasCoveredBillingPeriod
@@ -50,5 +35,18 @@ class InvoiceHasCoveredBillingPeriod implements Serializable
     public static function deserialize(array $data): self
     {
         return new self(BillingPeriod::deserialize($data[0]));
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPeriod()
+    {
+        return $this->period;
+    }
+
+    function serialize(): array
+    {
+        return [$this->period->serialize()];
     }
 }

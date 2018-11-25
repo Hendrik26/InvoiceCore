@@ -8,7 +8,6 @@
 
 namespace Irvobmagturs\InvoiceCore\Model\Event;
 
-
 use DateTimeImmutable;
 use DateTimeInterface;
 use Jubjubbird\Respects\Serializable;
@@ -16,14 +15,6 @@ use Jubjubbird\Respects\Serializable;
 class InvoiceDueDateHasBeenSet implements Serializable
 {
     private $dueDate;
-
-    /**
-     * @return DateTimeInterface
-     */
-    public function getInvoiceDueDate(): DateTimeInterface
-    {
-        return $this->dueDate;
-    }
 
     /**
      * InvoiceDueDateHasBeenSet constructor.
@@ -35,14 +26,6 @@ class InvoiceDueDateHasBeenSet implements Serializable
     }
 
     /**
-     * @return array
-     */
-    public function serialize(): array
-    {
-        return [$this->dueDate->format(DATE_ATOM)];
-    }
-
-    /**
      * @param array $data
      * @return InvoiceDueDateHasBeenSet
      * @throws \Exception
@@ -50,5 +33,21 @@ class InvoiceDueDateHasBeenSet implements Serializable
     public static function deserialize(array $data): self
     {
         return new self($data[0] ? new DateTimeImmutable($data[0]) : null);
+    }
+
+    /**
+     * @return DateTimeInterface
+     */
+    public function getInvoiceDueDate(): DateTimeInterface
+    {
+        return $this->dueDate;
+    }
+
+    /**
+     * @return array
+     */
+    public function serialize(): array
+    {
+        return [$this->dueDate->format(DATE_ATOM)];
     }
 }

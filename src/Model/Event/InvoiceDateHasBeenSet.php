@@ -14,19 +14,10 @@ use Jubjubbird\Respects\Serializable;
 
 class InvoiceDateHasBeenSet implements Serializable
 {
-
     /**
      * @var DateTimeImmutable $invoiceDate
      */
     private $invoiceDate;
-
-    /**
-     * @return DateTimeImmutable
-     */
-    public function getInvoiceDate(): DateTimeInterface
-    {
-        return $this->invoiceDate;
-    }
 
     /**
      * InvoiceDateHasBeenSet constructor.
@@ -37,14 +28,6 @@ class InvoiceDateHasBeenSet implements Serializable
     }
 
     /**
-     * @return array
-     */
-    function serialize(): array
-    {
-        return [$this->invoiceDate->format(DATE_ATOM)];
-    }
-
-    /**
      * @param array $data
      * @return InvoiceDateHasBeenSet
      * @throws \Exception
@@ -52,5 +35,21 @@ class InvoiceDateHasBeenSet implements Serializable
     public static function deserialize(array $data): self
     {
         return new self($data[0] ? new DateTimeImmutable($data[0]) : null);
+    }
+
+    /**
+     * @return DateTimeImmutable
+     */
+    public function getInvoiceDate(): DateTimeInterface
+    {
+        return $this->invoiceDate;
+    }
+
+    /**
+     * @return array
+     */
+    function serialize(): array
+    {
+        return [$this->invoiceDate->format(DATE_ATOM)];
     }
 }

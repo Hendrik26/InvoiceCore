@@ -25,11 +25,14 @@ class BillingPeriod extends AbstractValueObjectBase implements Serializable
     }
 
     /**
-     * @return mixed
+     * @param array $data
+     * @return BillingPeriod
+     * @throws Exception
      */
-    public function getStartDate()
+    public static function deserialize(array $data): self
     {
-        return $this->startDate;
+        return new self($data[0] ? new DateTimeImmutable($data[0]) : null,
+            $data[1] ? new DateTimeImmutable($data[1]) : null);
     }
 
     /**
@@ -50,21 +53,18 @@ class BillingPeriod extends AbstractValueObjectBase implements Serializable
     }
 
     /**
+     * @return mixed
+     */
+    public function getStartDate()
+    {
+        return $this->startDate;
+    }
+
+    /**
      * @return array
      */
     function serialize(): array
     {
         return [$this->startDate->format(DATE_ATOM), $this->endDate->format(DATE_ATOM)];
-    }
-
-    /**
-     * @param array $data
-     * @return BillingPeriod
-     * @throws Exception
-     */
-    public static function deserialize(array $data): self
-    {
-        return new self($data[0] ? new DateTimeImmutable($data[0]) : null,
-            $data[1] ? new DateTimeImmutable($data[1]) : null);
     }
 }

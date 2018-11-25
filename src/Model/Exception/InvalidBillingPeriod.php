@@ -8,7 +8,6 @@
 
 namespace Irvobmagturs\InvoiceCore\Model\Exception;
 
-
 use InvalidArgumentException;
 
 class InvalidBillingPeriod extends InvalidArgumentException

@@ -8,9 +8,8 @@
 
 namespace Irvobmagturs\InvoiceCore\Model\Exception;
 
-
 use InvalidArgumentException;
 
-class toLateInvoiceDueDate  extends InvalidArgumentException
+class toLateInvoiceDueDate extends InvalidArgumentException
 {
 }

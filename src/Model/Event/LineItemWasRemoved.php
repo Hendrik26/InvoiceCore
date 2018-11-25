@@ -47,5 +47,4 @@ class LineItemWasRemoved implements Serializable
             $this->position,
         ];
     }
-
 }

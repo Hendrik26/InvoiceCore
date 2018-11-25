@@ -15,7 +15,6 @@ use Irvobmagturs\InvoiceCore\Repository\CustomerNotFound;
 use Irvobmagturs\InvoiceCore\Repository\CustomerRepository;
 use Jubjubbird\Respects\CorruptAggregateHistory;
 
-
 class CustomerHandler implements CqrsCommandHandler
 {
     private $repository;
@@ -23,6 +22,20 @@ class CustomerHandler implements CqrsCommandHandler
     public function __construct(CustomerRepository $repository)
     {
         $this->repository = $repository;
+    }
+
+    /**
+     * @param $aggregateId
+     * @param array $args
+     * @throws CorruptAggregateHistory
+     * @throws Exception when one of the events is not a DomainEvent.
+     */
+    public function assignTaxIdentification($aggregateId, array $args): void
+    {
+        /** @var Customer $customer */
+        $customer = $this->repository->load(CustomerId::fromString($aggregateId));
+        $customer->assignTaxIdentification($args['idNumber']);
+        $this->repository->save($customer);
     }
 
     /**
@@ -49,22 +62,6 @@ class CustomerHandler implements CqrsCommandHandler
             )
         );
         $this->repository->save($customer);
-    }
-
-    /**
-     * @param string $aggregateId
-     * @throws CorruptAggregateHistory
-     * @throws CustomerExists
-     * @throws InvalidCustomerId
-     */
-    private function guardUniqueCustomer(string $aggregateId): void
-    {
-        try {
-            $this->repository->load(CustomerId::fromString($aggregateId));
-        } catch (CustomerNotFound $e) {
-            return;
-        }
-        throw new CustomerExists();
     }
 
     /**
@@ -106,16 +103,18 @@ class CustomerHandler implements CqrsCommandHandler
     }
 
     /**
-     * @param $aggregateId
-     * @param array $args
+     * @param string $aggregateId
      * @throws CorruptAggregateHistory
-     * @throws Exception when one of the events is not a DomainEvent.
+     * @throws CustomerExists
+     * @throws InvalidCustomerId
      */
-    public function assignTaxIdentification($aggregateId, array $args): void
+    private function guardUniqueCustomer(string $aggregateId): void
     {
-        /** @var Customer $customer */
-        $customer = $this->repository->load(CustomerId::fromString($aggregateId));
-        $customer->assignTaxIdentification($args['idNumber']);
-        $this->repository->save($customer);
+        try {
+            $this->repository->load(CustomerId::fromString($aggregateId));
+        } catch (CustomerNotFound $e) {
+            return;
+        }
+        throw new CustomerExists();
     }
 }

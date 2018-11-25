@@ -19,28 +19,12 @@ class InvoiceEmployedSepaDirectDebit implements Serializable
     private $mandate;
 
     /**
-     * @return SepaDirectDebitMandate
-     */
-    public function getMandate(): SepaDirectDebitMandate
-    {
-        return $this->mandate;
-    }
-
-    /**
      * InvoiceEmployedSepaDirectDebit constructor.
      * @param SepaDirectDebitMandate $mandate
      */
     public function __construct(SepaDirectDebitMandate $mandate)
     {
         $this->mandate = $mandate;
-    }
-
-    /**
-     * @return array
-     */
-    function serialize(): array
-    {
-        return [$this->mandate->serialize()];
     }
 
     /**
@@ -52,5 +36,19 @@ class InvoiceEmployedSepaDirectDebit implements Serializable
         return new self(SepaDirectDebitMandate::deserialize($data[0]));
     }
 
+    /**
+     * @return SepaDirectDebitMandate
+     */
+    public function getMandate(): SepaDirectDebitMandate
+    {
+        return $this->mandate;
+    }
 
+    /**
+     * @return array
+     */
+    function serialize(): array
+    {
+        return [$this->mandate->serialize()];
+    }
 }

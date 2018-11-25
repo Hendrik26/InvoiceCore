@@ -8,10 +8,8 @@
 
 namespace Irvobmagturs\InvoiceCore\Model\Exception;
 
-
 use InvalidArgumentException;
 
 class InvalidCustomerSalesTaxNumber extends InvalidArgumentException
 {
-
 }

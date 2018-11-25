@@ -48,51 +48,40 @@ use Jubjubbird\Respects\ApplyCallsWhenMethod;
 use Jubjubbird\Respects\RecordsEvents;
 use Jubjubbird\Respects\RecordsEventsForBusinessMethods;
 
-
 class Invoice implements AggregateRoot
 {
     use RecordsEventsForBusinessMethods;
     use ApplyCallsWhenMethod;
-
     /** @var InvoiceId */
     private $aggregateId; // done???
-
     /**
      * @var
      */
     private $customerId; // done
-
     /**
      * @var
      */
     private $customerSalesTaxNumber; // done
-
-    /**
-     * @var
-     */
-    private $invoiceNumber; // done
-    private $paymentReference; // === $intendedUse;
-
-
     /**
      * @var
      */
     private $invoiceDate; // done
-    private $invoiceDueDate; // done
-
-
+    private $invoiceDueDate; // === $intendedUse;
+    /**
+     * @var
+     */
+    private $invoiceNumber; // done
+    /** @var LineItem[] */
+    private $lineItems = []; // done
     /**
      * @var
      */
     private $mandate; // done
-
+    private $paymentReference; // done
     /**
      * @var
      */
     private $period; // done
-
-    /** @var LineItem[] */
-    private $lineItems = []; // done
 
     /**
      * Invoice constructor.
@@ -224,6 +213,15 @@ class Invoice implements AggregateRoot
     }
 
     /**
+     * @param String $paymentReference
+     */
+    public function requestPaymentReference(String $paymentReference)
+    {
+        $this->guardPaymentReference($paymentReference);
+        $this->recordThat(new PaymentReferenceHasBeenRequested($paymentReference));
+    }
+
+    /**
      * @param DateTimeInterface $date
      * @throws \Exception
      */
@@ -231,6 +229,16 @@ class Invoice implements AggregateRoot
     {
         $this->guardInvoiceDate($date);
         $this->recordThat(new InvoiceDateHasBeenSet($date));
+    }
+
+    /**
+     * @param DateTimeInterface $date
+     * @throws \Exception
+     */
+    public function setInvoiceDueDate(DateTimeInterface $date)
+    {
+        $this->guardInvoiceDueDate($date);
+        $this->recordThat(new InvoiceDueDateHasBeenSet($date));
     }
 
     /**
@@ -305,7 +313,6 @@ class Invoice implements AggregateRoot
         if (trim($mandate->getMandateReference()) === "") {
             throw new InvalidSepaDirectDebitMandateReference();
         }
-
     }
 
     /**
@@ -323,6 +330,34 @@ class Invoice implements AggregateRoot
         }
         if ($interval2->d < 0) {
             throw new toLateInvoiceDate;
+        }
+    }
+
+    /**
+     * @param DateTimeInterface $date
+     * @throws \Exception
+     */
+    private function guardInvoiceDueDate(DateTimeInterface $date)
+    {
+        $minDate = new DateTimeImmutable('1949-05-23');
+        $maxDate = new DateTimeImmutable('2100-01-01');
+        $interval = $minDate->diff($date); // DateInterval
+        $interval2 = $date->diff($maxDate); // DateInterval
+        if ($interval->d < 0) {
+            throw new toEarlyInvoiceDueDate;
+        }
+        if ($interval2->d < 0) {
+            throw new toLateInvoiceDueDate;
+        }
+    }
+
+    /**
+     * @param String $paymentReference
+     */
+    private function guardPaymentReference(String $paymentReference)
+    {
+        if (trim($paymentReference) === "") {
+            throw new EmptyPaymentReference;
         }
     }
 
@@ -364,7 +399,6 @@ class Invoice implements AggregateRoot
     private function whenInvoiceEmployedSepaDirectDebit(InvoiceEmployedSepaDirectDebit $event)
     {
         $this->mandate = $event->getMandate();
-
     }
 
     /**
@@ -415,53 +449,6 @@ class Invoice implements AggregateRoot
     private function whenLineItemWasRemoved(LineItemWasRemoved $event)
     {
         array_splice($this->lineItems, $event->getPosition(), 1);
-    }
-
-    /**
-     * @param DateTimeInterface $date
-     * @throws \Exception
-     */
-    public function setInvoiceDueDate(DateTimeInterface $date)
-    {
-        $this->guardInvoiceDueDate($date);
-        $this->recordThat(new InvoiceDueDateHasBeenSet($date));
-    }
-
-    /**
-     * @param DateTimeInterface $date
-     * @throws \Exception
-     */
-    private function guardInvoiceDueDate(DateTimeInterface $date)
-    {
-        $minDate = new DateTimeImmutable('1949-05-23');
-        $maxDate = new DateTimeImmutable('2100-01-01');
-        $interval = $minDate->diff($date); // DateInterval
-        $interval2 = $date->diff($maxDate); // DateInterval
-        if ($interval->d < 0) {
-            throw new toEarlyInvoiceDueDate;
-        }
-        if ($interval2->d < 0) {
-            throw new toLateInvoiceDueDate;
-        }
-    }
-
-    /**
-     * @param String $paymentReference
-     */
-    public function requestPaymentReference(String $paymentReference)
-    {
-        $this->guardPaymentReference($paymentReference);
-        $this->recordThat(new PaymentReferenceHasBeenRequested($paymentReference));
-    }
-
-    /**
-     * @param String $paymentReference
-     */
-    private function guardPaymentReference(String $paymentReference)
-    {
-        if (trim($paymentReference) === "") {
-            throw new EmptyPaymentReference;
-        }
     }
 
     /**

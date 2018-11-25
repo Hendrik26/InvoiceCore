@@ -27,13 +27,17 @@ use Irvobmagturs\InvoiceCore\Model\Exception\EmptyCountryCode;
  */
 class Address extends AbstractValueObjectBase
 {
-
     /**
      * Address constructor.
      */
-    public function __construct(string $countryCode, string $postalCode, string $city, ?string $addressLine1 = null,
-                                ?string $addressLine2 = null, ?string $addressLine3 = null)
-    {
+    public function __construct(
+        string $countryCode,
+        string $postalCode,
+        string $city,
+        ?string $addressLine1 = null,
+        ?string $addressLine2 = null,
+        ?string $addressLine3 = null
+    ) {
         $this->guardEmptyCountryCode($countryCode);
         $this->guardEmptyPostalCode($postalCode);
         $this->guardEmptyCity($city);
@@ -66,7 +70,7 @@ class Address extends AbstractValueObjectBase
      */
     function serialize(): array
     {
-        return[
+        return [
             $this->countryCode,
             $this->postalCode,
             $this->city,
@@ -76,12 +80,18 @@ class Address extends AbstractValueObjectBase
         ];
     }
 
+    private function guardEmptyCity(string $city)
+    {
+        if (trim($city) === "") {
+            throw new EmptyCity;
+        }
+    }
+
     private function guardEmptyCountryCode(string $countryCode)
     {
         if (trim($countryCode) === "") {
             throw new EmptyCountryCode();
         }
-
     }
 
     private function guardEmptyPostalCode(string $postalCode)
@@ -89,15 +99,5 @@ class Address extends AbstractValueObjectBase
         if (trim($postalCode) === "") {
             throw new EmptyPostalCode();
         }
-
     }
-
-    private function guardEmptyCity(string $city)
-    {
-        if (trim($city) === "") {
-            throw new EmptyCity;
-        }
-
-    }
-
 }

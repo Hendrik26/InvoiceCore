@@ -18,28 +18,12 @@ class CustomerNameWasChanged implements Serializable
     private $customerName;
 
     /**
-     * @return mixed
-     */
-    public function getCustomerName()
-    {
-        return $this->customerName;
-    }
-
-    /**
      * CustomerNameWasChanged constructor.
      * @param string $customerName
      */
     public function __construct(string $customerName)
     {
         $this->customerName = $customerName;
-    }
-
-    /**
-     * @return array
-     */
-    public function serialize(): array
-    {
-        return[$this->customerName];
     }
 
     /**
@@ -51,5 +35,19 @@ class CustomerNameWasChanged implements Serializable
         return new self($data[0]);
     }
 
+    /**
+     * @return mixed
+     */
+    public function getCustomerName()
+    {
+        return $this->customerName;
+    }
 
+    /**
+     * @return array
+     */
+    public function serialize(): array
+    {
+        return [$this->customerName];
+    }
 }

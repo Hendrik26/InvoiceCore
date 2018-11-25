@@ -21,8 +21,6 @@ use Irvobmagturs\InvoiceCore\Model\ValueObject\SepaDirectDebitMandate;
 use Irvobmagturs\InvoiceCore\Repository\InvoiceNotFound;
 use Irvobmagturs\InvoiceCore\Repository\InvoiceRepository;
 use Jubjubbird\Respects\CorruptAggregateHistory;
-use Jubjubbird\Respects\DomainEvents;
-
 
 class InvoiceHandler implements CqrsCommandHandler
 {
@@ -101,22 +99,6 @@ class InvoiceHandler implements CqrsCommandHandler
             $this->nullableStringToDate($args['invoiceDate'] ?? null)
         );
         $this->repository->save($invoice);
-    }
-
-    /**
-     * @param string $aggregateId
-     * @throws CorruptAggregateHistory
-     * @throws InvoiceExists
-     * @throws InvalidInvoiceId
-     */
-    private function guardUniqueInvoice(string $aggregateId): void
-    {
-        try {
-            $this->repository->load(InvoiceId::fromString($aggregateId));
-        } catch (InvoiceNotFound $e) {
-            return;
-        }
-        throw new InvoiceExists();
     }
 
     /**
@@ -217,6 +199,22 @@ class InvoiceHandler implements CqrsCommandHandler
             new DateTimeImmutable($invoiceDateSpec)
         );
         $this->repository->save($invoice);
+    }
+
+    /**
+     * @param string $aggregateId
+     * @throws CorruptAggregateHistory
+     * @throws InvoiceExists
+     * @throws InvalidInvoiceId
+     */
+    private function guardUniqueInvoice(string $aggregateId): void
+    {
+        try {
+            $this->repository->load(InvoiceId::fromString($aggregateId));
+        } catch (InvoiceNotFound $e) {
+            return;
+        }
+        throw new InvoiceExists();
     }
 
     /**

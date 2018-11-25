@@ -28,6 +28,15 @@ class CustomerAddressWasChanged implements Serializable
     }
 
     /**
+     * @param array $data
+     * @return Serializable
+     */
+    static function deserialize(array $data): Serializable
+    {
+        return new self(Address::deserialize($data[0]));
+    }
+
+    /**
      * @return string
      */
     public function getCustomerAddress(): Address
@@ -41,14 +50,5 @@ class CustomerAddressWasChanged implements Serializable
     function serialize(): array
     {
         return [$this->customerAddress->serialize()];
-    }
-
-    /**
-     * @param array $data
-     * @return Serializable
-     */
-    static function deserialize(array $data): Serializable
-    {
-        return new self(Address::deserialize($data[0]));
     }
 }
