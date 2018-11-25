@@ -30,6 +30,7 @@ class SimpleProjector implements EventBus
 {
     /** @var string[] */
     private $directoryMap;
+    private $versionMap = [];
 
     public function __construct(string $invoiceDir, string $customerDir)
     {
@@ -53,9 +54,10 @@ class SimpleProjector implements EventBus
     protected function apply(DomainEvent $event): void
     {
         $id = $event->getAggregateId();
+        $version = $this->versionMap[strval($id)] ?? 0;
         $dir = $this->directoryMap[get_class($id)];
-        $inFile = sprintf('%s/%s.json', rtrim($dir, '/'), strval($id));
-        $outFile = sprintf('%s/%s.json', rtrim($dir, '/'), strval($id));
+        $inFile = sprintf('%s/%s.json', rtrim($dir, '/'), strval($id), $version);
+        $outFile = sprintf('%s/%s.json', rtrim($dir, '/'), strval($id), ++$version);
         if (is_file($inFile)) {
             $aggregate = json_decode(file_get_contents($inFile));
         } else {
@@ -67,6 +69,7 @@ class SimpleProjector implements EventBus
             $outFile,
             json_encode($aggregate, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
         );
+        $this->versionMap[strval($id)] = $version;
     }
 
     private function whenCustomerAddressWasChanged(
