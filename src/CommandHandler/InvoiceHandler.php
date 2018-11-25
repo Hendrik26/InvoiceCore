@@ -8,11 +8,19 @@ namespace Irvobmagturs\InvoiceCore\CommandHandler;
 use DateTimeImmutable;
 use DateTimeZone;
 use Exception;
+use InvalidArgumentException;
 use Irvobmagturs\InvoiceCore\CommandHandler\Exception\InvoiceExists;
 use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\CqrsCommandHandler;
 use Irvobmagturs\InvoiceCore\Model\Entity\Invoice;
+use Irvobmagturs\InvoiceCore\Model\Exception\EmptyCountryCode;
+use Irvobmagturs\InvoiceCore\Model\Exception\InvalidBillingPeriod;
+use Irvobmagturs\InvoiceCore\Model\Exception\InvalidCustomerIban;
+use Irvobmagturs\InvoiceCore\Model\Exception\InvalidCustomerId;
+use Irvobmagturs\InvoiceCore\Model\Exception\InvalidCustomerSalesTaxNumber;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidInvoiceId;
+use Irvobmagturs\InvoiceCore\Model\Exception\InvalidLineItemPosition;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidLineItemTitle;
+use Irvobmagturs\InvoiceCore\Model\Exception\InvalidSepaDirectDebitMandateReference;
 use Irvobmagturs\InvoiceCore\Model\Id\CustomerId;
 use Irvobmagturs\InvoiceCore\Model\Id\InvoiceId;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\BillingPeriod;
@@ -35,8 +43,11 @@ class InvoiceHandler implements CqrsCommandHandler
     /**
      * @param string $aggregateId
      * @param array $args
+     * @throws CorruptAggregateHistory
+     * @throws InvalidArgumentException
      * @throws InvalidInvoiceId
      * @throws InvalidLineItemTitle
+     * @throws InvoiceNotFound
      * @throws Exception
      */
     public function appendLineItem(string $aggregateId, array $args): void
@@ -59,8 +70,11 @@ class InvoiceHandler implements CqrsCommandHandler
     /**
      * @param string $aggregateId
      * @param array $args
-     * @throws \Jubjubbird\Respects\CorruptAggregateHistory
-     * * @throws Exception
+     * @throws CorruptAggregateHistory
+     * @throws InvalidInvoiceId
+     * @throws InvoiceNotFound
+     * @throws EmptyCountryCode
+     * @throws InvalidCustomerSalesTaxNumber
      */
     public function becomeInternational(string $aggregateId, array $args): void
     {
@@ -73,9 +87,9 @@ class InvoiceHandler implements CqrsCommandHandler
     /**
      * @param string $aggregateId
      * @param array $args
-     * @throws \Buttercup\Protects\CorruptAggregateHistory
-     * @throws \Jubjubbird\Respects\CorruptAggregateHistory
-     * @throws Exception
+     * @throws CorruptAggregateHistory
+     * @throws InvalidInvoiceId
+     * @throws InvoiceNotFound
      */
     public function becomeNational(string $aggregateId, array $args): void
     {
@@ -88,6 +102,10 @@ class InvoiceHandler implements CqrsCommandHandler
     /**
      * @param string $aggregateId
      * @param array $args
+     * @throws CorruptAggregateHistory
+     * @throws InvalidInvoiceId
+     * @throws InvoiceExists
+     * @throws InvalidCustomerId
      * @throws Exception
      */
     public function chargeCustomer(string $aggregateId, array $args): void
@@ -105,7 +123,11 @@ class InvoiceHandler implements CqrsCommandHandler
     /**
      * @param string $aggregateId
      * @param array $args
-     * @throws \Buttercup\Protects\CorruptAggregateHistory
+     * @throws CorruptAggregateHistory
+     * @throws InvalidArgumentException
+     * @throws InvalidBillingPeriod
+     * @throws InvalidInvoiceId
+     * @throws InvoiceNotFound
      * @throws Exception
      */
     public function coverBillingPeriod(string $aggregateId, array $args): void
@@ -124,9 +146,9 @@ class InvoiceHandler implements CqrsCommandHandler
     /**
      * @param string $aggregateId
      * @param array $args
-     * @throws \Buttercup\Protects\CorruptAggregateHistory
-     * @throws \Jubjubbird\Respects\CorruptAggregateHistory
-     * @throws Exception
+     * @throws CorruptAggregateHistory
+     * @throws InvalidInvoiceId
+     * @throws InvoiceNotFound
      */
     public function dropBillingPeriod(string $aggregateId, array $args): void
     {
@@ -139,9 +161,12 @@ class InvoiceHandler implements CqrsCommandHandler
     /**
      * @param string $aggregateId
      * @param array $args
-     * @throws \Buttercup\Protects\CorruptAggregateHistory
-     * @throws \Jubjubbird\Respects\CorruptAggregateHistory
-     * @throws Exception
+     * @throws CorruptAggregateHistory
+     * @throws InvalidArgumentException
+     * @throws InvalidInvoiceId
+     * @throws InvoiceNotFound
+     * @throws InvalidCustomerIban
+     * @throws InvalidSepaDirectDebitMandateReference
      */
     public function employSepaDirectDebit(string $aggregateId, array $args): void
     {
@@ -157,9 +182,9 @@ class InvoiceHandler implements CqrsCommandHandler
     /**
      * @param string $aggregateId
      * @param array $args
-     * @throws \Buttercup\Protects\CorruptAggregateHistory
-     * @throws \Jubjubbird\Respects\CorruptAggregateHistory
-     * @throws Exception
+     * @throws CorruptAggregateHistory
+     * @throws InvalidInvoiceId
+     * @throws InvoiceNotFound
      */
     public function refrainFromSepaDirectDebit(string $aggregateId, array $args): void
     {
@@ -172,9 +197,10 @@ class InvoiceHandler implements CqrsCommandHandler
     /**
      * @param string $aggregateId
      * @param array $args
-     * @throws \Buttercup\Protects\CorruptAggregateHistory
-     * @throws \Jubjubbird\Respects\CorruptAggregateHistory
-     * @throws Exception
+     * @throws CorruptAggregateHistory
+     * @throws InvalidInvoiceId
+     * @throws InvoiceNotFound
+     * @throws InvalidLineItemPosition
      */
     public function removeLineItemByPosition(string $aggregateId, array $args): void
     {
@@ -187,8 +213,9 @@ class InvoiceHandler implements CqrsCommandHandler
     /**
      * @param string $aggregateId
      * @param array $args
-     * @throws \Buttercup\Protects\CorruptAggregateHistory
-     * @throws \Jubjubbird\Respects\CorruptAggregateHistory
+     * @throws CorruptAggregateHistory
+     * @throws InvalidInvoiceId
+     * @throws InvoiceNotFound
      * @throws Exception
      */
     public function setInvoiceDate(string $aggregateId, array $args): void
@@ -205,8 +232,8 @@ class InvoiceHandler implements CqrsCommandHandler
     /**
      * @param string $aggregateId
      * @throws CorruptAggregateHistory
-     * @throws InvoiceExists
      * @throws InvalidInvoiceId
+     * @throws InvoiceExists
      */
     private function guardUniqueInvoice(string $aggregateId): void
     {
