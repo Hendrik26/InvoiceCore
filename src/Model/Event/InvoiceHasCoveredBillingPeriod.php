@@ -13,9 +13,6 @@ use Jubjubbird\Respects\Serializable;
 
 class InvoiceHasCoveredBillingPeriod implements Serializable
 {
-    /**
-     * @var
-     */
     private $period;
 
     /**
@@ -40,7 +37,7 @@ class InvoiceHasCoveredBillingPeriod implements Serializable
     /**
      * @return BillingPeriod
      */
-    public function getPeriod()
+    public function getPeriod(): BillingPeriod
     {
         return $this->period;
     }

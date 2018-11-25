@@ -1,26 +1,32 @@
 <?php declare(strict_types=1);
 /**
- * @author Hendrik26
+ * @author I. R. Vobmagturs <i+r+vobmagturs@commodea.com>
  */
 
 namespace Irvobmagturs\InvoiceCore\Model\ValueObject;
 
 use DateInterval;
 use DateTimeImmutable;
+use DateTimeInterface;
 use Exception;
 use InvalidArgumentException;
 use Irvobmagturs\InvoiceCore\Infrastructure\AbstractValueObjectBase;
-use Jubjubbird\Respects\Serializable;
 
-class BillingPeriod extends AbstractValueObjectBase implements Serializable
+/**
+ * @property-read DateTimeInterface $startDate
+ * @property-read DateTimeInterface $endDate
+ * @method self withStartDate(DateTimeInterface $v)
+ * @method self withEndDate(DateTimeInterface $v)
+ */
+class BillingPeriod extends AbstractValueObjectBase
 {
     /**
      * BillingPeriod constructor.
-     * @param DateTimeImmutable $start
-     * @param DateTimeImmutable $end
+     * @param DateTimeInterface $start
+     * @param DateTimeInterface $end
      * @throws InvalidArgumentException
      */
-    public function __construct(DateTimeImmutable $start, DateTimeImmutable $end)
+    public function __construct(DateTimeInterface $start, DateTimeInterface $end)
     {
         $this->init('startDate', $start);
         $this->init('endDate', $end);
@@ -33,33 +39,15 @@ class BillingPeriod extends AbstractValueObjectBase implements Serializable
      */
     public static function deserialize(array $data): self
     {
-        return new self($data[0] ? new DateTimeImmutable($data[0]) : null,
-            $data[1] ? new DateTimeImmutable($data[1]) : null);
+        return new self(new DateTimeImmutable($data[0]), new DateTimeImmutable($data[1]));
     }
 
     /**
-     * @return mixed
-     */
-    public function getEndDate()
-    {
-        return $this->endDate;
-    }
-
-    /**
-     * @return mixed
+     * @return DateInterval
      */
     public function getInterval(): DateInterval
     {
-        $interval = $this->startDate->diff($this->endDate); // DateInterval
-        return $interval;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getStartDate()
-    {
-        return $this->startDate;
+        return $this->startDate->diff($this->endDate);
     }
 
     /**

@@ -20,7 +20,7 @@ use Jubjubbird\Respects\Serializable;
  * @property-read float $quantity
  * @property-read string $title
  * @property-read bool $timeBased
- * @property-read ?DateTimeInterface $date
+ * @property-read DateTimeInterface|null $date
  * @method self withPrice(Money $v)
  * @method self withQuantity(float $v)
  * @method self withTitle(string $v)

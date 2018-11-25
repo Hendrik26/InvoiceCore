@@ -18,15 +18,15 @@ use Irvobmagturs\InvoiceCore\Model\Exception\EmptyPostalCode;
  * @property-read string $countryCode
  * @property-read string $postalCode
  * @property-read string $city
- * @property-read ?string $addressLine1
- * @property-read ?string $addressLine2
- * @property-read ?string $addressLine3
+ * @property-read string|null $addressLine1
+ * @property-read string|null $addressLine2
+ * @property-read string|null $addressLine3
  * @method self withCountryCode(string $v)
  * @method self withPostalCode(string $v)
  * @method self withCity(string $v)
- * @method self withAddressLine1(string $v)
- * @method self withAddressLine2(string $v)
- * @method self withAddressLine3(string $v)
+ * @method self withAddressLine1(?string $v)
+ * @method self withAddressLine2(?string $v)
+ * @method self withAddressLine3(?string $v)
  */
 class Address extends AbstractValueObjectBase
 {
