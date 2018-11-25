@@ -21,7 +21,7 @@ class CqrsCommandBus extends TypeResolver
         );
     }
 
-    public function append(CqrsCommandHandlerInterface $handler)
+    public function append(CqrsCommandHandler $handler)
     {
         foreach (get_class_methods($handler) as $method) {
             $this->addResolverForField(

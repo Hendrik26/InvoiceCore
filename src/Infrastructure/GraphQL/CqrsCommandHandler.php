@@ -13,6 +13,6 @@ namespace Irvobmagturs\InvoiceCore\Infrastructure\GraphQL;
  *
  * $args is an associative array containing the arguments specified in the GraphQL mutation.
  */
-interface CqrsCommandHandlerInterface
+interface CqrsCommandHandler
 {
 }

@@ -6,7 +6,7 @@
 namespace Irvobmagturs\InvoiceCore\CommandHandler;
 
 use Exception;
-use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\CqrsCommandHandlerInterface;
+use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\CqrsCommandHandler;
 use Irvobmagturs\InvoiceCore\Model\Entity\Customer;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidCustomerId;
 use Irvobmagturs\InvoiceCore\Model\Id\CustomerId;
@@ -16,7 +16,7 @@ use Irvobmagturs\InvoiceCore\Repository\CustomerRepository;
 use Jubjubbird\Respects\CorruptAggregateHistory;
 
 
-class CustomerHandler implements CqrsCommandHandlerInterface
+class CustomerHandler implements CqrsCommandHandler
 {
     private $repository;
 

@@ -8,7 +8,7 @@ namespace Irvobmagturs\InvoiceCore\CommandHandler;
 use DateTimeImmutable;
 use DateTimeZone;
 use Exception;
-use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\CqrsCommandHandlerInterface;
+use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\CqrsCommandHandler;
 use Irvobmagturs\InvoiceCore\Model\Entity\Invoice;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidInvoiceId;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidLineItemTitle;
@@ -24,7 +24,7 @@ use Jubjubbird\Respects\CorruptAggregateHistory;
 use Jubjubbird\Respects\DomainEvents;
 
 
-class InvoiceHandler implements CqrsCommandHandlerInterface
+class InvoiceHandler implements CqrsCommandHandler
 {
     private $repository;
 
