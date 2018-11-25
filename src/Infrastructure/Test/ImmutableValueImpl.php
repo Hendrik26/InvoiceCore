@@ -6,6 +6,7 @@
 namespace Irvobmagturs\InvoiceCore\Infrastructure\Test;
 
 use DateTime;
+use InvalidArgumentException;
 use Irvobmagturs\InvoiceCore\Infrastructure\ImmutableValue;
 
 /**
@@ -18,6 +19,13 @@ use Irvobmagturs\InvoiceCore\Infrastructure\ImmutableValue;
  */
 class ImmutableValueImpl extends ImmutableValue
 {
+    /**
+     * ImmutableValueImpl constructor.
+     * @param string $string
+     * @param array $array
+     * @param DateTime $dateTime
+     * @throws InvalidArgumentException
+     */
     public function __construct(string $string, array $array, DateTime $dateTime)
     {
         $this->init('string', $string);

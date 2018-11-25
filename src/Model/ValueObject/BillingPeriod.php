@@ -8,15 +8,17 @@ namespace Irvobmagturs\InvoiceCore\Model\ValueObject;
 use DateInterval;
 use DateTimeImmutable;
 use Exception;
+use InvalidArgumentException;
 use Irvobmagturs\InvoiceCore\Infrastructure\AbstractValueObjectBase;
 use Jubjubbird\Respects\Serializable;
 
 class BillingPeriod extends AbstractValueObjectBase implements Serializable
 {
     /**
-     * Period constructor.
+     * BillingPeriod constructor.
      * @param DateTimeImmutable $start
      * @param DateTimeImmutable $end
+     * @throws InvalidArgumentException
      */
     public function __construct(DateTimeImmutable $start, DateTimeImmutable $end)
     {

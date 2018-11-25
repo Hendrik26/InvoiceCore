@@ -8,8 +8,11 @@
 
 namespace Irvobmagturs\InvoiceCore\Model\ValueObject;
 
+use InvalidArgumentException;
 use Irvobmagturs\InvoiceCore\Infrastructure\AbstractValueObjectBase;
+use Irvobmagturs\InvoiceCore\Model\Exception\EmptyCity;
 use Irvobmagturs\InvoiceCore\Model\Exception\EmptyCountryCode;
+use Irvobmagturs\InvoiceCore\Model\Exception\EmptyPostalCode;
 
 /**
  * @property-read string $countryCode
@@ -29,6 +32,14 @@ class Address extends AbstractValueObjectBase
 {
     /**
      * Address constructor.
+     * @param string $countryCode
+     * @param string $postalCode
+     * @param string $city
+     * @param null|string $addressLine1
+     * @param null|string $addressLine2
+     * @param null|string $addressLine3
+     * @throws EmptyCountryCode
+     * @throws InvalidArgumentException
      */
     public function __construct(
         string $countryCode,
@@ -52,6 +63,8 @@ class Address extends AbstractValueObjectBase
     /**
      * @param array $data
      * @return Address
+     * @throws EmptyCountryCode
+     * @throws InvalidArgumentException
      */
     static function deserialize(array $data): self
     {
@@ -80,6 +93,10 @@ class Address extends AbstractValueObjectBase
         ];
     }
 
+    /**
+     * @param string $city
+     * @throws EmptyCity
+     */
     private function guardEmptyCity(string $city)
     {
         if (trim($city) === "") {
@@ -87,6 +104,10 @@ class Address extends AbstractValueObjectBase
         }
     }
 
+    /**
+     * @param string $countryCode
+     * @throws EmptyCountryCode
+     */
     private function guardEmptyCountryCode(string $countryCode)
     {
         if (trim($countryCode) === "") {
@@ -94,6 +115,10 @@ class Address extends AbstractValueObjectBase
         }
     }
 
+    /**
+     * @param string $postalCode
+     * @throws EmptyPostalCode
+     */
     private function guardEmptyPostalCode(string $postalCode)
     {
         if (trim($postalCode) === "") {

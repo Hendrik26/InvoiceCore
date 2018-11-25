@@ -8,6 +8,8 @@
 
 namespace Irvobmagturs\InvoiceCore\Model\Event;
 
+use InvalidArgumentException;
+use Irvobmagturs\InvoiceCore\Model\Exception\EmptyCountryCode;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\Address;
 use Jubjubbird\Respects\Serializable;
 
@@ -31,7 +33,9 @@ class CustomerHasEngagedInBusiness implements Serializable
 
     /**
      * @param array $data
-     * @return static The object instance
+     * @return CustomerHasEngagedInBusiness
+     * @throws InvalidArgumentException
+     * @throws EmptyCountryCode
      */
     static function deserialize(array $data): self
     {

@@ -5,6 +5,7 @@
 
 namespace Irvobmagturs\InvoiceCore\Infrastructure\GraphQL;
 
+use GraphQL\Error\InvariantViolation;
 use GraphQL\Language\AST\ArgumentNode;
 use GraphQL\Language\AST\DirectiveDefinitionNode;
 use GraphQL\Server\ServerConfig;
@@ -84,16 +85,19 @@ class CustomizedGraphqlServerConfig extends ServerConfig
                     }
                 }
                 /** @var FieldDefinition|InputObjectField $field */
-                foreach ($type->getFields() as $field) {
-                    /** @var DirectiveDefinitionNode $directive */
-                    foreach ($field->astNode->directives ?? [] as $directive) {
-                        if ($directive->name->value == 'description') {
-                            $field->description = implode(
-                                PHP_EOL,
-                                array_map($valueFromArg, iterator_to_array($directive->arguments))
-                            );
+                try {
+                    foreach ($type->getFields() as $field) {
+                        /** @var DirectiveDefinitionNode $directive */
+                        foreach ($field->astNode->directives ?? [] as $directive) {
+                            if ($directive->name->value == 'description') {
+                                $field->description = implode(
+                                    PHP_EOL,
+                                    array_map($valueFromArg, iterator_to_array($directive->arguments))
+                                );
+                            }
                         }
                     }
+                } catch (InvariantViolation $e) {
                 }
             }
         }

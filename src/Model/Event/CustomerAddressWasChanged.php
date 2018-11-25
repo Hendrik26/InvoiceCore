@@ -8,6 +8,8 @@
 
 namespace Irvobmagturs\InvoiceCore\Model\Event;
 
+use InvalidArgumentException;
+use Irvobmagturs\InvoiceCore\Model\Exception\EmptyCountryCode;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\Address;
 use Jubjubbird\Respects\Serializable;
 
@@ -30,6 +32,8 @@ class CustomerAddressWasChanged implements Serializable
     /**
      * @param array $data
      * @return Serializable
+     * @throws InvalidArgumentException
+     * @throws EmptyCountryCode
      */
     static function deserialize(array $data): Serializable
     {

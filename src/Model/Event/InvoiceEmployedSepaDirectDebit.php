@@ -8,6 +8,7 @@
 
 namespace Irvobmagturs\InvoiceCore\Model\Event;
 
+use InvalidArgumentException;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\SepaDirectDebitMandate;
 use Jubjubbird\Respects\Serializable;
 
@@ -30,6 +31,7 @@ class InvoiceEmployedSepaDirectDebit implements Serializable
     /**
      * @param array $data
      * @return InvoiceEmployedSepaDirectDebit
+     * @throws InvalidArgumentException
      */
     static function deserialize(array $data): self
     {

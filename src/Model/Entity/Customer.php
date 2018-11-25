@@ -58,6 +58,7 @@ class Customer implements AggregateRoot
      * @param string $customerName
      * @param Address $billingAddress
      * @return Customer
+     * @throws InvalidCustomerName
      */
     public static function engageInBusiness(CustomerId $customerId, string $customerName, Address $billingAddress): self
     {
@@ -101,6 +102,7 @@ class Customer implements AggregateRoot
 
     /**
      * @param Address $customerAddress
+     * @throws InvalidCustomerAddress
      */
     public function relocate(Address $customerAddress)
     {
@@ -110,6 +112,7 @@ class Customer implements AggregateRoot
 
     /**
      * @param string $customerName
+     * @throws InvalidCustomerName
      */
     public function rename(string $customerName)
     {
@@ -119,6 +122,7 @@ class Customer implements AggregateRoot
 
     /**
      * @param string $customerName
+     * @throws InvalidCustomerName
      */
     private function guardEmptyCustomerName(string $customerName)
     {

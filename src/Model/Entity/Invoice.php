@@ -141,6 +141,8 @@ class Invoice implements AggregateRoot
     /**
      * @param string $countryCode
      * @param string $customerSalesTaxNumber
+     * @throws EmptyCountryCode
+     * @throws InvalidCustomerSalesTaxNumber
      */
     public function becomeInternational(string $countryCode, string $customerSalesTaxNumber)
     {
@@ -159,6 +161,7 @@ class Invoice implements AggregateRoot
 
     /**
      * @param BillingPeriod $period
+     * @throws InvalidBillingPeriod
      */
     public function coverBillingPeriod(BillingPeriod $period)
     {
@@ -178,6 +181,8 @@ class Invoice implements AggregateRoot
 
     /**
      * @param SepaDirectDebitMandate $mandate
+     * @throws InvalidCustomerIban
+     * @throws InvalidSepaDirectDebitMandateReference
      */
     public function employSepaDirectDebit(SepaDirectDebitMandate $mandate): void
     {
@@ -205,6 +210,7 @@ class Invoice implements AggregateRoot
 
     /**
      * @param int $position
+     * @throws InvalidLineItemPosition
      */
     public function removeLineItemByPosition(int $position)
     {
@@ -214,6 +220,7 @@ class Invoice implements AggregateRoot
 
     /**
      * @param String $paymentReference
+     * @throws EmptyPaymentReference
      */
     public function requestPaymentReference(String $paymentReference)
     {
@@ -243,6 +250,7 @@ class Invoice implements AggregateRoot
 
     /**
      * @param BillingPeriod $period
+     * @throws InvalidBillingPeriod
      */
     private function guardBillingPeriod(BillingPeriod $period)
     {
@@ -253,6 +261,7 @@ class Invoice implements AggregateRoot
 
     /**
      * @param string $countryCode
+     * @throws EmptyCountryCode
      */
     private function guardEmptyCountryCode(string $countryCode)
     {
@@ -263,6 +272,7 @@ class Invoice implements AggregateRoot
 
     /**
      * @param string $salesTaxNumber
+     * @throws InvalidCustomerSalesTaxNumber
      */
     private function guardEmptyCustomerSalesTaxNumber(string $salesTaxNumber)
     {
@@ -273,6 +283,7 @@ class Invoice implements AggregateRoot
 
     /**
      * @param string $invoiceNumber
+     * @throws EmptyInvoiceNumber
      */
     private function guardEmptyInvoiceNumber(string $invoiceNumber)
     {
@@ -294,6 +305,7 @@ class Invoice implements AggregateRoot
 
     /**
      * @param int $position
+     * @throws InvalidLineItemPosition
      */
     private function guardInvalidPosition(int $position): void
     {
@@ -304,6 +316,8 @@ class Invoice implements AggregateRoot
 
     /**
      * @param SepaDirectDebitMandate $mandate
+     * @throws InvalidCustomerIban
+     * @throws InvalidSepaDirectDebitMandateReference
      */
     private function guardInvalidSepaDirectDebitMandate(SepaDirectDebitMandate $mandate)
     {
@@ -353,6 +367,7 @@ class Invoice implements AggregateRoot
 
     /**
      * @param String $paymentReference
+     * @throws EmptyPaymentReference
      */
     private function guardPaymentReference(String $paymentReference)
     {

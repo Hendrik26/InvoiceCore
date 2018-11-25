@@ -5,6 +5,7 @@
 
 namespace Irvobmagturs\InvoiceCore\Model\ValueObject;
 
+use InvalidArgumentException;
 use Irvobmagturs\InvoiceCore\Infrastructure\AbstractValueObjectBase;
 use Jubjubbird\Respects\Serializable;
 
@@ -20,6 +21,7 @@ class Money extends AbstractValueObjectBase implements Serializable
      * Money constructor.
      * @param float $amount
      * @param string $currency
+     * @throws InvalidArgumentException
      */
     public function __construct(float $amount, string $currency)
     {
@@ -29,7 +31,8 @@ class Money extends AbstractValueObjectBase implements Serializable
 
     /**
      * @param array $data
-     * @return static The object instance
+     * @return Serializable
+     * @throws InvalidArgumentException
      */
     static function deserialize(array $data): Serializable
     {

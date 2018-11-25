@@ -11,6 +11,7 @@ namespace Irvobmagturs\InvoiceCore\Model\ValueObject;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Exception;
+use InvalidArgumentException;
 use Irvobmagturs\InvoiceCore\Infrastructure\AbstractValueObjectBase;
 use Jubjubbird\Respects\Serializable;
 
@@ -28,6 +29,15 @@ use Jubjubbird\Respects\Serializable;
  */
 class LineItem extends AbstractValueObjectBase
 {
+    /**
+     * LineItem constructor.
+     * @param Money $price
+     * @param float $quantity
+     * @param string $title
+     * @param bool $timeBased
+     * @param DateTimeInterface|null $date
+     * @throws InvalidArgumentException
+     */
     public function __construct(
         Money $price,
         float $quantity,

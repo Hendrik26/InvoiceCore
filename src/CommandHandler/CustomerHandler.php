@@ -6,10 +6,13 @@
 namespace Irvobmagturs\InvoiceCore\CommandHandler;
 
 use Exception;
+use InvalidArgumentException;
 use Irvobmagturs\InvoiceCore\CommandHandler\Exception\CustomerExists;
 use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\CqrsCommandHandler;
 use Irvobmagturs\InvoiceCore\Model\Entity\Customer;
+use Irvobmagturs\InvoiceCore\Model\Exception\EmptyCountryCode;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidCustomerId;
+use Irvobmagturs\InvoiceCore\Model\Exception\InvalidCustomerName;
 use Irvobmagturs\InvoiceCore\Model\Id\CustomerId;
 use Irvobmagturs\InvoiceCore\Model\ValueObject\Address;
 use Irvobmagturs\InvoiceCore\Repository\CustomerNotFound;
@@ -45,6 +48,9 @@ class CustomerHandler implements CqrsCommandHandler
      * @throws CorruptAggregateHistory
      * @throws CustomerExists
      * @throws InvalidCustomerId
+     * @throws InvalidArgumentException
+     * @throws EmptyCountryCode
+     * @throws InvalidCustomerName
      */
     public function engageInBusiness(string $aggregateId, array $args): void
     {
