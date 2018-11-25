@@ -39,22 +39,6 @@ class SepaDirectDebitMandate extends AbstractValueObjectBase
     }
 
     /**
-     * @return string
-     */
-    public function getCustomerIban(): string
-    {
-        return $this->customerIban;
-    }
-
-    /**
-     * @return string
-     */
-    public function getMandateReference(): string
-    {
-        return $this->mandateReference;
-    }
-
-    /**
      * @return array
      */
     function serialize(): array
