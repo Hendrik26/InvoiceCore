@@ -74,7 +74,16 @@ class SimpleProjector implements EventBus
         stdClass $aggregate,
         DomainEvent $recordedEvent
     ): void {
-        $aggregate->address = $event->getCustomerAddress()->serialize();
+        $address = [];
+        $address['addressLine1'] = $event->getCustomerAddress()->addressLine1;
+        $address['addressLine2'] = $event->getCustomerAddress()->addressLine2;
+        $address['addressLine3'] = $event->getCustomerAddress()->addressLine3;
+        $address['city'] = $event->getCustomerAddress()->city;
+        $address['countryCode'] = $event->getCustomerAddress()->countryCode;
+        $address['postalCode'] = $event->getCustomerAddress()->postalCode;
+        $aggregate->billingAddress = (object)array_filter($address, function ($x) {
+            return $x !== null;
+        });
     }
 
     private function whenCustomerHasEngagedInBusiness(
@@ -83,7 +92,16 @@ class SimpleProjector implements EventBus
         DomainEvent $recordedEvent
     ): void {
         $aggregate->name = $event->getCustomerName();
-        $aggregate->address = $event->getBillingAddress()->serialize();
+        $address = [];
+        $address['addressLine1'] = $event->getBillingAddress()->addressLine1;
+        $address['addressLine2'] = $event->getBillingAddress()->addressLine2;
+        $address['addressLine3'] = $event->getBillingAddress()->addressLine3;
+        $address['city'] = $event->getBillingAddress()->city;
+        $address['countryCode'] = $event->getBillingAddress()->countryCode;
+        $address['postalCode'] = $event->getBillingAddress()->postalCode;
+        $aggregate->billingAddress = (object)array_filter($address, function ($x) {
+            return $x !== null;
+        });
     }
 
     private function whenCustomerNameWasChanged(
@@ -141,7 +159,9 @@ class SimpleProjector implements EventBus
         stdClass $aggregate,
         DomainEvent $recordedEvent
     ): void {
-        $aggregate->mandate = $event->getMandate()->serialize();
+        $aggregate->mandate = new stdClass();
+        $aggregate->mandate->customerIban = $event->getMandate()->customerIban;
+        $aggregate->mandate->mandateReference = $event->getMandate()->mandateReference;
     }
 
     private function whenInvoiceHasCoveredBillingPeriod(
@@ -149,7 +169,9 @@ class SimpleProjector implements EventBus
         stdClass $aggregate,
         DomainEvent $recordedEvent
     ): void {
-        $aggregate->billingPeriod = $event->getPeriod()->serialize();
+        $aggregate->billingPeriod = new stdClass();
+        $aggregate->billingPeriod->startDate = $event->getPeriod()->startDate->format(DATE_ATOM);
+        $aggregate->billingPeriod->endDate = $event->getPeriod()->endDate->format(DATE_ATOM);
     }
 
     private function whenInvoiceHasDroppedBillingPeriod(
@@ -173,10 +195,10 @@ class SimpleProjector implements EventBus
         stdClass $aggregate,
         DomainEvent $recordedEvent
     ): void {
-        $aggregate->customer = strval($event->getCustomerId());
-        $aggregate->date = $event->getInvoiceDate()->format(DATE_ATOM);
-        $aggregate->items = [];
-        $aggregate->number = $event->getInvoiceNumber();
+        $aggregate->customerId = strval($event->getCustomerId());
+        $aggregate->invoiceDate = $event->getInvoiceDate()->format(DATE_ATOM);
+        $aggregate->lineItems = [];
+        $aggregate->invoiceNumber = $event->getInvoiceNumber();
     }
 
     private function whenLineItemWasAppended(
@@ -184,7 +206,23 @@ class SimpleProjector implements EventBus
         stdClass $aggregate,
         DomainEvent $recordedEvent
     ): void {
-        array_splice($aggregate->items, $event->getPosition(), 0, [$event->getItem()->serialize()]);
+        $item = [];
+        $item['price']['amount'] = $event->getItem()->price->amount;
+        $item['price']['currency'] = $event->getItem()->price->currency;
+        $item['date'] = $event->getItem()->date->format(DATE_ATOM);
+        $item['quantity'] = $event->getItem()->quantity;
+        $item['timeBased'] = $event->getItem()->timeBased;
+        $item['title'] = $event->getItem()->title;
+        array_splice(
+            $aggregate->lineItems,
+            $event->getPosition(),
+            0,
+            [
+                (object)array_filter($item, function ($x) {
+                    return $x !== null;
+                })
+            ]
+        );
     }
 
     private function whenLineItemWasRemoved(
@@ -192,7 +230,7 @@ class SimpleProjector implements EventBus
         stdClass $aggregate,
         DomainEvent $recordedEvent
     ): void {
-        array_splice($aggregate->items, $event->getPosition(), 1);
+        array_splice($aggregate->lineItems, $event->getPosition(), 1);
     }
 
     private function whenPaymentReferenceHasBeenRequested(
