@@ -4,10 +4,33 @@ schema {
 }
 type CqrsQuery {
 	loadFoo: String
+	customers(nameStartsWith: String): [QCustomer!]!
 }
 type CqrsCommandHandlers {
 	Customer(id: String!): CustomerHandler!
 	Invoice(id: String!): InvoiceHandler!
+}
+
+# query types, alphabetically
+type QCustomer {
+	name: String!
+	billingAddress: QAddress!
+	# other properties
+}
+
+# query subtypes, alphabetically
+type QAddress {
+	countryCode: QCountry!
+}
+enum QCountry {
+	DE
+	PL
+	CZ
+	AT
+	CH
+	FR
+	UK
+	# more on demand
 }
 
 # handlers, alphabetically
