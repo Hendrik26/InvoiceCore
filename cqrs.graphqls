@@ -35,10 +35,15 @@ type QInvoice {
 # query subtypes, alphabetically
 type QAddress {
 	countryCode: QCountry!
+    postalCode: String!
+    city: String!
+    addressLine1: String
+    addressLine2: String
+    addressLine3: String
 }
 type QBillingPeriod {
-	startDate: Date!
-	endDate: Date!
+	startDate: String!
+	endDate: String!
 }
 enum QCountry {
 	DE
@@ -57,13 +62,13 @@ type QLineItem {
 	timeBased: Boolean!
 	date: String
 }
+type QMandate {
+    mandateReference: String!
+    customerIban: String!
+}
 type QMoney {
 	amount: Float!
-	currency: String!!
-}
-type QMandate {
-	mandateReference: String!
-	customerIban: String!
+	currency: String!
 }
 
 # handlers, alphabetically
