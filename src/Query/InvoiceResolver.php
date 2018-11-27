@@ -19,7 +19,9 @@ class InvoiceResolver extends TypeResolver
         $this->addResolverForField('CqrsQuery', 'invoices', function () use ($invoiceDir) {
             foreach (new DirectoryIterator($invoiceDir) as $fileInfo) {
                 if ($fileInfo->isFile() && $fileInfo->getExtension() === 'json') {
-                    yield json_decode(file_get_contents($fileInfo->getRealPath()));
+                    $invoice = json_decode(file_get_contents($fileInfo->getRealPath()));
+                    $invoice->aggregateId = $fileInfo->getBasename('.json');
+                    yield $invoice;
                 }
             }
         });

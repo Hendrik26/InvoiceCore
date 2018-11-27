@@ -22,7 +22,6 @@ type QCustomer {
 type QInvoice {
 	aggregateId: String!
 	customerId: String!
-	customerSalesTaxNumber: String
 	invoiceDate: String!
 	invoiceDueDate: String!
 	invoiceNumber: String!
@@ -30,6 +29,7 @@ type QInvoice {
 	mandate: QMandate
 	paymentReference: String
 	period: QBillingPeriod
+	vatid: String
 }
 
 # query subtypes, alphabetically

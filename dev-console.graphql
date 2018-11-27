@@ -13,11 +13,12 @@
         }
     }
     invoices {
+        aggregateId
         customerId
-        customerSalesTaxNumber
         invoiceDate
         invoiceNumber
         paymentReference
+        vatid
         lineItems {
             date
             quantity
