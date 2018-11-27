@@ -20,7 +20,7 @@ use Irvobmagturs\InvoiceCore\Repository\CustomerRepository;
 use Irvobmagturs\InvoiceCore\Repository\InvoiceRepository;
 require_once __DIR__ . '/vendor/autoload.php';
 
-class customerResolver
+class CustomerResolver
 {
     private $schemaCache;
     private $eventStoreFile;
@@ -67,6 +67,7 @@ class customerResolver
         });
         $typeResolver->addResolverForField('QCustomer', 'name', function (
             $typeValue, array $args, $context, ResolveInfo $info) {
+
             return $customer->billingAdress;
         });
 

@@ -15,6 +15,8 @@ use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\TypeResolver;
 use Irvobmagturs\InvoiceCore\Infrastructure\SqLiteEventStore;
 use Irvobmagturs\InvoiceCore\Infrastructure\SqLitePdo;
 use Irvobmagturs\InvoiceCore\Projector\SimpleProjector;
+use Irvobmagturs\InvoiceCore\Query\CustomerResolver;
+use Irvobmagturs\InvoiceCore\Query\InvoiceResolver;
 use Irvobmagturs\InvoiceCore\Repository\CustomerRepository;
 use Irvobmagturs\InvoiceCore\Repository\InvoiceRepository;
 
@@ -33,47 +35,8 @@ $typeResolver = new TypeResolver();
 $typeResolver->addResolverForField('CqrsQuery', 'loadFoo', function () {
     return 'bar';
 });
-$typeResolver->addResolverForField('CqrsQuery', 'invoices', function () {
-    return ['Inv001', 'Inv002', 'Inv003'];
-});
-$typeResolver->addResolverForField('QInvoice', 'invoiceNumber', function (
-    $typeValue, array $args, $context, ResolveInfo $info) {
-    return $typeValue;
-});
-$typeResolver->addResolverForField('QInvoice', 'invoiceDate', function (
-    $typeValue, array $args, $context, ResolveInfo $info) {
-    return (new DateTime('now'))->format(DATE_ATOM).$typeValue;
-});
-$typeResolver->addResolverForField('QInvoice', 'mandate', function (
-    $typeValue, array $args, $context, ResolveInfo $info) {
-    return $typeValue;
-});
-$typeResolver->addResolverForField('QMandate', 'mandateReference', function (
-    $typeValue, array $args, $context, ResolveInfo $info) {
-    return 'MR-'.$typeValue;
-});
-$typeResolver = new TypeResolver($typeResolver);
-
-$typeResolver->addResolverForField('CqrsQuery', 'customers', function () {
-    $customerFiles = array();
-    $customers = array();
-    foreach (new DirectoryIterator('data/projections/customer') as $fileInfo) {
-        if($fileInfo->isDot()) continue;
-        if($fileInfo->getExtension() === 'json'){
-          $customerFiles[] = $fileInfo->getFilename();
-        }
-        // echo $fileInfo->getFilename() . "<br>\n";
-    }
-    foreach ($customerFiles as $customerFile){
-        $customers[] =  json_decode(file_get_contents($customerFile));
-    }
-    return $customers;
-});
-$typeResolver->addResolverForField('QCustomer', 'name', function (
-    $typeValue, array $args, $context, ResolveInfo $info) {
-    return $typeValue;
-});
-
+$typeResolver = new InvoiceResolver($typeResolver);
+$typeResolver = new CustomerResolver($customerDir, $typeResolver);
 $commandBus = new CqrsCommandBus($typeResolver);
 $typeResolver = $commandBus;
 $commandBus->append(new InvoiceHandler(new InvoiceRepository($eventStore, $eventBus)));
