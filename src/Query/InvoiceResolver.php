@@ -8,35 +8,20 @@
 
 namespace Irvobmagturs\InvoiceCore\Query;
 
-
-use DateTime;
-use GraphQL\Type\Definition\ResolveInfo;
+use DirectoryIterator;
 use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\TypeResolver;
 
 class InvoiceResolver extends TypeResolver
 {
-    public function __construct($base = null)
+    public function __construct(string $invoiceDir, TypeResolver $base = null)
     {
         parent::__construct($base);
-        $this->addResolverForField('CqrsQuery', 'invoices', function () {
-            return ['Inv001', 'Inv002', 'Inv003'];
-        });
-        $this->addResolverForField('QInvoice', 'invoiceNumber', function (
-            $typeValue, array $args, $context, ResolveInfo $info) {
-            return $typeValue;
-        });
-        $this->addResolverForField('QInvoice', 'invoiceDate', function (
-            $typeValue, array $args, $context, ResolveInfo $info) {
-            return (new DateTime('now'))->format(DATE_ATOM).$typeValue;
-        });
-        $this->addResolverForField('QInvoice', 'mandate', function (
-            $typeValue, array $args, $context, ResolveInfo $info) {
-            return $typeValue;
-        });
-        $this->addResolverForField('QMandate', 'mandateReference', function (
-            $typeValue, array $args, $context, ResolveInfo $info) {
-            return 'MR-'.$typeValue;
+        $this->addResolverForField('CqrsQuery', 'invoices', function () use ($invoiceDir) {
+            foreach (new DirectoryIterator($invoiceDir) as $fileInfo) {
+                if ($fileInfo->isFile() && $fileInfo->getExtension() === 'json') {
+                    yield json_decode(file_get_contents($fileInfo->getRealPath()));
+                }
+            }
         });
     }
-
 }

@@ -35,7 +35,7 @@ $typeResolver = new TypeResolver();
 $typeResolver->addResolverForField('CqrsQuery', 'loadFoo', function () {
     return 'bar';
 });
-$typeResolver = new InvoiceResolver($typeResolver);
+$typeResolver = new InvoiceResolver($invoiceDir, $typeResolver);
 $typeResolver = new CustomerResolver($customerDir, $typeResolver);
 $commandBus = new CqrsCommandBus($typeResolver);
 $typeResolver = $commandBus;
