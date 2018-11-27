@@ -214,6 +214,19 @@ class InvoiceHandler implements CqrsCommandHandler
      * @param string $aggregateId
      * @param array $args
      * @throws CorruptAggregateHistory
+     */
+    public function requestPaymentReference(string $aggregateId, array $args): void
+    {
+        /** @var Invoice $invoice */
+        $invoice = $this->repository->load(InvoiceId::fromString($aggregateId));
+        $invoice->requestPaymentReference($args['paymentReference']);
+        $this->repository->save($invoice);
+    }
+
+    /**
+     * @param string $aggregateId
+     * @param array $args
+     * @throws CorruptAggregateHistory
      * @throws InvalidInvoiceId
      * @throws InvoiceNotFound
      * @throws Exception

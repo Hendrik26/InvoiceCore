@@ -88,6 +88,7 @@ type InvoiceHandler {
 	employSepaDirectDebit(mandate: SepaDirectDebitMandate!): Boolean!
 	refrainFromSepaDirectDebit: Boolean!
 	removeLineItemByPosition(position: Int!): Boolean!
+    requestPaymentReference(paymentReference: String!): Boolean!
 	setInvoiceDate(invoiceDate: Date!): Boolean!
 }
 
