@@ -28,7 +28,7 @@ class CustomerResolver extends TypeResolver
             foreach (new DirectoryIterator($dir) as $fileInfo) {
                 if ($fileInfo->isDot()) continue;
                 if ($fileInfo->getExtension() === FILE_EXTENSION) {
-                    $customerFiles[] = $fileInfo->getFilename();
+                    $customerFiles[] = $fileInfo->getRealPath();
                 }
             }
             foreach ($customerFiles as $customerFile) {
