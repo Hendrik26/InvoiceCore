@@ -13,25 +13,23 @@
         }
     }
     invoices {
-#       aggregateId
-#       customerId
+        customerId
         customerSalesTaxNumber
         invoiceDate
-#       invoiceDueDate
         invoiceNumber
         paymentReference
-#       lineItems {
-#           date
-#           quantity
-#           timeBased
-#           title
-#           price {
-#               amount
-#               currency
-#           }
-#       }
+        lineItems {
+            date
+            quantity
+            timeBased
+            title
+            price {
+                amount
+                currency
+            }
+        }
         mandate {
-#           customerIban
+            customerIban
             mandateReference
         }
         period {
