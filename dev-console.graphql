@@ -1,4 +1,45 @@
-{ loadFoo }
+{
+    customers {
+        customerId
+        customerSalesTaxNumber
+        name
+        billingAddress {
+            addressLine1
+            addressLine2
+            addressLine3
+            city
+            countryCode
+            postalCode
+        }
+    }
+    invoices {
+#       aggregateId
+#       customerId
+        customerSalesTaxNumber
+        invoiceDate
+#       invoiceDueDate
+        invoiceNumber
+        paymentReference
+#       lineItems {
+#           date
+#           quantity
+#           timeBased
+#           title
+#           price {
+#               amount
+#               currency
+#           }
+#       }
+        mandate {
+#           customerIban
+            mandateReference
+        }
+        period {
+            endDate
+            startDate
+        }
+    }
+}
 
 mutation m {
     Customer(id: "3aae0bc8-dcc8-47e7-bb33-ebb0ceb32361") {
