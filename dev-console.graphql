@@ -2,6 +2,7 @@
     customers {
         customerId
         customerSalesTaxNumber
+        vatid
         name
         billingAddress {
             addressLine1

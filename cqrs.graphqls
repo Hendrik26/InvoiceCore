@@ -17,7 +17,7 @@ type QCustomer {
 	name: String!
 	billingAddress: QAddress!
 	customerId: String!
-	customerSalesTaxNumber: String
+	vatid: String
 }
 type QInvoice {
 	aggregateId: String!

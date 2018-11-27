@@ -17,24 +17,17 @@ const FILE_EXTENSION = 'json';
 
 class CustomerResolver extends TypeResolver
 {
-    private $dir;
-
-    public function __construct($dir, $base = null)
+    public function __construct($customerDir, $base = null)
     {
         parent::__construct($base);
-        $this->addResolverForField('CqrsQuery', 'customers', function () use ($dir) {
-            $customerFiles = array();
-            $customers = array();
-            foreach (new DirectoryIterator($dir) as $fileInfo) {
-                if ($fileInfo->isDot()) continue;
-                if ($fileInfo->getExtension() === FILE_EXTENSION) {
-                    $customerFiles[] = $fileInfo->getRealPath();
+        $this->addResolverForField('CqrsQuery', 'customers', function () use ($customerDir) {
+            foreach (new DirectoryIterator($customerDir) as $fileInfo) {
+                if ($fileInfo->isFile() && $fileInfo->getExtension() === 'json') {
+                    $customer = json_decode(file_get_contents($fileInfo->getRealPath()));
+                    $customer->aggregateId = $fileInfo->getBasename('.json');
+                    yield $customer;
                 }
             }
-            foreach ($customerFiles as $customerFile) {
-                $customers[] = json_decode(file_get_contents($customerFile));
-            }
-            return $customers;
         });
         $this->addResolverForField(
             'QCustomer',
@@ -57,6 +50,14 @@ class CustomerResolver extends TypeResolver
                 return $customer->vatid;
             }
         );
+
+        $this->addResolverForField(
+            'QCustomer',
+            'vatid',
+            function ($customer, array $args, $context, ResolveInfo $info) {
+                return $customer->vatid;
+            }
+        );
         $this->addResolverForField(
             'QAddress',
             'countryCode',
@@ -71,9 +72,5 @@ class CustomerResolver extends TypeResolver
                 return $address->$fieldName;
             }
         );
-
-
-        $this->dir = $dir;
     }
-
 }
