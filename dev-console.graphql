@@ -1,7 +1,6 @@
 {
     customers {
         customerId
-        customerSalesTaxNumber
         vatid
         name
         billingAddress {

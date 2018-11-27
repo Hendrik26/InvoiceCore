@@ -47,7 +47,7 @@ class CustomerResolver extends TypeResolver
             'QCustomer',
             'customerId',
             function ($customer, array $args, $context, ResolveInfo $info) {
-                return $customer->vatid;
+                return $customer->aggregateId;
             }
         );
 
