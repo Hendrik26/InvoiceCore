@@ -20,6 +20,15 @@ use Irvobmagturs\InvoiceCore\Query\InvoiceResolver;
 use Irvobmagturs\InvoiceCore\Repository\CustomerRepository;
 use Irvobmagturs\InvoiceCore\Repository\InvoiceRepository;
 
+if (PHP_SAPI !== 'cli') {
+    header('Access-Control-Allow-Origin: *');
+    if (($_SERVER['REQUEST_METHOD'] ?? null) == 'OPTIONS') {
+        header('Access-Control-Allow-Headers: content-type');
+        header('Access-Control-Allow-Methods: POST');
+        exit;
+    }
+}
+
 require_once __DIR__ . '/vendor/autoload.php';
 $schemaCache = __DIR__ . '/data/cache/schema';
 $eventStoreFile = __DIR__ . '/data/eventstore.sqlite';
