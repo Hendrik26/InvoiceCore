@@ -10,6 +10,7 @@ namespace Irvobmagturs\InvoiceCore\Query;
 
 
 use DirectoryIterator;
+use Irvobmagturs\InvoiceCore\Model\ValueObject\Address;
 use GraphQL\Type\Definition\ResolveInfo;
 use Irvobmagturs\InvoiceCore\Infrastructure\GraphQL\TypeResolver;
 

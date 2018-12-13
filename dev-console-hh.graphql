@@ -118,3 +118,10 @@ query gql
         billingAddress { addressLine1 addressLine2 addressLine3 city countryCode postalCode }
     }
 }
+
+query gql01
+{
+    customers { customerId vatid name
+        billingAddress { city countryCode postalCode }
+    }
+}
