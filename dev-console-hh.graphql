@@ -1,0 +1,127 @@
+query q{
+    customers {
+        customerId
+        vatid
+        name
+        billingAddress {
+            addressLine1
+            addressLine2
+            addressLine3
+            city
+            countryCode
+            postalCode
+        }
+    }
+    invoices {
+        aggregateId
+        customerId
+        invoiceDate
+        invoiceNumber
+        paymentReference
+        vatid
+        lineItems {
+            date
+            quantity
+            timeBased
+            title
+            price {
+                amount
+                currency
+            }
+        }
+        mandate {
+            customerIban
+            mandateReference
+        }
+        period {
+            endDate
+            startDate
+        }
+    }
+}
+
+mutation m {
+    Customer(id: "5cbf0bc8-dcc8-47e7-bb33-ebb0ceb32361") {
+        engageInBusiness(
+            name: "Olsenbande"
+            billingAddress: {
+                addressLine1: "Egon Olsen"
+                addressLine2: "Asta Nielsen Strædet 4"
+                city: "Kopenhagen"
+                countryCode: "DK"
+                postalCode: "1500"
+            }
+        )
+        assignTaxIdentification(idNumber: "AB0123456789")
+        relocate(
+            billingAddress: {
+                addressLine1: "Egon Olsen"
+                addressLine2: "Asta Nielsen Strædet 4"
+                city: "Kopenhagen OT Valby"
+                countryCode: "DK"
+                postalCode: "2500"
+            }
+        )
+        rename(name: "Egon Olsen Holding")
+    }
+}
+
+mutation m {
+    Invoice(id: "c0104842-95bc-4022-9872-5b0e78866383") {
+        chargeCustomer(
+            customerId: "3aae0bc8-dcc8-47e7-bb33-ebb0ceb32361"
+            invoiceDate: "yesterday"
+            invoiceNumber: "B01-43bc-b3a2"
+        )
+        appendLineItem(
+            item: {
+                date: "now"
+                quantity: 1
+                timeBased: false
+                title: "some item"
+                price: {
+                    amount: 0
+                    currency: ""
+                }
+            }
+        )
+        becomeInternational(
+            countryCode: "UK"
+            customerSalesTaxNumber: "AB0123456789"
+        )
+        becomeNational
+        coverBillingPeriod(
+            period: {
+                startDate: { iso8601value: "2018-01-01" }
+                endDate: { iso8601value: "2018-12-31" }
+            }
+        )
+        dropBillingPeriod
+        employSepaDirectDebit(
+            mandate: {
+                customerIban: "UK01 2345 6789 0123 4567 89"
+                mandateReference: "c012/345"
+            }
+        )
+        refrainFromSepaDirectDebit
+        removeLineItemByPosition(position: 0)
+        requestPaymentReference(paymentReference: "xy123ab")
+        setInvoiceDate(
+            invoiceDate: { iso8601value: "2018-12-31" }
+        )
+    }
+}
+
+query gql
+{
+    customers { customerId vatid name
+        billingAddress { addressLine1 addressLine2 addressLine3 city countryCode postalCode }
+    }
+}
+
+query gql01
+{
+    customers { customerId vatid name
+        billingAddress { city countryCode postalCode }
+    }
+}

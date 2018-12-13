@@ -1,0 +1,113 @@
+@startuml
+!define SHOW_METHODS
+!define SHOW_INHERITANCE
+!define SHOW_ASSOCIATIONS
+!include command-side.puml!classifiers
+
+!ifdef SHOW_INHERITANCE
+	ImmutableValue <|- AbstractValueObjectBase
+	DomainEvents <|- AggregateHistory
+	IsEventSourced <|- AggregateRoot
+	RecordsEvents <|- AggregateRoot
+	TypeResolver <|- CqrsCommandBus
+
+	Serializable <|.. AbstractValueObjectBase
+!endif
+
+AggregateHistory *-> DomainEvent
+AggregateHistory *--> IdentifiesAggregate
+CqrsCommandHandler *-> Repository
+DomainEvent *--> IdentifiesAggregate
+DomainEvent *--> Serializable
+IsEventSourced *--> IdentifiesAggregate
+Repository *-> EventStore
+Repository *-> EventBus
+
+AggregateRoot o--> RecordsEvents
+AggregateRoot o--> AbstractValueObjectBase
+CqrsCommandBus o--> CqrsCommandHandler
+DomainEvents o--> DomainEvent
+
+!ifdef SHOW_ASSOCIATIONS
+	EventBus --> DomainEvents
+	EventStore --> DomainEvent
+	EventStore --> IdentifiesAggregate
+	IsEventSourced --> AggregateHistory
+	IsEventSourced --> RecordsEvents
+	RecordsEvents --> DomainEvents
+	Repository ---> IdentifiesAggregate
+	Repository --> AggregateRoot
+!endif
+@enduml
+
+@startuml(id=classifiers)
+interface AggregateRoot
+interface CqrsCommandHandler
+interface DomainEvent {
+	!ifdef SHOW_METHODS
+		getAggregateId()
+		getPayload()
+		getRecordedOn()
+	!endif
+}
+interface EventBus {
+	!ifdef SHOW_METHODS
+		dispatch()
+	!endif
+}
+interface EventStore {
+	!ifdef SHOW_METHODS
+		append()
+		listEventsForId()
+	!endif
+}
+interface IdentifiesAggregate {
+	!ifdef SHOW_METHODS
+		{static} fromString()
+		equals()
+		__toString()
+	!endif
+}
+interface IsEventSourced {
+	!ifdef SHOW_METHODS
+		{static} reconstituteFrom()
+		getAggregateId()
+	!endif
+}
+interface RecordsEvents {
+	!ifdef SHOW_METHODS
+		clearRecordedEvents()
+		getRecordedEvents()
+	!endif
+}
+interface Repository {
+	!ifdef SHOW_METHODS
+		load()
+		save()
+	!endif
+}
+interface Serializable {
+	!ifdef SHOW_METHODS
+		{static} deserialize()
+		serialize()
+	!endif
+}
+abstract AbstractValueObjectBase
+class AggregateHistory {
+	!ifdef SHOW_METHODS
+		getAggregateId()
+	!endif
+}
+class CqrsCommandBus {
+	!ifdef SHOW_METHODS
+		append()
+	!endif
+}
+class TypeResolver {
+	!ifdef SHOW_METHODS
+		addResolverForField()
+		addResolverForType()
+		generateTypeConfigDecorator()
+	!endif
+}
+@enduml

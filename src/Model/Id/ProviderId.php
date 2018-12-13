@@ -6,12 +6,12 @@
 namespace Irvobmagturs\InvoiceCore\Model\Id;
 
 use Buttercup\Protects\IdentifiesAggregate;
-use Irvobmagturs\InvoiceCore\Infrastructure\UsesUuidForIdentification;
 use Irvobmagturs\InvoiceCore\Model\Exception\InvalidProviderId;
+use Jubjubbird\Respects\UsesUuidForIdentification;
 use Ramsey\Uuid\Exception\InvalidUuidStringException;
 use Ramsey\Uuid\Uuid;
 
-final class ProviderId implements IdentifiesAggregate
+class ProviderId implements IdentifiesAggregate
 {
     use UsesUuidForIdentification;
 

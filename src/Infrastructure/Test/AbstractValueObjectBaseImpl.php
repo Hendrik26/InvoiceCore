@@ -2,13 +2,13 @@
 /**
  * @author I. R. Vobmagturs <i+r+vobmagturs@commodea.com>
  */
+
 namespace Irvobmagturs\InvoiceCore\Infrastructure\Test;
 
-use DateTime;
 use Irvobmagturs\InvoiceCore\Infrastructure\AbstractValueObjectBase;
-use Irvobmagturs\InvoiceCore\Infrastructure\Serializable;
+use Jubjubbird\Respects\Serializable;
 
-final class AbstractValueObjectBaseImpl extends AbstractValueObjectBase
+class AbstractValueObjectBaseImpl extends AbstractValueObjectBase
 {
     /**
      * @param array $data

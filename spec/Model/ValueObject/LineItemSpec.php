@@ -1,7 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author I. R. Vobmagturs <i+r+vobmagturs@commodea.com>
  */
+
 namespace spec\Irvobmagturs\InvoiceCore\Model\ValueObject;
 
 use DateTime;
@@ -15,28 +16,27 @@ class LineItemSpec extends ObjectBehavior
     function it_configures_a_new_instance()
     {
         $value = [
-            7, /*position*/
+            0, /*back-compat*/
             ['EUR', 2.34], /*price*/
-            5.6, /*quantity*/
+            9.2, /*quantity*/
             'title',
             true, /*timeBased*/
             '2018-10-30T23:04:42+01:00'
         ];
-        $this->withPosition(7)->serialize()->shouldBe($value);
+        $this->withQuantity(9.2)->serialize()->shouldBe($value);
         $this->serialize()->shouldNotBe($value);
     }
 
     function it_deserializes_from_an_array()
     {
         $this->beConstructedThroughDeserialize([
-            7, /*position*/
+            0, /*back-compat*/
             ['GBP', 8.9],
             1.2, /*quantity*/
             'title*',
             false, /*timeBased*/
             null /*date*/
         ]);
-        $this->position->shouldBe(7);
         $this->price->shouldBeLike(new Money(8.90, 'GBP'));
         $this->quantity->shouldBe(1.2);
         $this->title->shouldBe('title*');
@@ -47,11 +47,6 @@ class LineItemSpec extends ObjectBehavior
     function it_exposes_the_date()
     {
         $this->date->shouldBeAnInstanceOf(DateTimeInterface::class);
-    }
-
-    function it_exposes_the_position()
-    {
-        $this->position->shouldBe(1);
     }
 
     function it_exposes_the_price()
@@ -82,7 +77,7 @@ class LineItemSpec extends ObjectBehavior
     function it_serializes_to_an_array()
     {
         $this->serialize()->shouldBe([
-            1, /*position*/
+            0, /*back-compat*/
             ['EUR', 2.34], /*price*/
             5.6, /*quantity*/
             'title',
@@ -95,7 +90,6 @@ class LineItemSpec extends ObjectBehavior
     {
         $date->format(DATE_ATOM)->willReturn('2018-10-30T23:04:42+01:00');
         $this->beConstructedWith(
-            1, /*position*/
             new Money(2.34, 'EUR'),
             5.6, /*quantity*/
             'title',

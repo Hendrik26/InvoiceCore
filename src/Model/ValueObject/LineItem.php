@@ -11,34 +11,39 @@ namespace Irvobmagturs\InvoiceCore\Model\ValueObject;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Exception;
+use InvalidArgumentException;
 use Irvobmagturs\InvoiceCore\Infrastructure\AbstractValueObjectBase;
-use Irvobmagturs\InvoiceCore\Infrastructure\Serializable;
 
 /**
- * @property-read int $position
  * @property-read Money $price
  * @property-read float $quantity
  * @property-read string $title
  * @property-read bool $timeBased
- * @property-read ?DateTimeInterface $date
- * @method self withPosition(int $v)
+ * @property-read DateTimeInterface|null $date
  * @method self withPrice(Money $v)
  * @method self withQuantity(float $v)
  * @method self withTitle(string $v)
  * @method self withTimeBased(bool $v)
  * @method self withDate(?DateTimeInterface $v)
  */
-final class LineItem extends AbstractValueObjectBase
+class LineItem extends AbstractValueObjectBase
 {
+    /**
+     * LineItem constructor.
+     * @param Money $price
+     * @param float $quantity
+     * @param string $title
+     * @param bool $timeBased
+     * @param DateTimeInterface|null $date
+     * @throws InvalidArgumentException
+     */
     public function __construct(
-        int $position,
         Money $price,
         float $quantity,
         string $title,
         bool $timeBased,
         ?DateTimeInterface $date = null
     ) {
-        $this->init('position', $position);
         $this->init('price', $price);
         $this->init('quantity', $quantity);
         $this->init('title', $title);
@@ -51,10 +56,10 @@ final class LineItem extends AbstractValueObjectBase
      * @return static The object instance
      * @throws Exception when the date string cannot be parsed
      */
-    static function deserialize(array $data): Serializable
+    static function deserialize(array $data): self
     {
+        // $data[0] skipped for back-compat
         return new self(
-            $data[0],
             Money::deserialize($data[1]),
             $data[2],
             $data[3],
@@ -69,7 +74,7 @@ final class LineItem extends AbstractValueObjectBase
     function serialize(): array
     {
         return [
-            $this->position,
+            0, // for back-compat
             $this->price->serialize(),
             $this->quantity,
             $this->title,

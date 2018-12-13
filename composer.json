@@ -1,6 +1,7 @@
 {
     "name": "Irvobmagturs/InvoiceCore",
     "type": "project",
+    "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
             "Irvobmagturs\\InvoiceCore\\": "src/"
@@ -9,11 +10,18 @@
     "require": {
         "ext-json": "*",
         "webonyx/graphql-php": "^0.12.6",
-        "buttercup/protects": "dev-master",
+        "jubjubbird/respects": "*",
         "mathiasverraes/classfunctions": "1.*",
-        "ramsey/uuid": "^3.8"
+        "ramsey/uuid": "^3.8",
+        "ext-pdo": "*"
     },
     "require-dev": {
         "phpspec/phpspec": "5.0.3"
-    }
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/jubjubbird/respects.git"
+        }
+    ]
 }

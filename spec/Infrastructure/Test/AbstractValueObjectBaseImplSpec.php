@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @author I. R. Vobmagturs <i+r+vobmagturs@commodea.com>
  */
@@ -7,7 +7,6 @@ namespace spec\Irvobmagturs\InvoiceCore\Infrastructure\Test;
 
 use Irvobmagturs\InvoiceCore\Infrastructure\Test\AbstractValueObjectBaseImpl;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class AbstractValueObjectBaseImplSpec extends ObjectBehavior
 {

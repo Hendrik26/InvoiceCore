@@ -2,7 +2,10 @@
 /**
  * @author I. R. Vobmagturs <i+r+vobmagturs@commodea.com>
  */
+
 namespace Irvobmagturs\InvoiceCore\Infrastructure;
+
+use Jubjubbird\Respects\Serializable;
 
 /**
  * A base class for value objects allowing read-only access to its protected member variables, equality testing and

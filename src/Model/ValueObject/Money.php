@@ -1,11 +1,12 @@
 <?php declare(strict_types=1);
 /**
- * @author hendrik
+ * @author Hendrik26
  */
+
 namespace Irvobmagturs\InvoiceCore\Model\ValueObject;
 
+use InvalidArgumentException;
 use Irvobmagturs\InvoiceCore\Infrastructure\AbstractValueObjectBase;
-use Irvobmagturs\InvoiceCore\Infrastructure\Serializable;
 
 /**
  * @property-read float $amount
@@ -13,10 +14,16 @@ use Irvobmagturs\InvoiceCore\Infrastructure\Serializable;
  * @method Money withAmount(float $v)
  * @method Money withCurrency(string $v)
  */
-final class Money extends AbstractValueObjectBase
+class Money extends AbstractValueObjectBase
 {
-
-    public function __construct(float $amount, string $currency) {
+    /**
+     * Money constructor.
+     * @param float $amount
+     * @param string $currency
+     * @throws InvalidArgumentException
+     */
+    public function __construct(float $amount, string $currency)
+    {
         $this->init('amount', $amount);
         $this->init('currency', $currency);
     }
@@ -24,8 +31,9 @@ final class Money extends AbstractValueObjectBase
     /**
      * @param array $data
      * @return static The object instance
+     * @throws InvalidArgumentException
      */
-    static function deserialize(array $data): Serializable
+    static function deserialize(array $data): self
     {
         return new self($data[1], $data[0]);
     }

@@ -1,0 +1,125 @@
+schema {
+	query: CqrsQuery
+	mutation: CqrsCommandHandlers
+}
+type CqrsQuery {
+	loadFoo: String
+	customers(nameStartsWith: String): [QCustomer!]!
+	invoices: [QInvoice!]!
+}
+type CqrsCommandHandlers {
+	Customer(id: String!): CustomerHandler!
+	Invoice(id: String!): InvoiceHandler!
+}
+
+# query types, alphabetically
+type QCustomer {
+	name: String!
+	billingAddress: QAddress!
+	customerId: String!
+	vatid: String
+}
+type QInvoice {
+	aggregateId: String!
+	customerId: String!
+	invoiceDate: String!
+	invoiceDueDate: String!
+	invoiceNumber: String!
+	lineItems: [QLineItem!]!
+	mandate: QMandate
+	paymentReference: String
+	period: QBillingPeriod
+	vatid: String
+}
+
+# query subtypes, alphabetically
+type QAddress {
+	countryCode: QCountry!
+    postalCode: String!
+    city: String!
+    addressLine1: String
+    addressLine2: String
+    addressLine3: String
+}
+type QBillingPeriod {
+	startDate: String!
+	endDate: String!
+}
+enum QCountry {
+	DE
+	PL
+	CZ
+	AT
+	CH
+	FR
+	UK
+	# more on demand
+}
+type QLineItem {
+	price: QMoney
+	quantity: Int
+	title: String!
+	timeBased: Boolean!
+	date: String
+}
+type QMandate {
+    mandateReference: String!
+    customerIban: String!
+}
+type QMoney {
+	amount: Float!
+	currency: String!
+}
+
+# handlers, alphabetically
+type CustomerHandler {
+	engageInBusiness(name: String! billingAddress: Address!): Boolean!
+	relocate(billingAddress: Address!): Boolean!
+	rename(name: String!): Boolean!
+	assignTaxIdentification(idNumber: String!): Boolean
+}
+type InvoiceHandler {
+	chargeCustomer(customerId: String!, invoiceNumber: String!, invoiceDate: String!): Boolean!
+	appendLineItem(item: LineItem!): Boolean!
+	becomeInternational(countryCode: String!, customerSalesTaxNumber: String!): Boolean!
+	becomeNational: Boolean!
+	coverBillingPeriod(period: BillingPeriod!): Boolean!
+	dropBillingPeriod: Boolean!
+	employSepaDirectDebit(mandate: SepaDirectDebitMandate!): Boolean!
+	refrainFromSepaDirectDebit: Boolean!
+	removeLineItemByPosition(position: Int!): Boolean!
+    requestPaymentReference(paymentReference: String!): Boolean!
+	setInvoiceDate(invoiceDate: Date!): Boolean!
+}
+
+# input types, alphabetically
+input Address {
+	addressLine1: String
+	addressLine2: String
+	addressLine3: String
+	city: String!
+	countryCode: String!
+	postalCode: String!
+}
+input BillingPeriod {
+	endDate: Date!
+	startDate: Date!
+}
+input Date {
+	iso8601value: String!
+}
+input LineItem {
+	date: String!
+	price: Money!
+	quantity: Float!
+	timeBased: Boolean!
+	title: String!
+}
+input Money {
+	amount: Float!
+	currency: String!
+}
+input SepaDirectDebitMandate{
+	customerIban: String!
+	mandateReference: String!
+}
